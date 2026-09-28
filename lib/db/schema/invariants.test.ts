@@ -41,6 +41,13 @@ const EXPECTED_TABLES = [
   "stage_event",
   "vacancy_audit",
   "roi_scenario",
+  // clients and pilots
+  "client",
+  "vacancy",
+  "pilot",
+  "pilot_metric",
+  "owner_report",
+  "report_view",
 ];
 
 /** Tables that sit above the workspace boundary. */
