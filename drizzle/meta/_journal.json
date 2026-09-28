@@ -15,6 +15,13 @@
       "when": 1790624541498,
       "tag": "0001_gigantic_justin_hammer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790624595361,
+      "tag": "0002_dnc_permanent",
+      "breakpoints": true
     }
   ]
 }

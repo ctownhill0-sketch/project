@@ -1,12 +1,15 @@
 import type { Db } from "@/lib/db/client";
 import { appUser, company, contact, membership, pipelineStage, workspace } from "@/lib/db/schema";
 
+let ownerCount = 0;
+
 /** Minimal owned rows for DB-level tests. Fictional data only. */
 export async function insertOwner(db: Db) {
+  ownerCount += 1;
   const [ws] = await db.insert(workspace).values({ name: "Test workspace" }).returning();
   const [user] = await db
     .insert(appUser)
-    .values({ email: "owner@vacancydesk.example", name: "Test Owner" })
+    .values({ email: `owner${ownerCount}@vacancydesk.example`, name: "Test Owner" })
     .returning();
   if (!ws || !user) throw new Error("fixture insert failed");
   await db.insert(membership).values({ workspaceId: ws.id, createdById: user.id, userId: user.id });
