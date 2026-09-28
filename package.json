@@ -17,17 +17,26 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx scripts/seed.ts",
     "db:setup": "pnpm db:migrate && pnpm db:seed",
-    "db:reset": "tsx scripts/reset.ts && pnpm db:setup"
+    "db:reset": "tsx scripts/reset.ts && pnpm db:setup",
+    "ui:add": "shadcn add --yes --overwrite",
+    "ui:normalize": "tsx scripts/normalize-ui.ts && prettier --write components/ui"
   },
   "dependencies": {
+    "@base-ui/react": "^1.8.0",
     "@electric-sql/pglite": "0.5.8",
     "@fontsource-variable/inter": "^5.3.0",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.4.0",
     "drizzle-orm": "0.45.3",
+    "lucide-react": "^1.48.0",
     "next": "16.3.6",
     "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
+    "shadcn": "^4.21.0",
+    "sonner": "^2.0.8",
+    "tw-animate-css": "^1.4.0",
     "zod": "4.6.5"
   },
   "devDependencies": {

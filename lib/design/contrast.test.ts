@@ -31,6 +31,12 @@ const TEXT_PAIRS = [
   ["destructive", "card"],
   ["primary-foreground", "primary"],
   ["destructive-foreground", "destructive"],
+  ["popover-foreground", "popover"],
+  ["secondary-foreground", "secondary"],
+  ["sidebar-foreground", "sidebar"],
+  ["sidebar-accent-foreground", "sidebar-accent"],
+  ["sidebar-primary-foreground", "sidebar-primary"],
+  ["accent-foreground", "accent"],
 ] as const;
 
 /** Control boundaries and focus indicators (WCAG 1.4.11 / 2.4.11). */

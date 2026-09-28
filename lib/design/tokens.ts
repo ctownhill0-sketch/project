@@ -28,6 +28,19 @@ const light = {
   "ring-halo": "#E3A72F",
   "chart-1": "#0F2A44",
   "chart-2": "#8C5F0A",
+  // Tokens shadcn components expect, mapped onto the same palette.
+  popover: "#FFFFFF",
+  "popover-foreground": "#0F2A44",
+  secondary: "#EFECE4",
+  "secondary-foreground": "#0F2A44",
+  sidebar: "#FFFFFF",
+  "sidebar-foreground": "#0F2A44",
+  "sidebar-primary": "#0F2A44",
+  "sidebar-primary-foreground": "#FFFFFF",
+  "sidebar-accent": "#EFECE4",
+  "sidebar-accent-foreground": "#0F2A44",
+  "sidebar-border": "#D9D4C7",
+  "sidebar-ring": "#0F2A44",
 } as const;
 
 export type TokenName = keyof typeof light;
@@ -54,6 +67,18 @@ const dark: Record<TokenName, string> = {
   "ring-halo": "#E3A72F",
   "chart-1": "#8EC5FF",
   "chart-2": "#E3A72F",
+  popover: "#12263D",
+  "popover-foreground": "#E8EDF3",
+  secondary: "#1A3150",
+  "secondary-foreground": "#E8EDF3",
+  sidebar: "#12263D",
+  "sidebar-foreground": "#E8EDF3",
+  "sidebar-primary": "#E3A72F",
+  "sidebar-primary-foreground": "#0B1B2E",
+  "sidebar-accent": "#1A3150",
+  "sidebar-accent-foreground": "#E8EDF3",
+  "sidebar-border": "#24395A",
+  "sidebar-ring": "#E3A72F",
 };
 
 export const themes = { light, dark } satisfies Record<string, Record<TokenName, string>>;

@@ -31,6 +31,8 @@ const eslintConfig = defineConfig([
     },
   },
   { files: ["components/icons.ts", "components/ui/**"], rules: { "no-restricted-imports": "off" } },
+  // The generic Label receives htmlFor through props, which the rule can't see.
+  { files: ["components/ui/label.tsx"], rules: { "jsx-a11y/label-has-associated-control": "off" } },
   globalIgnores([
     ".next/**",
     "out/**",
