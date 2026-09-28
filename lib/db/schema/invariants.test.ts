@@ -13,6 +13,16 @@ const EXPECTED_TABLES = [
   "workspace",
   "app_user",
   "membership",
+  // leads
+  "company",
+  "contact",
+  "tag",
+  "company_tag",
+  "import_batch",
+  "import_mapping",
+  "software_pattern",
+  "detection_run",
+  "score_history",
 ];
 
 /** Tables that sit above the workspace boundary. */
