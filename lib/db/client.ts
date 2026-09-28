@@ -13,6 +13,7 @@ export type Db = PgliteDatabase;
 
 export interface DbHandle {
   db: Db;
+  driver: DbOptions["driver"];
   close: () => Promise<void>;
 }
 
@@ -20,12 +21,12 @@ export async function createDb(options: DbOptions): Promise<DbHandle> {
   if (options.driver === "pglite") {
     const client = new PGlite(options.dir);
     await client.waitReady;
-    return { db: drizzlePglite({ client }), close: () => client.close() };
+    return { db: drizzlePglite({ client }), driver: "pglite", close: () => client.close() };
   }
   if (!options.url) {
     throw new Error("DATABASE_URL is required when DATABASE_DRIVER=neon");
   }
   const pool = new Pool({ connectionString: options.url });
   const db = drizzleNodePg({ client: pool }) as unknown as Db;
-  return { db, close: () => pool.end() };
+  return { db, driver: "neon", close: () => pool.end() };
 }
