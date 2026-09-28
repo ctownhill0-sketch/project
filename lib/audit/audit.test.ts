@@ -66,6 +66,33 @@ describe("withAudit", () => {
 });
 
 describe("redact", () => {
+  it("hides contact names, notes and role titles, and snake_case personal keys", () => {
+    expect(
+      redact(
+        {
+          name: "Jordan Example",
+          notes: "cell is 555",
+          roleTitle: "Owner",
+          normalized_phone: "1",
+          shopper_name: "Me",
+        },
+        { entity: "contact" },
+      ),
+    ).toEqual({
+      name: "[redacted]",
+      notes: "[redacted]",
+      roleTitle: "[redacted]",
+      normalized_phone: "[redacted]",
+      shopper_name: "[redacted]",
+    });
+  });
+
+  it("keeps firm names, which are public business data", () => {
+    expect(redact({ name: "Harborline Residential" }, { entity: "company" })).toEqual({
+      name: "Harborline Residential",
+    });
+  });
+
   it("hides personal fields at any depth and keeps the rest", () => {
     expect(
       redact({

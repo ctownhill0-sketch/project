@@ -18,7 +18,8 @@ import {
  * fictional (.example domains, 555-01xx numbers). Deterministic for a given `now`.
  */
 
-export const SEED_OWNER_EMAIL = "ctownhill0@gmail.com";
+/** Fictional by default. Set OWNER_EMAIL in .env.local to use your own (it never leaves this Mac). */
+export const SEED_OWNER_EMAIL = "founder@vacancy-desk.example";
 const DAY = 86_400_000;
 
 type Own = { workspaceId: string; createdById: string };
@@ -297,8 +298,11 @@ export interface SeedResult {
   summary: string;
 }
 
-export async function seed(db: Db, { now = new Date(), seedValue = 20260929 } = {}): Promise<SeedResult> {
-  const existing = await db.select().from(s.appUser).where(eq(s.appUser.email, SEED_OWNER_EMAIL));
+export async function seed(
+  db: Db,
+  { now = new Date(), seedValue = 20260929, ownerEmail = SEED_OWNER_EMAIL } = {},
+): Promise<SeedResult> {
+  const existing = await db.select().from(s.appUser).where(eq(s.appUser.email, ownerEmail));
   if (existing.length > 0)
     return { skipped: true, summary: "Already seeded. Run pnpm db:reset to start over." };
 
@@ -307,10 +311,7 @@ export async function seed(db: Db, { now = new Date(), seedValue = 20260929 } = 
 
   return db.transaction(async (tx) => {
     const [ws] = await tx.insert(s.workspace).values({ name: "Vacancy Desk" }).returning();
-    const [owner] = await tx
-      .insert(s.appUser)
-      .values({ email: SEED_OWNER_EMAIL, name: "Founder" })
-      .returning();
+    const [owner] = await tx.insert(s.appUser).values({ email: ownerEmail, name: "Founder" }).returning();
     if (!ws || !owner) throw new Error("Could not create the workspace owner.");
     const own: Own = { workspaceId: ws.id, createdById: owner.id };
     await tx.insert(s.membership).values({ ...own, userId: owner.id, role: "owner" });

@@ -21,21 +21,35 @@ export interface AuditedWork<T> {
   after?: unknown;
 }
 
-/** Personal data never goes into the audit log (brief Part 10: PII minimised). */
-const PERSONAL_FIELDS = new Set(["email", "phone", "normalizedPhone", "shopperName"]);
+/**
+ * Personal data never goes into the audit log (brief Part 10: PII minimised).
+ * Keys are compared without case or underscores, so `shopperName` and
+ * `shopper_name` match. Free-text notes may contain anything, so they're hidden too.
+ */
+const PERSONAL_FIELDS = new Set(["email", "phone", "normalizedphone", "shoppername", "notes"]);
+/** Entities that describe a person: their name and role are personal data as well. */
+const PERSON_ENTITIES = new Set(["contact", "app_user"]);
+const PERSON_FIELDS = new Set(["name", "roletitle"]);
 
-export function redact(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(redact);
-  if (value instanceof Date) return value.toISOString();
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value).map(([key, inner]) => [
-        key,
-        PERSONAL_FIELDS.has(key) ? "[redacted]" : redact(inner),
-      ]),
-    );
-  }
-  return value;
+const normalizeKey = (key: string) => key.replace(/_/g, "").toLowerCase();
+
+export function redact(value: unknown, options: { entity?: string } = {}): unknown {
+  const isPerson = options.entity !== undefined && PERSON_ENTITIES.has(options.entity);
+  const hide = (key: string) => {
+    const k = normalizeKey(key);
+    return PERSONAL_FIELDS.has(k) || (isPerson && PERSON_FIELDS.has(k));
+  };
+  const walk = (inner: unknown): unknown => {
+    if (Array.isArray(inner)) return inner.map(walk);
+    if (inner instanceof Date) return inner.toISOString();
+    if (inner && typeof inner === "object") {
+      return Object.fromEntries(
+        Object.entries(inner).map(([key, v]) => [key, hide(key) ? "[redacted]" : walk(v)]),
+      );
+    }
+    return inner;
+  };
+  return walk(value);
 }
 
 /**
@@ -56,7 +70,7 @@ export async function withAudit<T>(
       action: meta.action,
       entity: meta.entity,
       entityId: entityId ?? null,
-      diff: redact({ before, after }) as Record<string, unknown>,
+      diff: redact({ before, after }, { entity: meta.entity }) as Record<string, unknown>,
     });
     return result;
   });

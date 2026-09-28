@@ -25,6 +25,7 @@ describe("seed", () => {
     expect(await total(s.membership)).toBe(1);
     const users = await handle.db.select().from(s.appUser);
     expect(users.map((u) => u.email)).toEqual([SEED_OWNER_EMAIL]);
+    expect(SEED_OWNER_EMAIL).toMatch(/\.example$/); // no real personal data in seed
   });
 
   it("creates 50 fictional NYC-metro firms: 5 on AppFolio, 5 duplicates", async () => {

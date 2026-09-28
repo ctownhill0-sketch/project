@@ -11,7 +11,7 @@ async function main() {
   acquireLock(lockDir);
   try {
     const handle = await createDb({ driver: "pglite", dir: env.PGLITE_DIR });
-    const result = await seed(handle.db);
+    const result = await seed(handle.db, env.OWNER_EMAIL ? { ownerEmail: env.OWNER_EMAIL } : {});
     await handle.close();
     console.log(result.summary);
   } finally {
