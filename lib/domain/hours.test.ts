@@ -45,3 +45,17 @@ describe("isUsFederalHoliday", () => {
     expect(isUsFederalHoliday("2026-10-13")).toBe(false);
   });
 });
+
+describe("hoursBucket with edited settings", () => {
+  it("can fold Saturday into after-hours and keep holidays as business days", () => {
+    const hours = { ...DEFAULT_BUSINESS_HOURS, saturdayBucket: false, holidaysAreAfterHours: false };
+    expect(hoursBucket(new Date("2026-10-31T15:00:00Z"), hours)).toBe("after_hours"); // Sat
+    expect(hoursBucket(new Date("2026-11-26T15:00:00Z"), hours)).toBe("business"); // Thanksgiving
+  });
+
+  it("respects custom start and end times", () => {
+    const hours = { ...DEFAULT_BUSINESS_HOURS, start: "08:30", end: "17:30" };
+    expect(hoursBucket(new Date("2026-10-28T12:45:00Z"), hours)).toBe("business"); // Wed 08:45 EDT
+    expect(hoursBucket(new Date("2026-10-28T21:15:00Z"), hours)).toBe("business"); // Wed 17:15 EDT
+  });
+});

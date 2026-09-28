@@ -31,7 +31,7 @@ const WEEKDAYS: Record<string, number> = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 
 
 /** Wall-clock parts in the given zone. Intl applies daylight saving for us. */
 function localParts(instant: Date, timeZone: string): LocalParts {
-  const parts = Object.fromEntries(
+  const parts: Record<string, string> = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
       timeZone,
       year: "numeric",
@@ -47,14 +47,13 @@ function localParts(instant: Date, timeZone: string): LocalParts {
   );
   return {
     date: `${parts.year}-${parts.month}-${parts.day}`,
-    isoWeekday: WEEKDAYS[parts.weekday ?? ""] ?? 0,
+    isoWeekday: WEEKDAYS[String(parts.weekday)] as number,
     minutes: Number(parts.hour) * 60 + Number(parts.minute),
   };
 }
 
 function toMinutes(hhmm: string): number {
-  const [h, m] = hhmm.split(":").map(Number);
-  return (h ?? 0) * 60 + (m ?? 0);
+  return Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));
 }
 
 export function hoursBucket(sentAt: Date, hours: BusinessHours = DEFAULT_BUSINESS_HOURS): HoursBucket {
