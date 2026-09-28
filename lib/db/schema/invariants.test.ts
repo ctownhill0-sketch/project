@@ -23,6 +23,14 @@ const EXPECTED_TABLES = [
   "software_pattern",
   "detection_run",
   "score_history",
+  // listings and reviews (deferred modules; tables exist, stay empty)
+  "listing",
+  "listing_snapshot",
+  "alert",
+  "review",
+  "review_classification",
+  // mystery shops
+  "mystery_shop",
 ];
 
 /** Tables that sit above the workspace boundary. */
