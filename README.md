@@ -2,7 +2,7 @@
 
 An internal tool for running Vacancy Desk's sales process: leads, mystery shops, calls, pipeline, ROI, audits and pilots. Right now it's a **$0 build that runs only on your Mac**. It has no cloud services, no API keys and no credit card anywhere.
 
-> **Status:** design stage (Checkpoint A). The app code doesn't exist yet. The commands in step 5 below start working once the Foundation step is built. Steps 1–4 you can do today.
+> **Status:** Step 1 (Foundation) is built: the app shell, the design system at `/design`, the database and fictional demo data. The modules (Leads, Mystery shops, Calls…) arrive in Steps 2–10.
 
 ---
 
@@ -68,7 +68,7 @@ cd ~/Documents/project
 
 **Why:** every command after this has to run _inside_ the project folder.
 
-### 5. Start the app _(works once the Foundation step is built)_
+### 5. Start the app
 
 ```bash
 pnpm install
@@ -109,6 +109,31 @@ Now open **http://localhost:3000** in your browser. `localhost` means "this Mac 
 | Anything else                           | Copy the whole error message and paste it to Claude.                                       |
 
 ---
+
+## Checking that everything works (optional)
+
+These are the same checks that run automatically before every commit and on GitHub.
+
+```bash
+pnpm typecheck && pnpm lint && pnpm test
+```
+
+**Why:** type errors, style problems and failing tests show up here before they reach GitHub. All three should finish without errors.
+
+```bash
+pnpm exec playwright install chromium
+pnpm e2e
+```
+
+**Why:** the first command is a one-time, free download of a test browser. The second clicks through the app at phone, tablet and desktop sizes and checks accessibility.
+
+## Useful commands
+
+| Command         | What it does                                               |
+| --------------- | ---------------------------------------------------------- |
+| `pnpm dev`      | Start the app                                              |
+| `pnpm db:reset` | Delete your local data and start over with fresh demo data |
+| `pnpm format`   | Tidy the code's formatting                                 |
 
 ## What's built and what's deferred
 
