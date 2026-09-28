@@ -1,6 +1,16 @@
 import { createElement, type ComponentProps } from "react";
 import {
   AlertTriangle,
+  Bell,
+  ChevronRight,
+  Command as CommandIcon,
+  ExternalLink,
+  Info,
+  Keyboard,
+  Radar,
+  Search,
+  TrendingDown,
+  TrendingUp,
   Ban,
   BarChart3,
   Calculator,
@@ -54,6 +64,16 @@ export const Icons = {
   error: wrap(XCircle, "error"),
   neutral: wrap(CircleDot, "neutral"),
   excluded: wrap(Ban, "excluded"),
+  finder: wrap(Radar, "finder"),
+  bell: wrap(Bell, "bell"),
+  search: wrap(Search, "search"),
+  keyboard: wrap(Keyboard, "keyboard"),
+  command: wrap(CommandIcon, "command"),
+  info: wrap(Info, "info"),
+  external: wrap(ExternalLink, "external"),
+  chevron: wrap(ChevronRight, "chevron"),
+  up: wrap(TrendingUp, "up"),
+  down: wrap(TrendingDown, "down"),
 };
 
 export type IconName = keyof typeof Icons;

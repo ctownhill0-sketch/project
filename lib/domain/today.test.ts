@@ -58,3 +58,17 @@ describe("buildToday", () => {
     expect(t.totalDue).toBe(5);
   });
 });
+
+describe("buildToday without de-duplication (notification bell)", () => {
+  it("keeps every reminder even when two belong to the same firm", () => {
+    const t = buildToday(
+      { ...inputs, openShops: [{ ...firm("a", 50), sentAt: h(-5) }], candidates: [] },
+      10,
+      { dedupe: false },
+    );
+    expect(t.items.filter((i) => i.companyId === "a").map((i) => i.kind)).toEqual([
+      "callback",
+      "reply_check",
+    ]);
+  });
+});

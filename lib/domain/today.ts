@@ -34,11 +34,11 @@ const REPLY_CHECK_WINDOW_H = 24 * 7;
  * Today's work, in the call workspace's order (brief M6): callbacks (overdue first),
  * reply checks, then the highest scores. One row per firm.
  */
-export function buildToday(input: TodayInputs, limit: number) {
+export function buildToday(input: TodayInputs, limit: number, { dedupe = true } = {}) {
   const items: TodayItem[] = [];
   const seen = new Set<string>();
   const add = (item: TodayItem) => {
-    if (seen.has(item.companyId)) return;
+    if (dedupe && seen.has(item.companyId)) return;
     seen.add(item.companyId);
     items.push(item);
   };

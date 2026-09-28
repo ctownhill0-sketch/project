@@ -10,19 +10,32 @@ export interface NavItem {
   step: number;
   /** Shown in the phone bottom bar (brief 8.8: alerts, shop replies, quick dashboard). */
   onPhoneBar?: boolean;
+  group: NavGroup;
 }
 
+export type NavGroup = "top" | "Find" | "Sell" | "Prove" | "Setup";
+export const NAV_GROUPS: NavGroup[] = ["top", "Find", "Sell", "Prove", "Setup"];
+
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: "dashboard", step: 10, onPhoneBar: true },
-  { href: "/leads", label: "Leads", icon: "leads", step: 2 },
-  { href: "/shops", label: "Mystery shops", shortLabel: "Shops", icon: "shops", step: 3, onPhoneBar: true },
-  { href: "/calls", label: "Calls", icon: "calls", step: 4, onPhoneBar: true },
-  { href: "/pipeline", label: "Pipeline", icon: "pipeline", step: 5 },
-  { href: "/roi", label: "ROI", icon: "roi", step: 6 },
-  { href: "/audits", label: "Audits", icon: "audits", step: 7 },
-  { href: "/pilots", label: "Pilots", icon: "pilots", step: 9 },
-  { href: "/settings", label: "Settings", icon: "settings", step: 10 },
-  { href: "/design", label: "Design system", icon: "design", step: 1 },
+  { href: "/dashboard", label: "Dashboard", icon: "dashboard", step: 10, onPhoneBar: true, group: "top" },
+  { href: "/finder", label: "Lead finder", icon: "finder", step: 2, group: "Find" },
+  { href: "/leads", label: "Leads", icon: "leads", step: 2, group: "Sell" },
+  {
+    href: "/shops",
+    label: "Mystery shops",
+    shortLabel: "Shops",
+    icon: "shops",
+    step: 3,
+    onPhoneBar: true,
+    group: "Sell",
+  },
+  { href: "/calls", label: "Calls", icon: "calls", step: 4, onPhoneBar: true, group: "Sell" },
+  { href: "/pipeline", label: "Pipeline", icon: "pipeline", step: 5, group: "Sell" },
+  { href: "/roi", label: "ROI", icon: "roi", step: 6, group: "Prove" },
+  { href: "/audits", label: "Audits", icon: "audits", step: 7, group: "Prove" },
+  { href: "/pilots", label: "Pilots", icon: "pilots", step: 9, group: "Prove" },
+  { href: "/settings", label: "Settings", icon: "settings", step: 10, group: "Setup" },
+  { href: "/design", label: "Design system", icon: "design", step: 1, group: "Setup" },
 ];
 
 export function navLabel(href: string): string {
