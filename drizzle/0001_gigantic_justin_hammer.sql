@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "deal_one_open_per_company_uq" ON "deal" USING btree ("company_id") WHERE "deal"."closed_at" is null;

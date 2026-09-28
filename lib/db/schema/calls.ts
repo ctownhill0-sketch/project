@@ -127,6 +127,10 @@ export const deal = pgTable(
   },
   (t) => [
     index("deal_stage_idx").on(t.workspaceId, t.stageId),
+    // At most one open deal per company (brief M7).
+    uniqueIndex("deal_one_open_per_company_uq")
+      .on(t.companyId)
+      .where(sql`${t.closedAt} is null`),
     check("deal_probability_range", sql`${t.probability} between 0 and 100`),
     check("deal_vacancies_positive", sql`${t.vacancies} >= 1`),
   ],
