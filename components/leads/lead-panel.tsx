@@ -68,12 +68,7 @@ export function LeadPanel({ lead }: { lead: LeadDetail }) {
           ) : (
             <Badge variant="outline">{STATUS_LABEL[lead.status] ?? lead.status}</Badge>
           )}
-          {lead.dncFlag ? (
-            <Badge variant="outline" className="text-destructive-text border-destructive/45">
-              <Icons.excluded data-icon="inline-start" />
-              Do not call
-            </Badge>
-          ) : null}
+          {lead.dncFlag ? <StatusBadge status="do_not_call" /> : null}
         </div>
         <div className="flex flex-wrap gap-2 pt-1">
           {lead.phone && !lead.dncFlag ? (

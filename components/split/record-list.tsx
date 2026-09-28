@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+import { scrollIntoList } from "@/components/split/scroll-into-list";
+import { useRecordKeys } from "@/components/split/use-record-keys";
 import { cn } from "@/lib/utils";
 
 export interface RecordItem {
@@ -21,67 +22,22 @@ interface RecordListProps {
   label: string;
 }
 
-const EDITABLE = "input, textarea, select, [contenteditable='true'], [role='combobox']";
-
 /**
  * A keyboard-first record list (listbox + aria-activedescendant).
  * J/K or ↓/↑ move the selection, Enter opens it. No animation: used many times a day.
  */
 export function RecordList({ items, selectedId, hrefPrefix, label }: RecordListProps) {
-  const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
-  const index = Math.max(
-    0,
-    items.findIndex((i) => i.id === selectedId),
-  );
-
-  const select = (i: number, open = false) => {
-    const item = items[Math.min(items.length - 1, Math.max(0, i))];
-    if (!item) return;
-    const href = `${hrefPrefix}${item.id}`;
-    if (open) router.push(href, { scroll: false });
-    else router.replace(href, { scroll: false });
-  };
-
-  // J/K work anywhere on the page (not while typing or in a dialog).
-  useEffect(() => {
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const target = e.target as HTMLElement | null;
-      if (target?.closest?.(EDITABLE) || document.querySelector("[role='dialog']")) return;
-      if (ref.current?.contains(target)) return; // handled by onKeyDown below
-      if (e.key === "j" || e.key === "k") {
-        e.preventDefault();
-        select(index + (e.key === "j" ? 1 : -1));
-        ref.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+  const { index, select, onKeyDown } = useRecordKeys({
+    ids: items.map((i) => i.id),
+    selectedId,
+    hrefPrefix,
+    containerRef: ref,
   });
-
-  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "ArrowDown" || e.key === "j") {
-      e.preventDefault();
-      select(index + 1);
-    } else if (e.key === "ArrowUp" || e.key === "k") {
-      e.preventDefault();
-      select(index - 1);
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      select(index, true);
-    } else if (e.key === "Home") {
-      e.preventDefault();
-      select(0);
-    } else if (e.key === "End") {
-      e.preventDefault();
-      select(items.length - 1);
-    }
-  };
 
   const activeId = items[index] ? `record-${items[index].id}` : undefined;
   useEffect(() => {
-    if (activeId) document.getElementById(activeId)?.scrollIntoView({ block: "nearest" });
+    if (activeId) scrollIntoList(document.getElementById(activeId));
   }, [activeId]);
 
   return (

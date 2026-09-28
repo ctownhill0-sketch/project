@@ -1,6 +1,13 @@
 import { createElement, type ComponentProps } from "react";
 import {
   AlertTriangle,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  Columns3,
+  Rows3,
+  Rows4,
+  X,
   Bell,
   ChevronRight,
   Command as CommandIcon,
@@ -74,6 +81,13 @@ export const Icons = {
   chevron: wrap(ChevronRight, "chevron"),
   up: wrap(TrendingUp, "up"),
   down: wrap(TrendingDown, "down"),
+  sortAsc: wrap(ArrowUp, "sort-asc"),
+  sortDesc: wrap(ArrowDown, "sort-desc"),
+  sortNone: wrap(ArrowUpDown, "sort-none"),
+  columns: wrap(Columns3, "columns"),
+  comfortable: wrap(Rows3, "comfortable"),
+  compact: wrap(Rows4, "compact"),
+  close: wrap(X, "close"),
 };
 
 export type IconName = keyof typeof Icons;

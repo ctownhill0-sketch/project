@@ -114,7 +114,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
 
       {d.nextUp ? <NextUp next={d.nextUp} /> : null}
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <section aria-labelledby="today" className="flex min-w-0 flex-col gap-2">
           <div className="flex items-baseline gap-2">
             <h2 id="today" className="font-semibold">

@@ -253,6 +253,11 @@
       min-width: 2.75rem;
     }
   }
+  /* The focused skip link paints above the sticky sidebar (both are positioned; DOM order would
+     otherwise put the sidebar on top). The one stacking rule outside shadcn's overlays. */
+  [data-skip-link]:focus {
+    z-index: 1;
+  }
   /* Keep keyboard focus clear of the fixed phone bottom bar (WCAG 2.4.11). */
   @media (width < 48rem) {
     html {

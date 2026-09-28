@@ -4,6 +4,31 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ## [Unreleased]: UI upgrade
 
+### Added
+
+- **Shell (Direction C):**
+  - grouped sidebar with counts and a top bar (breadcrumb, notification bell, theme);
+  - a ⌘K command menu for pages, leads by name, town or phone, and actions;
+  - a keyboard map: G then D/L/C/P, `/`, `?`, and J/K in lists.
+- **Page header** on every built page: title, one line of context, 2–4 key numbers and one primary action.
+- **Dashboard:**
+  - a Next up card;
+  - a Today split view (list + lead detail, linkable with `?lead=`);
+  - the Day-90 kill test;
+  - MRR vs a dashed, labeled 7% weekly projection, with a table view.
+- **Leads:**
+  - filter chips and search kept in the URL;
+  - a virtualized DataGrid (TanStack Table + Virtual behind a `GridColumn` interface, so reui can replace it) with a sticky header, sorting, column visibility and a density toggle;
+  - a split view with J/K and arrow keys. Below 1280px the detail opens as a sheet.
+- Phone numbers display as `(917) 555-0125` and dial through `tel:+1…` links.
+
+### Fixed
+
+- The skip link was hidden under the sticky sidebar when focused.
+- Selecting a list row no longer scrolls the page or moves the Tab starting point, which had skipped the skip link.
+- The MRR chart no longer overflows a 320px screen before it measures.
+- The resize handle no longer renders before hydration, when it had no value to announce.
+
 ### Changed
 
 - **Palette: Graphite** (graphite + indigo) replaces navy + gold, chosen at Checkpoint P. The tokens are generated from `docs/palettes/palettes.mjs` and kept in sync by tests.

@@ -10,6 +10,7 @@ const STATUSES = {
   at_risk: { label: "At risk", tone: "warning", icon: Icons.warning },
   missed: { label: "Missed", tone: "destructive", icon: Icons.error },
   excluded: { label: "Excluded", tone: "neutral", icon: Icons.excluded },
+  do_not_call: { label: "Do not call", tone: "destructive", icon: Icons.excluded },
 } as const satisfies Record<string, { label: string; tone: Tone; icon: unknown }>;
 
 export type Status = keyof typeof STATUSES;
@@ -17,7 +18,7 @@ export type Status = keyof typeof STATUSES;
 const TONE_CLASS: Record<Tone, string> = {
   success: "border-success/40 text-success",
   warning: "border-warning/40 text-warning",
-  destructive: "border-destructive/40 text-destructive",
+  destructive: "border-destructive/40 text-destructive-text",
   neutral: "border-input text-muted-foreground",
 };
 

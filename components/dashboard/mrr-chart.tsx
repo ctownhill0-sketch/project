@@ -30,6 +30,8 @@ export function MrrChart({ data }: { data: MrrPoint[] }) {
       <ChartContainer
         config={config}
         className="aspect-auto h-44 w-full"
+        // Start no wider than the narrowest column (320px screen minus gutters) so it never overflows before measuring.
+        initialDimension={{ width: 280, height: 176 }}
         role="img"
         aria-label="MRR by week with a 7% weekly growth projection"
       >

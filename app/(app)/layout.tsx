@@ -40,6 +40,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       <div className="flex min-h-dvh flex-col lg:flex-row">
         <a
           href="#main"
+          data-skip-link
           className="bg-card text-foreground sr-only rounded-lg px-4 py-2 shadow-md focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
         >
           Skip to content

@@ -2,7 +2,9 @@ import { expect, test } from "@playwright/test";
 import { NAV_ITEMS } from "../components/shell/nav-items";
 import { axeViolations } from "./axe";
 
-const PLACEHOLDERS = NAV_ITEMS.filter((item) => item.href !== "/design");
+// Pages that are built have their own specs (dashboard, leads, design).
+const BUILT = new Set(["/design", "/dashboard", "/leads"]);
+const PLACEHOLDERS = NAV_ITEMS.filter((item) => !BUILT.has(item.href));
 
 test("the home page redirects to the dashboard", async ({ page }) => {
   await page.goto("/");
