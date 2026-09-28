@@ -8,7 +8,11 @@ test.describe("/design", () => {
   test("follows the design-system checklist structure", async ({ page }) => {
     await page.goto("/design");
     await expect(page.getByRole("heading", { level: 1, name: "Design system" })).toBeVisible();
-    for (const name of SECTIONS) await expect(page.getByRole("heading", { level: 2, name })).toBeVisible();
+    for (const name of SECTIONS) {
+      await expect(page.getByRole("heading", { level: 2, name })).toBeVisible();
+      // Each section is a named region (aria-labelledby must point at a real id).
+      await expect(page.getByRole("region", { name, exact: true })).toBeVisible();
+    }
     for (const name of STATES) await expect(page.getByRole("heading", { level: 3, name })).toBeVisible();
   });
 

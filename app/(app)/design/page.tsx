@@ -84,10 +84,13 @@ function ratio(token: TokenName, theme: "light" | "dark") {
   return `${contrastRatio(themes[theme][token], themes[theme][against]).toFixed(2)}:1`;
 }
 
+const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
 function Section({ title, children }: { title: string; children: ReactNode }) {
+  const id = `section-${slug(title)}`;
   return (
-    <section aria-labelledby={title} className="flex flex-col gap-6">
-      <h2 id={title} className="text-h2 font-semibold">
+    <section aria-labelledby={id} className="flex flex-col gap-6">
+      <h2 id={id} className="text-h2 font-semibold">
         {title}
       </h2>
       {children}
@@ -221,7 +224,7 @@ export default function DesignPage() {
                   className="bg-accent block"
                   style={{ width: step * 4, height: step * 4 }}
                 />
-                <span className="num text-caption text-muted-foreground">{step * 4}</span>
+                <Num value={step * 4} className="text-caption text-muted-foreground" />
               </div>
             ))}
           </div>
