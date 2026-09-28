@@ -20,6 +20,13 @@ export function normalizeUiSource(source: string): string {
       // Translucent text fails contrast on tinted fills; use tokens that are tested.
       .replace(/(hover:)text-foreground\/\d+\b/g, "$1text-foreground")
       .replace(/\btext-foreground\/\d+\b/g, "text-muted-foreground")
+      // Library text uses the text-safe destructive tone; opacity on coloured text is dropped
+      // so the measured contrast is what renders.
+      .replace(/\btext-destructive(?![-\w])(\/\d+)?/g, "text-destructive-text")
+      .replace(
+        /\b(text-(?:primary|secondary|accent|success|warning|info|link|muted-foreground))\/\d+\b/g,
+        "$1",
+      )
       // Outline buttons need a visible 3:1 edge; --border is decorative only (design contract §2).
       .replace(/(outline:\s*\n?\s*"[^"]*?)border-border bg-background/g, "$1border-input bg-card")
       .replace(/\bshadow-xs\b/g, "shadow-sm")

@@ -41,46 +41,56 @@ import { durations, easings, radii, shadows, themes, typeScale, type TokenName }
 export const metadata: Metadata = { title: navLabel("/design") };
 
 /** Which surface each token is read against, so the table shows the ratio that matters. */
-const CONTRAST_AGAINST: Partial<Record<TokenName, TokenName | "fill">> = {
+const CONTRAST_AGAINST: Partial<Record<TokenName, TokenName>> = {
   foreground: "background",
   "card-foreground": "card",
   "muted-foreground": "background",
   link: "background",
-  success: "background",
-  warning: "background",
-  destructive: "background",
+  // Status text only sits on surfaces (StatusBadge carries its own card fill).
+  success: "card",
+  warning: "card",
+  destructive: "card",
+  info: "card",
   "primary-foreground": "primary",
+  "accent-foreground": "accent",
   input: "background",
   ring: "background",
-  accent: "fill",
+  "chart-1": "card",
+  "chart-2": "card",
+  "chart-3": "card",
+  "chart-4": "card",
+  "chart-5": "card",
 };
 
 const SHOWN_TOKENS: TokenName[] = [
   "background",
   "card",
+  "popover",
   "muted",
   "foreground",
-  "card-foreground",
   "muted-foreground",
   "primary",
   "primary-foreground",
   "accent",
+  "accent-foreground",
   "link",
   "success",
   "warning",
   "destructive",
+  "info",
   "border",
   "input",
   "ring",
+  "chart-1",
+  "chart-2",
+  "chart-3",
+  "chart-4",
+  "chart-5",
 ];
 
 function ratio(token: TokenName, theme: "light" | "dark") {
   const against = CONTRAST_AGAINST[token];
   if (!against) return "Surface";
-  if (against === "fill")
-    return theme === "light"
-      ? "Fill only"
-      : `${contrastRatio(themes.dark.accent, themes.dark.background).toFixed(2)}:1`;
   return `${contrastRatio(themes[theme][token], themes[theme][against]).toFixed(2)}:1`;
 }
 
@@ -128,8 +138,8 @@ export default function DesignPage() {
               </span>
             </div>
             <p className="text-muted-foreground max-w-[60ch]">
-              A calm operations console. The one memorable element is large, navy, tabular numbers. Gold
-              appears only as thin rules, fills and focus rings.
+              A calm operations console in graphite and indigo. The one memorable element is large, tabular
+              numbers. Indigo marks the one primary action, links, selection and focus.
             </p>
           </CardContent>
         </Card>

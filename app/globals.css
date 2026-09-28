@@ -8,115 +8,130 @@
 /* Semantic tokens. Source of truth: lib/design/tokens.ts (kept in sync by lib/design/css-sync.test.ts). */
 :root {
   color-scheme: light;
-  --background: #f7f5f0;
-  --foreground: #0f2a44;
+  --background: #f6f6f7;
+  --foreground: #17171c;
   --card: #ffffff;
-  --card-foreground: #0f2a44;
-  --muted: #efece4;
-  --muted-foreground: #4a5566;
-  --primary: #0f2a44;
-  --primary-foreground: #ffffff;
-  --accent: #e3a72f;
-  --accent-foreground: #0f2a44;
-  --link: #8c5f0a;
-  --success: #1e7a4c;
-  --warning: #8a5a00;
-  --destructive: #b42318;
-  --destructive-foreground: #ffffff;
-  --border: #d9d4c7;
-  --input: #6f7a8a;
-  --ring: #0f2a44;
-  --ring-halo: #e3a72f;
-  --chart-1: #0f2a44;
-  --chart-2: #8c5f0a;
+  --card-foreground: #17171c;
   --popover: #ffffff;
-  --popover-foreground: #0f2a44;
-  --secondary: #efece4;
-  --secondary-foreground: #0f2a44;
+  --popover-foreground: #17171c;
+  --muted: #ededf1;
+  --muted-foreground: #50505c;
+  --secondary: #ededf1;
+  --secondary-foreground: #17171c;
+  --primary: #4338ca;
+  --primary-foreground: #ffffff;
+  --accent: #5a5ce6;
+  --accent-foreground: #ffffff;
+  --link: #4338ca;
+  --success: #2d8014;
+  --warning: #774500;
+  --destructive: #d74030;
+  --destructive-text: #a8212e;
+  --destructive-foreground: #ffffff;
+  --info: #3a6fa3;
+  --border: #dbdbe1;
+  --input: #737383;
+  --ring: #4338ca;
+  --ring-halo: #4338ca;
+  --chart-1: #697eda;
+  --chart-2: #89401c;
+  --chart-3: #0d9f66;
+  --chart-4: #916607;
+  --chart-5: #dc428a;
   --sidebar: #ffffff;
-  --sidebar-foreground: #0f2a44;
-  --sidebar-primary: #0f2a44;
+  --sidebar-foreground: #17171c;
+  --sidebar-primary: #4338ca;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #efece4;
-  --sidebar-accent-foreground: #0f2a44;
-  --sidebar-border: #d9d4c7;
-  --sidebar-ring: #0f2a44;
+  --sidebar-accent: #ededf1;
+  --sidebar-accent-foreground: #17171c;
+  --sidebar-border: #dbdbe1;
+  --sidebar-ring: #4338ca;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #0b1b2e;
-  --foreground: #e8edf3;
-  --card: #12263d;
-  --card-foreground: #e8edf3;
-  --muted: #1a3150;
-  --muted-foreground: #a9b4c2;
-  --primary: #e3a72f;
-  --primary-foreground: #0b1b2e;
-  --accent: #e3a72f;
-  --accent-foreground: #0b1b2e;
-  --link: #e3a72f;
-  --success: #4cc38a;
-  --warning: #f0b44c;
-  --destructive: #f97066;
-  --destructive-foreground: #0b1b2e;
-  --border: #24395a;
-  --input: #6b7b91;
-  --ring: #e3a72f;
-  --ring-halo: #e3a72f;
-  --chart-1: #8ec5ff;
-  --chart-2: #e3a72f;
-  --popover: #12263d;
-  --popover-foreground: #e8edf3;
-  --secondary: #1a3150;
-  --secondary-foreground: #e8edf3;
-  --sidebar: #12263d;
-  --sidebar-foreground: #e8edf3;
-  --sidebar-primary: #e3a72f;
-  --sidebar-primary-foreground: #0b1b2e;
-  --sidebar-accent: #1a3150;
-  --sidebar-accent-foreground: #e8edf3;
-  --sidebar-border: #24395a;
-  --sidebar-ring: #e3a72f;
+  --background: #0e0e12;
+  --foreground: #ececf1;
+  --card: #16161c;
+  --card-foreground: #ececf1;
+  --popover: #1d1d25;
+  --popover-foreground: #ececf1;
+  --muted: #22222b;
+  --muted-foreground: #a7a7b4;
+  --secondary: #22222b;
+  --secondary-foreground: #ececf1;
+  --primary: #8e92f7;
+  --primary-foreground: #11113a;
+  --accent: #8e92f7;
+  --accent-foreground: #11113a;
+  --link: #a7aaf9;
+  --success: #5fd37f;
+  --warning: #ee921a;
+  --destructive: #f0555b;
+  --destructive-text: #f47a7f;
+  --destructive-foreground: #0e0e12;
+  --info: #88abea;
+  --border: #2e2e39;
+  --input: #72727f;
+  --ring: #a7aaf9;
+  --ring-halo: #a7aaf9;
+  --chart-1: #596cc6;
+  --chart-2: #9a5426;
+  --chart-3: #2d9570;
+  --chart-4: #976c14;
+  --chart-5: #a15884;
+  --sidebar: #16161c;
+  --sidebar-foreground: #ececf1;
+  --sidebar-primary: #8e92f7;
+  --sidebar-primary-foreground: #11113a;
+  --sidebar-accent: #22222b;
+  --sidebar-accent-foreground: #ececf1;
+  --sidebar-border: #2e2e39;
+  --sidebar-ring: #a7aaf9;
 }
 
 /* Follow the system when the viewer hasn't chosen a theme. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --background: #0b1b2e;
-    --foreground: #e8edf3;
-    --card: #12263d;
-    --card-foreground: #e8edf3;
-    --muted: #1a3150;
-    --muted-foreground: #a9b4c2;
-    --primary: #e3a72f;
-    --primary-foreground: #0b1b2e;
-    --accent: #e3a72f;
-    --accent-foreground: #0b1b2e;
-    --link: #e3a72f;
-    --success: #4cc38a;
-    --warning: #f0b44c;
-    --destructive: #f97066;
-    --destructive-foreground: #0b1b2e;
-    --border: #24395a;
-    --input: #6b7b91;
-    --ring: #e3a72f;
-    --ring-halo: #e3a72f;
-    --chart-1: #8ec5ff;
-    --chart-2: #e3a72f;
-    --popover: #12263d;
-    --popover-foreground: #e8edf3;
-    --secondary: #1a3150;
-    --secondary-foreground: #e8edf3;
-    --sidebar: #12263d;
-    --sidebar-foreground: #e8edf3;
-    --sidebar-primary: #e3a72f;
-    --sidebar-primary-foreground: #0b1b2e;
-    --sidebar-accent: #1a3150;
-    --sidebar-accent-foreground: #e8edf3;
-    --sidebar-border: #24395a;
-    --sidebar-ring: #e3a72f;
+    --background: #0e0e12;
+    --foreground: #ececf1;
+    --card: #16161c;
+    --card-foreground: #ececf1;
+    --popover: #1d1d25;
+    --popover-foreground: #ececf1;
+    --muted: #22222b;
+    --muted-foreground: #a7a7b4;
+    --secondary: #22222b;
+    --secondary-foreground: #ececf1;
+    --primary: #8e92f7;
+    --primary-foreground: #11113a;
+    --accent: #8e92f7;
+    --accent-foreground: #11113a;
+    --link: #a7aaf9;
+    --success: #5fd37f;
+    --warning: #ee921a;
+    --destructive: #f0555b;
+    --destructive-text: #f47a7f;
+    --destructive-foreground: #0e0e12;
+    --info: #88abea;
+    --border: #2e2e39;
+    --input: #72727f;
+    --ring: #a7aaf9;
+    --ring-halo: #a7aaf9;
+    --chart-1: #596cc6;
+    --chart-2: #9a5426;
+    --chart-3: #2d9570;
+    --chart-4: #976c14;
+    --chart-5: #a15884;
+    --sidebar: #16161c;
+    --sidebar-foreground: #ececf1;
+    --sidebar-primary: #8e92f7;
+    --sidebar-primary-foreground: #11113a;
+    --sidebar-accent: #22222b;
+    --sidebar-accent-foreground: #ececf1;
+    --sidebar-border: #2e2e39;
+    --sidebar-ring: #a7aaf9;
   }
 }
 
@@ -125,8 +140,12 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-accent: var(--accent);
@@ -135,17 +154,18 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-destructive: var(--destructive);
+  --color-destructive-text: var(--destructive-text);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-info: var(--info);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-halo: var(--ring-halo);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -254,21 +274,10 @@ h3 {
   text-wrap: balance;
 }
 
-/* Focus: 2px navy outline + gold halo (light); gold outline (dark). Never hidden. */
+/* Focus: one 2px ring in the indigo ring token (≥3:1 on every surface, tested). Never hidden. */
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
-  box-shadow:
-    0 0 0 4px var(--background),
-    0 0 0 6px var(--ring-halo);
-}
-:root[data-theme="dark"] :focus-visible {
-  box-shadow: none;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) :focus-visible {
-    box-shadow: none;
-  }
 }
 
 /* Theme toggle icons follow data-theme directly, before React hydrates. */

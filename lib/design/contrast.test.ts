@@ -22,13 +22,15 @@ const TEXT_PAIRS = [
   ["foreground", "muted"],
   ["link", "background"],
   ["link", "card"],
-  ["link", "muted"],
-  ["success", "background"],
+  // Status TEXT only sits on a surface: StatusBadge always carries its own card fill.
   ["success", "card"],
-  ["warning", "background"],
   ["warning", "card"],
-  ["destructive", "background"],
   ["destructive", "card"],
+  ["info", "card"],
+  ["success", "popover"],
+  ["warning", "popover"],
+  ["destructive", "popover"],
+  ["info", "popover"],
   ["primary-foreground", "primary"],
   ["destructive-foreground", "destructive"],
   ["popover-foreground", "popover"],
@@ -37,6 +39,10 @@ const TEXT_PAIRS = [
   ["sidebar-accent-foreground", "sidebar-accent"],
   ["sidebar-primary-foreground", "sidebar-primary"],
   ["accent-foreground", "accent"],
+  // Inline error text (field errors, invalid labels, alerts) may sit on any background.
+  ["destructive-text", "background"],
+  ["destructive-text", "card"],
+  ["destructive-text", "muted"],
 ] as const;
 
 /** Control boundaries and focus indicators (WCAG 1.4.11 / 2.4.11). */
@@ -45,8 +51,19 @@ const UI_PAIRS = [
   ["input", "card"],
   ["ring", "background"],
   ["ring", "card"],
+  ["primary", "card"],
+  ["accent", "card"],
+  // Status icons and marks may touch the page background.
+  ["success", "background"],
+  ["warning", "background"],
+  ["destructive", "background"],
+  ["info", "background"],
+  // Chart colors are drawn as 2px lines on the card surface.
   ["chart-1", "card"],
   ["chart-2", "card"],
+  ["chart-3", "card"],
+  ["chart-4", "card"],
+  ["chart-5", "card"],
 ] as const;
 
 describe.each(Object.keys(themes) as ThemeName[])("%s theme", (name) => {
@@ -61,18 +78,25 @@ describe.each(Object.keys(themes) as ThemeName[])("%s theme", (name) => {
   });
 });
 
-describe("gold rule", () => {
-  it("never uses gold as a text color in the light theme", () => {
-    const gold = themes.light.accent.toUpperCase();
-    const textTokens = [
-      "foreground",
-      "card-foreground",
-      "muted-foreground",
-      "link",
-      "success",
-      "warning",
-      "destructive",
-    ] as const;
-    for (const token of textTokens) expect(themes.light[token].toUpperCase()).not.toBe(gold);
+describe("destructive text on its own 10% tint", () => {
+  it.each(["light", "dark"] as const)("%s", (mode) => {
+    const t = themes[mode];
+    const mix = (fg: string, bg: string, a: number) =>
+      "#" +
+      [1, 3, 5]
+        .map((i) =>
+          Math.round(parseInt(fg.slice(i, i + 2), 16) * a + parseInt(bg.slice(i, i + 2), 16) * (1 - a))
+            .toString(16)
+            .padStart(2, "0"),
+        )
+        .join("");
+    expect(contrastRatio(t["destructive-text"], mix(t.destructive, t.card, 0.1))).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+describe("accent rule", () => {
+  it("accent is a fill with its own readable foreground", () => {
+    for (const t of Object.values(themes))
+      expect(contrastRatio(t["accent-foreground"], t.accent)).toBeGreaterThanOrEqual(4.5);
   });
 });

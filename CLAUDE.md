@@ -68,11 +68,11 @@ Day-90 kill test. Current scope: the **$0 Free Build**. The spec is
 
 ## Design tokens (summary; details in `docs/design-contract.md`)
 
-- Light: bg #F7F5F0, fg/primary #0F2A44, card #FFF, muted text #4A5566, link #8C5F0A, success #1E7A4C,
-  warning #8A5A00, destructive #B42318, input border #6F7A8A. **Gold #E3A72F: fills/rules only, never
-  text on light.**
-- Dark: bg #0B1B2E, fg #E8EDF3, card #12263D, link/primary/ring gold, success #4CC38A, destructive #F97066.
-- Focus: 2px navy outline + gold halo (light), gold outline (dark).
+- Palette **Graphite** (Checkpoint P). Light: bg #F6F6F7, fg #17171C, card #FFF, muted text #50505C,
+  primary/link/ring indigo #4338CA, input border #737383. Dark: bg #0E0E12, fg #ECECF1, primary #8E92F7.
+- Status (shared): success #2D8014, warning #774500, destructive #D74030, info #3A6FA3 (dark: #5FD37F,
+  #EE921A, #F0555B, #88ABEA). Status text only on surfaces; inline error text uses `destructive-text`.
+- Focus: one 2px indigo ring. Never text opacity. Values live in `lib/design/tokens.ts` (tests keep CSS in sync).
 - Inter 400/500/600. Scale 48/56 · 36/44 · 28/36 · 22/30 · 16/24 · 14/20 · 12/16. Radius 8/12/16.
 - Exactly three shadows: `shadow-sm` (controls), `shadow-md` (cards, popovers), `shadow-lg` (modals).
 - Motion: none on 100+/day actions. Easing out `cubic-bezier(0.23,1,0.32,1)`. Never ease-in or `transition: all`.

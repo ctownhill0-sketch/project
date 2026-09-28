@@ -20,7 +20,7 @@ test.describe("/design", () => {
     await page.goto("/design");
     const colors = page.getByRole("table", { name: "Color tokens" });
     await expect(colors.getByRole("row")).not.toHaveCount(0);
-    await expect(colors).toContainText("13.43:1");
+    await expect(colors).toContainText("16.54:1"); // Graphite foreground on background
     await expect(page.getByRole("table", { name: "Type scale" })).toContainText("48/56");
   });
 

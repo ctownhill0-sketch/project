@@ -52,6 +52,23 @@ describe("normalizeUiSource", () => {
     expect(normalizeUiSource(`import { cn } from "cn";`)).toBe(`import { cn } from "@/lib/utils";`);
   });
 
+  it("uses the text-safe destructive tone for text in library components", () => {
+    expect(
+      normalizeUiSource(
+        `"text-destructive hover:text-destructive data-[variant=destructive]:text-destructive"`,
+      ),
+    ).toBe(
+      `"text-destructive-text hover:text-destructive-text data-[variant=destructive]:text-destructive-text"`,
+    );
+    expect(normalizeUiSource(`"text-destructive-text"`)).toBe(`"text-destructive-text"`);
+  });
+
+  it("strips opacity from colored text so measured contrast is what renders", () => {
+    expect(normalizeUiSource(`"text-destructive/90 text-primary/80"`)).toBe(
+      `"text-destructive-text text-primary"`,
+    );
+  });
+
   it("leaves unrelated code alone", () => {
     const src = `const darkMode = "dark"; // dark: is a word here`;
     expect(normalizeUiSource(`"p-2"`)).toBe(`"p-2"`);

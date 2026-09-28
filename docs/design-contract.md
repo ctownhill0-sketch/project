@@ -4,37 +4,44 @@ The rules every screen follows. It comes from brief Part 8 and the approved spec
 
 ## 1. Direction
 
-- **Mood:** a calm operations console.
-- **The memorable element:** large, navy, tabular numbers.
-- **Gold:** only as thin rules, fills or (in dark mode) focus rings. **Never as text on a light background.**
+- **Mood:** a calm operations console in **Graphite** (neutral graphite surfaces, deep indigo actions), chosen at Checkpoint P on 2026-09-28. Options and evidence are in `docs/palettes/`.
+- **The memorable element:** large, tabular numbers in graphite ink.
+- **Indigo** marks the one primary action, links, selection and focus. Nothing else competes with it.
 
 ## 2. Color tokens (semantic only)
 
-Every text pair must reach at least 4.5:1, and every UI boundary at least 3:1. The measured ratios are checked by `lib/design/contrast.test.ts`.
+The source of truth is `lib/design/tokens.ts`, generated from `docs/palettes/palettes.mjs`. `lib/design/palette-choice.test.ts` keeps them in sync, and `lib/design/contrast.test.ts` measures every pair below in both themes.
 
-| Token                | Light                    | Ratio (light)             | Dark         | Ratio (dark)              | Use                                                 |
-| -------------------- | ------------------------ | ------------------------- | ------------ | ------------------------- | --------------------------------------------------- |
-| `background`         | #F7F5F0                  |                           | #0B1B2E      |                           | Page                                                |
-| `foreground`         | #0F2A44                  | 13.43 on bg               | #E8EDF3      | 14.74 on bg               | Body text, numbers                                  |
-| `card`               | #FFFFFF                  |                           | #12263D      |                           | Cards, popovers                                     |
-| `card-foreground`    | #0F2A44                  | 14.63                     | #E8EDF3      | 13.02                     |                                                     |
-| `muted`              | #EFECE4                  |                           | #1A3150      |                           | Quiet fills                                         |
-| `muted-foreground`   | #4A5566                  | 6.93 on bg, 6.39 on muted | #A9B4C2      | 8.26 on bg, 6.25 on muted | Secondary text                                      |
-| `primary`            | #0F2A44                  |                           | #E3A72F      |                           | The one primary action                              |
-| `primary-foreground` | #FFFFFF                  | 14.63                     | #0B1B2E      | 8.12                      |                                                     |
-| `accent` (gold)      | #E3A72F                  | fills only                | #E3A72F      |                           | Rules, meters, selected fills                       |
-| `link`               | #8C5F0A                  | 5.13 on bg, 4.74 on muted | #E3A72F      | 8.12                      | Links (Gold Deep)                                   |
-| `success`            | #1E7A4C                  | 4.89 on bg                | #4CC38A      | 7.83 on bg                | Status (always with icon + label)                   |
-| `warning`            | #8A5A00                  | 5.44 on bg                | #F0B44C      | 9.37 on bg                | Status (always with icon + label)                   |
-| `destructive`        | #B42318                  | 6.03 on bg                | #F97066      | 6.23 on bg                | Errors, destructive actions                         |
-| `border`             | #D9D4C7                  | decorative (1.36)         | #24395A      | decorative                | Dividers only, never the only boundary of a control |
-| `input`              | **#6F7A8A**              | 3.99 on bg, 4.35 on card  | **#6B7B91**  | 3.55 on card              | Control borders (must be ≥ 3:1)                     |
-| `ring`               | navy #0F2A44 + gold halo | 13.43                     | gold #E3A72F | 8.12                      | Focus                                               |
+| Token                      | Light   | Ratio               | Dark    | Ratio               | Use                                     |
+| -------------------------- | ------- | ------------------- | ------- | ------------------- | --------------------------------------- |
+| `background`               | #F6F6F7 |                     | #0E0E12 |                     | Page                                    |
+| `surface (card)`           | #FFFFFF |                     | #16161C |                     | Cards, panels, tables                   |
+| `surface-raised (popover)` | #FFFFFF |                     | #1D1D25 |                     | Popovers, sheets, dialogs               |
+| `subtle (muted)`           | #EDEDF1 |                     | #22222B |                     | Selected rows, quiet fills              |
+| `foreground`               | #17171C | 16.54 on background | #ECECF1 | 16.36 on background | Body text, numbers                      |
+| `muted-foreground`         | #50505C | 7.36 on background  | #A7A7B4 | 8.10 on background  | Secondary text                          |
+| `primary`                  | #4338CA | 7.90 on surface     | #8E92F7 | 6.52 on surface     | The one primary action (UI 3:1)         |
+| `primary-foreground`       | #FFFFFF | 7.90 on primary     | #11113A | 6.53 on primary     | Text on primary                         |
+| `accent`                   | #5A5CE6 | 5.11 on surface     | #8E92F7 | 6.52 on surface     | Selection, meters, rules (fill)         |
+| `link`                     | #4338CA | 7.32 on background  | #A7AAF9 | 8.95 on background  | Links                                   |
+| `success`                  | #2D8014 | 4.99 on surface     | #5FD37F | 9.53 on surface     | Status text on surfaces, icons anywhere |
+| `warning`                  | #774500 | 7.97 on surface     | #EE921A | 7.52 on surface     | Status                                  |
+| `destructive`              | #D74030 | 4.50 on surface     | #F0555B | 5.28 on surface     | Status and icons                        |
+| `destructive-text`         | #A8212E | 6.65 on background  | #F47A7F | 7.28 on background  | Inline error text on any background     |
+| `info`                     | #3A6FA3 | 5.27 on surface     | #88ABEA | 7.77 on surface     | Status                                  |
+| `border`                   | #DBDBE1 |                     | #2E2E39 |                     | Decorative dividers only                |
+| `border-strong (input)`    | #737383 | 4.31 on background  | #72727F | 4.06 on background  | Control boundaries (3:1)                |
+| `ring`                     | #4338CA | 7.32 on background  | #A7AAF9 | 8.95 on background  | Focus ring (3:1)                        |
 
-**Findings from planning, now fixed:**
+Chart lines 1–5: light #697EDA, #89401C, #0D9F66, #916607, #DC428A; dark #596CC6, #9A5426, #2D9570, #976C14, #A15884.
 
-- **Focus ring:** gold on #F7F5F0 is only 1.96:1. Light theme uses a 2px navy outline (13.43:1) with a 2px gold halo outside it as decoration. Dark theme uses a 2px gold outline (8.12:1).
-- **Input border:** the first candidate #8A94A3 was only 2.82:1, so it's now #6F7A8A. The dark theme's #5B6B80 was 2.82:1 on cards, so it's now #6B7B91.
+**Rules**
+
+- **Status text** (success, warning, destructive, info) sits only on a surface. `StatusBadge` always carries its own card fill. Status icons and marks may touch the page background (≥ 3:1).
+- **Error text** in forms, alerts and destructive buttons uses `destructive-text`, which passes on any background and on its own 10% tint. `destructive` is the status and icon tone. `pnpm ui:normalize` routes shadcn's `text-destructive` to it.
+- **Color blindness:** status colors were chosen by searching thousands of combinations for color-blind separation at text contrast. The worst pair is 7.5 in light and 8.5 in dark (OKLab ΔE×100), and every status also has an icon and a label. Chart colors 1–5 pass the dataviz validator in both modes (color-blind separation ≥ 9.4).
+- **Focus:** one 2px `ring` outline, 7.32:1 in light and 8.95:1 in dark. The old gold halo is gone.
+- Text colors never use opacity (`text-x/80`), because the measured contrast must be what renders. The normalizer strips it.
 
 ## 3. Type
 

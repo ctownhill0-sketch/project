@@ -2,6 +2,15 @@
 
 All notable changes to this project. Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the Free Build steps.
 
+## [Unreleased]: UI upgrade
+
+### Changed
+
+- **Palette: Graphite** (graphite + indigo) replaces navy + gold, chosen at Checkpoint P. The tokens are generated from `docs/palettes/palettes.mjs` and kept in sync by tests.
+- Status colors re-chosen for color-blind separation. The old warning and destructive were indistinguishable with deuteranopia.
+- New `destructive-text` token for inline error text. The focus ring is simplified to one indigo outline.
+- The normalizer now routes library error text to `destructive-text` and strips opacity from colored text.
+
 ## [Unreleased]: Step 1 Foundation (complete, awaiting Checkpoint C)
 
 ### Added

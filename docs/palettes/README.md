@@ -22,3 +22,7 @@ Three palettes, each with a full light and dark token set. Every value is checke
 - **New rule:** status _text_ sits only on a surface (StatusBadge always has one). Status icons and marks may touch the page background at 3:1.
 - **Ink palette:** emerald is the _accent_, not the primary, so the brand color never competes with the success green.
 - The chart-only lightness band and chroma notes in the status report don't apply to text colors. Two readings sit exactly at the chroma floor (0.099–0.1) because of rounding.
+
+## Decision
+
+**Graphite** was chosen on 2026-09-28. While applying it, axe caught that the light error red (#D74030) fails as _inline_ error text on the page background and on its own tint. So a second tone, `destructive-text` (#A8212E light, #F47A7F dark), is used for error text, and `destructive` stays the status and icon color. A darker single red would have collided with the warning brown for color-blind users (worst ΔE 3.6–4.8).

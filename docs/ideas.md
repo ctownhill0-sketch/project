@@ -22,6 +22,10 @@ Things kept out of scope on purpose. **Nothing here gets built without the found
 | Automatic software detection                                  | The polite fetcher                                                                                                                                                                                                                                                     | `SoftwarePattern` rows seeded      |
 | Public ROI share link                                         | Deployment                                                                                                                                                                                                                                                             | ROI inputs already live in the URL |
 
+## Brand
+
+- **Brand book needs the new colors.** The app moved from navy + gold to **Graphite** (graphite + indigo) at Checkpoint P (2026-09-28). Update any logo, wordmark, decks or letterhead with the tokens in `docs/design-contract.md` §2 before anything goes to clients.
+
 ## Other ideas
 
 - **GoHighLevel sync.** A `CrmAdapter` backed by GHL, authenticated with a Private Integration Token. Dry run first. Pull-only sync, and never SMS or workflows. Parked because the founder doesn't use GHL.
