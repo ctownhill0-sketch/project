@@ -1,48 +1,61 @@
 # Vacancy Desk Command Center: design spec
 
-- **Date:** 2026-09-28
+- **Date:** 2026-09-28 (revision 2: "$0 Free Build" scope change)
 - **Status:** DRAFT, waiting for founder approval (Checkpoint A)
 - **Classification:** ARCHITECTURAL
-- **Source brief:** "BUILD BRIEF: Vacancy Desk Command Center" (Parts 0–12). This spec records the decisions and changes on top of that brief. Where it says nothing, the brief applies.
+- **Source brief:** "BUILD BRIEF: Vacancy Desk Command Center" (Parts 0–12) plus the founder's "SCOPE CHANGE: $0 BUILD ONLY" message. Where this spec says nothing, the brief applies. The workflow, TDD, design system (Part 8), guardrails (Part 11) and checkpoints all still apply.
 
 ---
 
-## 1. Founder answers (Part 3)
+## 0. Scope change summary
 
-The founder answered questions 1–6 himself. For questions 1 and 7–12 he said "you choose," so Claude picked. Every pick below can be changed in Settings or an environment variable unless it's marked otherwise.
+The **Free Build** replaces the phase plan in brief Part 9. The hard rules:
 
-| # | Topic | Decision | Who decided |
+- **Total cost is $0, with no credit card anywhere.** Any service, package or step that would need a card, a paid plan or an API key is a STOP-and-ask.
+- **No** Anthropic API calls, Google Places, email sending or GoHighLevel.
+- **Runs locally on the founder's Mac** with `pnpm dev`. **No deployment for now.** The code stays deployable later.
+- The database needs **no account**, and the schema stays portable to Neon.
+- Auth is **local single-user**, and `workspaceId` and `createdById` stay on every table.
+- Every AI feature gets a **manual or template version** now, with a clearly marked hook where Claude plugs in later (section 6).
+
+Everything marked **⏸ DEFERRED** below is listed in `docs/ideas.md` and will **not** be built until there's revenue.
+
+---
+
+## 1. Founder answers (Part 3), after the scope change
+
+| # | Topic | Decision | Status |
 |---|---|---|---|
-| 1 | Metro and timezone | Timezone `America/New_York`. Starting metro: **New York metro** (5 boroughs, Long Island, Westchester, North Jersey). Metros are an editable list. | Timezone: founder. Metro: Claude, reading "new york" |
-| 2 | Business hours | **Three buckets:** business (Mon–Fri 09:00–17:00), **Saturday**, and after-hours (weeknights, Sunday, US federal holidays). All in NY local time, correct across daylight saving. | Founder (B) |
-| 3 | Hosting | **Netlify free plan** (commercial use allowed). Vercel Hobby rejected: its terms are non-commercial only. | Founder (A) |
-| 4 | Database | **Neon free plan** + Drizzle | Founder (A) |
-| 5 | Auth | **Google sign-in**. `ALLOWED_EMAILS=ctownhill0@gmail.com` | Method: founder. Email: Claude, from the account on file |
-| 6 | GoHighLevel | **Not used.** The app is the CRM. `CrmAdapter` interface ships with the no-op adapter only. GHL sync moved to `docs/ideas.md`. | Founder ("don't have GHL") |
-| 7 | Google Places | **Turn billing on before Phase 3**, on the same Google Cloud project used for sign-in. $1 budget alert, plus an in-app daily request cap (default 25 Place Details calls a day). Nothing in Phases 1–2 needs it. | Claude |
-| 8 | Anthropic | **The key is needed by Phase 2**, not Phase 1. Monthly AI cap **$20**, enforced in the app. Also set the same limit in the Anthropic Console as a backstop. Default models (editable): classifier `claude-haiku-4-5-20251001`, writer `claude-sonnet-5-5`. | Claude |
-| 9 | Scraper CSV | No sample given yet. The import wizard maps **any** header, and saved mappings are reused. Test fixtures use an invented, fictional header. The founder can share 5 sanitized rows any time before M1 is finished, to add a real-shape fixture. | Claude |
-| 10 | Logo | No SVG. Use the text wordmark "Vacancy Desk" (Inter 600, navy) with a thin gold rule. It's swappable in Settings > Brand. "Keyhour" appears nowhere. | Claude |
-| 11 | Mailing address | **Can't be chosen for the founder.** It's a required setting. Until it's filled in, every "Send email" control stays disabled and says why. It's only needed in Phase 3 (owner report email). A PO box or virtual mailbox is fine. | Open, founder must supply |
-| 12 | Writing samples | **Deferred to Phase 4.** The content engine (M16) is disabled until 3 samples are pasted into Settings > Voice. | Claude |
+| 1 | Metro and timezone | `America/New_York`. Starting metro: New York metro (5 boroughs, Long Island, Westchester, North Jersey). Editable list. | Decided (metro chosen by Claude) |
+| 2 | Business hours | Three buckets: **business** (Mon–Fri 09:00–17:00), **Saturday**, **after-hours** (weeknights, Sunday, US federal holidays), in NY local time and correct across daylight saving | Decided (founder: B) |
+| 3 | Hosting | **None. Runs locally.** Deployment is deferred. | ⏸ DEFERRED |
+| 4 | Database | **PGlite** (local, no account). See 3.2. | Changed by scope |
+| 5 | Auth | **Local single-user, no sign-in.** Google sign-in is deferred. | Changed by scope |
+| 6 | GoHighLevel | Not used. `CrmAdapter` is not built in the Free Build. | ⏸ DEFERRED |
+| 7 | Google Places | Not used | ⏸ DEFERRED, question skipped |
+| 8 | Anthropic key and cap | Not used | ⏸ DEFERRED, question skipped |
+| 9 | Scraper CSV sample | Still useful for M1. The import wizard maps any header either way. | **Asked (optional)** |
+| 10 | Logo | Text wordmark "Vacancy Desk", swappable in Settings > Brand. It appears on the audit PDF. "Keyhour" appears nowhere. | Decided by Claude |
+| 11 | Mailing address | Only needed for email | ⏸ DEFERRED, question skipped |
+| 12 | Writing samples | Only needed for M16 | ⏸ DEFERRED, question skipped |
+| new | **Day-90 kill-test start date** | The countdown needs a Day 0 | **Asked** |
 
 ---
 
 ## 2. Understanding: what was said vs. what was assumed
 
-**Said (in the brief or in answers):**
-- A single-user internal tool, built so it can become multi-user later (`workspaceId` and `createdById` on every table).
-- The goal is to pass the Day-90 kill test and then grow MRR 7% week over week.
-- $0 running cost apart from Claude API usage.
-- All 18 modules, the design system and the guardrails as written in Parts 7, 8 and 11.
-- Hosting on Netlify free, Neon, and Google sign-in. No GHL.
+**Said:**
+- $0, no card, no API keys, local Mac only.
+- The ten Free Build items, in the order given (section 4).
+- The deferred list (section 5).
+- Every rule from the brief outside the phase plan still applies.
 
-**Assumed by Claude (the founder should correct any of these):**
-- There's one user today: `ctownhill0@gmail.com`.
-- The New York metro includes North Jersey. So the fair-housing pattern list ships with NY State, NYC **and** NJ protections, including lawful source of income and NYC's broader classes.
-- The app is the system of record for leads, calls and the pipeline. There's no outside CRM to reconcile.
-- Deploys to production can be batched, because of the Netlify deploy budget (see 4.1).
-- The founder is fine with the app being unreachable in the rare case the free-plan credit cap is hit before month end. The mitigation is to monitor usage in Settings > Usage (see 4.1).
+**Assumed by Claude (correct any of these):**
+- One Mac and one user. The app is reached only at `http://localhost:3000`. The dev server binds to `127.0.0.1`, so other devices on the Wi-Fi can't open it.
+- Weekly business numbers (MRR, cash, net burn, insurance study hours) are **typed in by hand** once a week. Calls, conversations, audits and pilots are counted from app data.
+- "Backups" means a one-click export of the whole database to a file in a folder the founder chooses (for example iCloud Drive), plus JSON/CSV export. There's no cloud backup service.
+- The **full schema** (including tables for deferred modules) lands in the Foundation step. Tables for deferred modules stay empty. That way reviving a module later doesn't need a Checkpoint E schema change.
+- GitHub Actions CI is kept. It's free for public repos, and private repos get a free monthly minutes allowance on the free plan with no card needed. If the allowance runs out, CI simply stops; nothing is billed. Every check also runs locally.
 
 ---
 
@@ -50,214 +63,248 @@ The founder answered questions 1–6 himself. For questions 1 and 7–12 he said
 
 ### 3.1 Application architecture
 
-| Option | Summary | Pros | Cons |
-|---|---|---|---|
-| **A. One Next.js app (recommended)** | App Router, RSC by default, Server Actions for mutations, Route Handlers for webhooks, cron and downloads. `lib/domain` holds pure logic. | Simplest thing for a solo founder. One deploy, one test setup. Domain logic stays pure and fully unit-testable. | Big-bang deploys. Moving to multi-user later means adding authorization checks everywhere, which `requireUser()` and `workspaceId` already prepare for. |
-| B. pnpm monorepo (`apps/web`, `packages/domain`, `packages/db`) | Same code, split into packages. | Hard boundaries between packages. | More tooling and build config, and it slows a solo dev down for no benefit today. |
-| C. Separate API (Hono/Fastify) + SPA | Classic split. | Frontend and backend deploy separately. | Twice the hosting, auth across two apps, and it throws away RSC. Not justified. |
-
-**Pick: A.** Layout as in Part 6: `app/(app)/[module]`, `app/api/inngest`, `app/api/cron/heartbeat`, `app/r/[token]`, `lib/domain`, `lib/ai`, `lib/db`, `lib/fetcher`.
-
-### 3.2 Database and auth
-
-| Option | Summary | Pros | Cons |
-|---|---|---|---|
-| **A. Neon + Drizzle + Better Auth (Google) (recommended)** | Better Auth with its Drizzle adapter stores its user, session and account tables in Neon. | Better Auth is actively developed. Auth.js went into maintenance mode after joining Better Auth in Sept 2025 [1]. Sessions live in our own database, and there's no vendor lock-in. | We own the auth tables and must migrate them carefully. |
-| B. Neon + Drizzle + Auth.js v5 | The classic NextAuth. | Well known. | Maintenance mode: security fixes only [1]. Not a good choice for a new project. |
-| C. Supabase (DB + Auth) | All in one. | Auth is included. | It pauses after 7 idle days. The founder already chose Neon. |
-
-**Pick: A.** Allowlist enforcement:
-1. The Better Auth sign-in hook rejects any email not in `ALLOWED_EMAILS`.
-2. Next.js middleware redirects visitors without a session.
-3. `requireUser()` runs at the top of every Server Action and Route Handler. It returns `{ userId, workspaceId }`, and every query is scoped by `workspaceId`.
-
-### 3.3 Job runner
-
-| Option | Summary | Pros | Cons |
-|---|---|---|---|
-| **A. Inngest free plan (recommended)** | Durable functions with steps, retries with backoff, built-in cron triggers, and idempotency keys. Served from `app/api/inngest`. | Retries, steps, throttling (1 request per domain every 5s) and concurrency are built in. Current free plan: 100k executions a month, 5 concurrent steps [3]. The brief's "50k" figure is out of date. | Another vendor. Each step runs as a Netlify function call, which uses a little compute credit. |
-| B. Trigger.dev free | Similar durable jobs. | Good developer experience. | Smaller free allowance, and its own runtime to learn. |
-| C. Home-made Postgres queue + Netlify scheduled functions | Jobs table polled every N minutes. | No extra vendor. | We'd rebuild retries, backoff, throttling and concurrency ourselves. More code, more bugs. |
-
-**Pick: A.** How it changes the brief:
-- The brief used Vercel Cron as a daily heartbeat because Hobby cron is so limited. **On Netlify, Inngest's own cron triggers do the scheduling.**
-- `app/api/cron/heartbeat` stays. It checks `CRON_SECRET`, sends an `app/heartbeat` event, and records a JobRun, so we can see the schedule is alive. A **Netlify scheduled function** calls it once a day.
-- Every job takes an idempotency key (for example `listings.daily:{companyId}:{date}`), retries with exponential backoff (3 tries), and writes a `JobRun` row.
-
-### 3.4 PDF generation
-
-| Option | Summary | Pros | Cons |
-|---|---|---|---|
-| **A. @react-pdf/renderer on the server (recommended)** | Renders PDFs from React components in a Route Handler, with Inter embedded. | No browser needed, so it fits inside serverless function limits. Output is deterministic, which makes snapshot tests possible. | Layout is flexbox only, not full CSS, so the PDF and the screen view are separate components that share data. |
-| B. Headless Chromium (Puppeteer + @sparticuz/chromium) printing HTML | Screen and PDF share one design. | Pixel-identical to the web view. | A ~50 MB binary that pushes function size limits, cold starts of several seconds, and more compute credits. It also blurs the "no headless browser" rule. |
-| C. pdf-lib, drawn by hand | Low-level drawing. | Tiny. | Every layout is hand-positioned, which is slow to build and change. |
-
-**Pick: A.** Print CSS also ships for browser printing of screens (call briefs, ROI).
-
-### 3.5 Other stack decisions
-
-| Area | Decision | Why |
+| Option | Pros | Cons |
 |---|---|---|
-| Next.js | Latest stable **16.3.x**. Pin to the patched release after the 30 Sept 2026 security release (16.3.7) [2]. | Latest stable at the time of writing. |
-| UI primitives | **shadcn/ui on Base UI** (never mixed with Radix) | Base UI became shadcn's default in July 2026 [6]. It also unlocks coss.com/ui (Number Field, Meter, Segmented Control), which the brief allows only on Base UI. |
-| Email (Phase 3) | **Resend free plan**: 3,000 a month, 100 a day [5] | Plenty for weekly owner reports. Sending pauses at the cap; it never bills overage. |
-| File storage | **Netlify Blobs** for PDFs, CSV uploads and weekly backups | Included in the platform, so no extra vendor. Uses credits. |
-| Rate limiting | Postgres-backed fixed-window limiter on `/r/[token]` and the auth routes | $0 and no Redis vendor. |
-| AI | `@anthropic-ai/sdk`, `client.messages.parse()` + `zodOutputFormat(schema)` [7]. Prompt caching on system prompts. One `lib/ai/client.ts` handles retries, timeouts, cost logging (`AiCall`), the spending cap and PII redaction. `PROMPT_VERSION` goes on every prompt. | As in the brief. |
-| Long AI calls | Call briefs and audit summaries can take longer than a synchronous function's timeout. **To verify in Phase 2:** Netlify's current sync function timeout. If it's too short, we run the call as an Inngest step and the UI polls for the result. | Protects against timeouts. |
+| **A. One Next.js app (recommended)**: App Router, RSC, Server Actions, pure `lib/domain` | Simplest for a solo founder. One test setup. Deploys later with no rewrite. | Moving to multi-user later needs authorization checks everywhere, which `requireUser()` and `workspaceId` prepare for |
+| B. pnpm monorepo (`apps/web`, `packages/*`) | Hard boundaries | Tooling overhead, no benefit today |
+| C. Local API server + SPA | Clear split | Two processes to run, and it throws away RSC and Server Actions |
+
+**Pick: A.** Layout as in brief Part 6, **minus** `app/api/inngest`, `app/api/cron/heartbeat` and `app/r/[token]` (all deferred).
+
+### 3.2 Database (local, no account)
+
+| Option | One-line trade-off |
+|---|---|
+| **A. PGlite + Drizzle (recommended)** | Real Postgres compiled to WebAssembly and installed with `pnpm install`, with nothing else to install. Data is a folder on disk. **Same SQL dialect as Neon, so moving later means swapping the Drizzle driver, not the schema.** The catch: one process at a time, so don't run two copies of the app against the same data folder. |
+| B. Postgres in Docker | Identical to production Postgres, but you need Docker Desktop (a large install that can't be run by `pnpm dev` alone), and it uses RAM in the background. |
+| C. SQLite + Drizzle | Tiny and fast, but a different SQL dialect: moving to Neon later means a second schema and migration rewrite. It also loses Postgres types (`timestamptz`, enums, jsonb). |
+
+**Pick: A.**
+- `DATABASE_DRIVER=pglite` (default) or `neon` later, chosen in one file, `lib/db/client.ts`.
+- Migrations come from `drizzle-kit` using the `postgresql` dialect, so they work on both.
+- The data folder is `.data/pglite/`, which is git-ignored.
+- `pnpm test` uses an **in-memory** PGlite per test file, so tests are fast and isolated.
+
+### 3.3 Auth (local single-user)
+
+| Option | Trade-off |
+|---|---|
+| **A. Local owner, no sign-in (recommended)** | The seed creates one `Workspace`, one `User` (the founder) and a `Membership`. `requireUser()` returns them. The server binds to `127.0.0.1`. Zero setup. Better Auth plugs in later behind the same `requireUser()`. |
+| B. Local password (Better Auth with email + password) | Works offline, but it's a password to manage for a tool only you can reach. |
+| C. Google sign-in | Needs a Google Cloud project. Free, but out of scope under the "no accounts" spirit. |
+
+**Pick: A.** `requireUser()` is still called at the top of **every** Server Action and Route Handler, and every query is still scoped by `workspaceId`. So adding real auth later changes one function, not the whole app.
+
+### 3.4 Job runner
+
+| Option | Trade-off |
+|---|---|
+| **A. No job runner; compute "due" items when a page loads (recommended)** | Reply-check reminders (1h/4h/24h/72h after `sentAt`) and "call now" lists are **derived on every page load** from timestamps. There's a badge in the nav and a "Due now" list. Nothing runs in the background, so nothing can silently fail. |
+| B. `node-cron` inside the dev server | Only runs while `pnpm dev` is open anyway, and adds a failure mode. |
+| C. Inngest dev server | Free and local, but it's a second process and a vendor for work option A already covers. |
+
+**Pick: A.** Background jobs are ⏸ DEFERRED. The `JobRun` table exists but stays unused.
+
+### 3.5 PDF generation
+
+| Option | Trade-off |
+|---|---|
+| **A. @react-pdf/renderer in a Route Handler (recommended)** | Free npm package, no browser, deterministic output, which makes snapshot tests possible. Layout is flexbox only. |
+| B. Browser print-to-PDF from print CSS | Zero code, but output varies between browsers and there's no automated snapshot test |
+| C. Headless Chromium (Puppeteer) | Pixel-identical to the web view, but a large download, and it blurs the "no headless browser" rule |
+
+**Pick: A**, with Inter embedded from the free `@fontsource/inter` package (SIL Open Font License). Print CSS still ships for printing screens (call prep, ROI).
+
+### 3.6 Other stack decisions (all free, no account)
+
+| Area | Decision |
+|---|---|
+| Next.js | Latest stable 16.3.x, pinned to the patch from the 30 Sept 2026 security release |
+| UI | shadcn/ui on **Base UI** (never Radix), plus the brief's component order. Registries are public and free. |
+| Font | Inter via `next/font` (self-hosted at build time, no account) |
+| Tests | Vitest, Testing Library, Playwright + @axe-core/playwright. MSW is kept for the future AI hook tests but unused now. On the Mac, `pnpm exec playwright install chromium` is a free one-time download. |
+| Tooling | ESLint (next + jsx-a11y), Prettier, lefthook, gitleaks (free binary; lefthook skips it with a warning if it's not installed, and CI always runs it) |
+| Node | **Node 24 LTS**. pnpm is pinned via `packageManager` in `package.json`. |
 
 ---
 
-## 4. Platform limits (checked 2026-09-28; recheck before launch)
+## 4. Free Build: scope and order (replaces brief Part 9)
 
-Official pages couldn't be fetched directly from the build container because of network policy. The figures below come from official documentation, as quoted in search results, and are marked for re-checking in the founder's browser before launch.
+Each step ends with its tests green and a Checkpoint D demo on seed data. Checkpoint C (screenshots of the tokens, /design and the shell in both themes) comes after step 1, before any module.
 
-### 4.1 Netlify free plan [4]
-- **300 credits a month, as a hard cap.** When they run out, **every site pauses until the next cycle**. There's no overage billing.
-- Costs: production deploy ≈ 15 credits, compute ≈ 10 credits per GB-hour, bandwidth ≈ 20 credits per GB, web requests ≈ 2 credits per 10k.
-- **Deploy Previews and branch deploys are free.** Only production deploys cost credits.
-- **Consequence:** at most about 15–20 production deploys a month. We therefore **turn off auto-publish on `main`** and deploy to production on purpose, about 1–3 times a week. Settings > Usage shows the credits we can estimate, with a warning at 70%.
-- **Commercial use: allowed** on the free plan.
+### Step 1: Foundation
+- Scaffold, CI, full Drizzle schema (section 7), PGlite client, local `requireUser()`, AuditLog writer.
+- App shell (sidebar / drawer / bottom nav), design tokens, `docs/design-contract.md`, the `/design` page, `CLAUDE.md`.
+- Seed data per brief Part 10, **adjusted:** 50 fictional Northeast firms (5 AppFolio, 5 duplicates), 40 shops (8 with no reply), 25 calls, 12 deals, 2 pilots (one on track, one at risk on day 7), 12 weeks of metrics. The 20 transcripts are ⏸ DEFERRED with M12.
 
-### 4.2 Neon free plan [8]
-- 0.5 GB storage per project, 100 CU-hours a month per project, 10 branches per project, 5 GB transfer a month.
-- Scales to zero after 5 idle minutes and **never pauses permanently**.
-- **Preview databases:** a GitHub Action resets one shared `preview` Neon branch from `main` for each deploy preview. This stays within the 10-branch limit and needs no Vercel integration.
+### Step 2: M1 Leads
+- CSV wizard (upload → map → preview 20 rows → commit), saved column mappings, ImportBatch.
+- Dedupe: normalized domain, name and phone. Same domain means a duplicate. Jaro-Winkler ≥ 0.9 on name + city means a possible duplicate, shown in a merge screen.
+- **Software detection is MANUAL:** a dropdown per firm (appfolio | buildium | doorloop | rent_manager | yardi | none | unknown) plus an optional evidence note. There's a **"Check portal" link** that opens the firm's website in a new tab (`rel="noopener noreferrer"`). AppFolio still means excluded with score 0, which can be overridden. `SoftwarePattern` rows are seeded with the brief's patterns for later, and M18 can edit them.
+- Score with editable weights (+30 not AppFolio, +20 no software, +20 3–25 listings, +25 shop median > 2h with no-replies counting as > 2h, +15 50–500 units, +10 local). The +10 review boost is ⏸ DEFERRED with M3. The score is capped at 0–100, with a breakdown popover and score history.
+- Tags, statuses, a 5,000-row virtualized table, filters in the URL (nuqs), CSV export.
+- **Polite fetcher:** it needs no paid service, so it's **built** as `lib/fetcher` with unit tests: robots.txt, per-domain rate limit, Retry-After, 3 tries, 10s timeout, 2 MB cap, honest user agent. **It has no caller in the Free Build.** It exists so auto-detection can come back later without new guardrail work. It's the last task in step 2, and the founder can cut it at Checkpoint B.
 
-### 4.3 Inngest free plan [3]
-- 100k executions a month and 5 concurrent steps. Our expected load is well under 10k a month.
+### Step 3: M4 Mystery-shop tracker (full)
+- 60-second logging form, a "Replied now" button, and a phone layout for quick logging.
+- Stats per firm and per metro: median / P75 / P90, no-reply share at 24h and 72h, and the **two medians side by side** (replied-only, and no-reply counted as never answered). Split three ways: business, Saturday and after-hours.
+- **In-app reminders only:** a "Reply checks due" list and a nav badge, computed from `sentAt` + 1h/4h/24h/72h.
+- Ethics panel (real name, genuine inquiries, no fake tours, at most 1 shop per firm per 30 days, which is **enforced**, and no protected-class personas).
 
-### 4.4 Google Places API (New) [9]
-- Place Details **Enterprise + Atmosphere** is the SKU that includes reviews. Free allowance ≈ 1,000 requests a month, then ≈ $25 per 1,000.
-- The Text Search SKU and its free allowance will be confirmed at Checkpoint E before Phase 3.
-- Attribution and caching rules will be read then too. Reviews are labeled "Sample of up to 5 Google reviews."
+### Step 4: M6 Call workspace
+- Today's list: call-now firms first, then callbacks due, then highest score. Call blocks Tue–Thu 9:00–11:30 are highlighted.
+- Scripts (gatekeeper, opener with test result, opener without, voicemail, follow-up, pilot close) with `{{variables}}` filled from the lead's data. Missing values render as **"unknown"** and are highlighted.
+- Objection library, dispositions on hotkeys 1–9 (no animation), next-step scheduling, `tel:` links only. `do_not_call` is permanent.
+- **Call prep panel (replaces M5 AI briefs):** built only from the firm's own data. That covers the snapshot, mystery-shop evidence with dates, ROI at the firm's typical rent if one was entered, detected software, the last 3 calls, and open next steps. `AI-HOOK(M5)` marks where the Claude brief will slot in.
 
-### 4.5 Resend free plan [5]
-- 3,000 emails a month, 100 a day, 1 domain, 30-day logs.
+### Step 5: M7 Pipeline
+- Kanban + table, with a "Move to…" menu for every drag. A lost reason is required.
+- One StageEvent per move, at most one open deal per company.
+- Expected MRR = max($400, vacancies × $119) × probability.
 
-### 4.6 Anthropic
-- Pay as you go. Hard monthly cap enforced by `lib/ai/client.ts` (default $20) and shown in Settings > Usage.
+### Step 6: M9 ROI calculator (full)
+- Daily vacancy cost = rent × 12 ÷ 365 ($1,800 → $59.18). Annual loss, cost, net savings, payback. Every output is labeled "Estimate."
+- Present mode (48/36px type).
+- **"Shareable link" becomes a copyable local URL** with the inputs in the query string (works on this Mac only). Public sharing is ⏸ DEFERRED with deployment.
 
-**Estimated monthly cost: $0** plus Claude API usage (capped at $20). A domain name (about $12 a year) is optional; the app runs on `*.netlify.app`.
+### Step 7: M8 Vacancy audit
+- A one-page branded PDF from a fill-in template: the firm's shop results vs. the metro median, the renter experience (from the shop log), the ROI numbers, and a method note.
+- **Summary: the founder writes the 3 sentences** in a text box (with a sentence counter). The number-grounding check still runs: any number in the text that isn't in the audit's data is flagged before export. `AI-HOOK(M8)` marks the spot.
+- It must pass the M14 layer-1 check before export.
+
+### Step 8: M14 Fair-housing checker, layer 1
+- An editable regex list, seeded with the brief's examples plus NY/NYC/NJ source-of-income patterns.
+- Outcome pass / warn / block. Every check is logged (`FairHousingCheck`), and overrides require a reason. Labeled "Screening aid, not legal advice."
+- Runs on **audit text** and **call scripts** (on save). Tests include false positives ("family room" must pass).
+- Layer 2 (Claude classifier) is ⏸ DEFERRED; `AI-HOOK(M14-L2)`.
+
+### Step 9: M10 Pilot scorecard
+- **Manual daily entry** per vacancy: inquiries, median and P90 reply, tours, applications, escalations, fair-housing flags, human-minutes. This is a fast grid form with keyboard entry.
+- Guarantee: "at risk" from day 7 (projected tours = tours × 14 ÷ days elapsed < target, or median reply > 60s), then "met" or "missed" at day 14. Shown with an icon, a label and a color together.
+
+### Step 10: M17 Founder dashboard + M18 Settings
+- **Dashboard:**
+  - MRR, and week-over-week growth vs. 7% (below target shows red, a down icon and "Below 7% target").
+  - The weekly activity from the brief.
+  - Kill-test widget: countdown, pilots out of 3, conversations out of 60, after-hours median vs. 10 min.
+  - YC-readiness widget.
+  - MRR chart with the 7% projection line.
+  - It must answer "am I on track?" at 1440×900 without scrolling.
+- **Settings:**
+  - Scoring weights, the software list and patterns, business hours, thresholds (kill test, tour target, call blocks), brand, fair-housing patterns.
+  - A weekly-numbers entry form.
+  - CSV/JSON export, a database backup file, and delete demo data.
+  - **No API key sections, no model IDs, no AI cap** (⏸ DEFERRED).
 
 ---
 
-## 5. Changes to the brief
+## 5. Deferred until revenue (do not build)
 
-| Brief said | Spec says | Reason |
-|---|---|---|
-| Vercel hosting, Vercel Cron heartbeat, Neon preview branches via Vercel | Netlify free, Inngest cron, a Netlify scheduled function for the heartbeat, one shared Neon `preview` branch reset by a GitHub Action | Vercel Hobby prohibits commercial use (Part 0: platform terms override the brief) |
-| Inngest free "50k runs" | 100k executions a month | Current pricing |
-| Better Auth or Auth.js | Better Auth | Auth.js is in maintenance mode |
-| shadcn: pick Radix or Base UI | Base UI | shadcn's default, and it enables coss.com/ui |
-| GHL adapter in Phase 4; README covers rotating the GHL token every 90 days | Removed. `CrmAdapter` with the no-op adapter only. The idea is logged in `docs/ideas.md` | Founder has no GHL |
-| Phase 4: "GHL contract fixtures, rate-limiter test" | The rate-limiter test stays (polite fetcher + public routes). GHL fixtures are dropped. | Same |
-| Deploy on every push | Deliberate production deploys | Netlify credit budget |
+Tracked in `docs/ideas.md`: M2 listings monitor · M3 review pain finder · M5 AI call briefs · M11 owner report + emails · M12 objection tagger (and its 20 seed transcripts) · M13 Company Brain + AI export · M14 layer 2 · M15 Metro Response Index · M16 content engine · background jobs (Inngest) · deployment (Netlify/Vercel, Neon, Google sign-in) · GoHighLevel sync · the AI wrapper `lib/ai/client.ts` · Google Places · Resend.
 
-Nothing in Part 11 (guardrails) changes.
+The research on hosting and platform limits from revision 1 is kept in section 10 for when deployment comes back.
 
 ---
 
-## 6. System design
+## 6. AI hook pattern
 
-### 6.1 Request flow
+Every AI feature is written against an interface. It has a **manual** implementation now and a **Claude** implementation later.
+
+```ts
+// lib/ai/hooks.ts
+// AI-HOOK: each provider has a manual implementation now; a Claude one plugs in later.
+export interface AuditSummaryProvider { draft(input: AuditData): Promise<Draft> }
+export const auditSummary: AuditSummaryProvider = manualAuditSummary; // returns founder's text
 ```
-Browser ──> Netlify Edge ──> Next.js (RSC + Server Actions)
-                               │   requireUser() ─> Better Auth session (Neon)
-                               ├── lib/domain (pure)  scoring, stats, ROI, guarantee, dedupe, detector
-                               ├── lib/db (Drizzle)    every query scoped by workspaceId
-                               ├── lib/audit           AuditLog on every C/U/D and AI call
-                               ├── lib/ai/client.ts    redact → cap check → parse() → AiCall log
-                               └── lib/fetcher         the polite fetcher (robots, rate limit, 10s, 2MB)
-Inngest ──> /api/inngest ──> job functions ──> same lib/* ──> JobRun rows
-Netlify scheduled fn (daily) ──> /api/cron/heartbeat (CRON_SECRET) ──> Inngest event
-Public: /r/[token] (noindex, rate-limited, hashed UA view log)
-```
 
-### 6.2 Data model
-- Exactly as in brief Part 6, in Drizzle, with committed migrations. Every table has `id` (uuid v7), `workspaceId`, `createdById`, `createdAt` and `updatedAt`.
-- Better Auth tables (`user`, `session`, `account`, `verification`) are added and linked to a `Workspace` and `Membership` table (one row each today).
-- `MysteryShop` gets an `hoursBucket` field: `business | saturday | after_hours`. It's computed from `sentAt` in the NY timezone and stored, but recomputed if the business-hours setting changes.
-- Protected characteristics have **no column anywhere**. `sensitiveContentPresent` (M12) is a boolean plus a review record, never a class label.
-- The whole schema lands in Phase 1. Any change after that goes through Checkpoint E.
-
-### 6.3 Domain logic (`lib/domain`, ≥90% coverage)
-- **Scoring:** weights come from Settings. The result is capped to 0–100 and returns a breakdown.
-- **Dedupe:** normalized domain, name and E.164 phone. Same domain means a duplicate. Jaro-Winkler on name + city ≥ 0.9 means a possible duplicate.
-- **Detector:** patterns from the `SoftwarePattern` table, returning evidence and a confidence. Manual overrides survive re-runs.
-- **Stats:** median, P75 and P90 over `firstReplyAt - sentAt`. Two medians: replied-only, and with no-replies counted as never answered (treated as +∞ so they push the median up). No-reply shares at 24h and 72h. All bucketed by hours bucket.
-- **ROI:** daily cost = rent × 12 ÷ 365. $1,800 → $59.18.
-- **Guarantee:** "at risk" from day 7 if projected tours (tours × 14 ÷ days elapsed) < target or median reply > 60s. "Met" or "Missed" at day 14.
-- **Expected MRR:** max(400, vacancies × 119) × probability.
-- **Kill test:** pilots out of 3, conversations out of 60, and after-hours median vs. 10 min. The thresholds are settings.
-
-### 6.4 Guardrails, as enforced in code
-- The fetcher is the only module allowed to import `fetch` for outbound web requests. A lint rule enforces this.
-- It has no form-posting API and no browser dependency.
-- No SMS, dialer or voicemail code exists. Calls are `tel:` links only. `do_not_call` is permanent: there's a database constraint, and the UI has no "undo" path.
-- The fair-housing check is required before any renter- or owner-facing export or send. There's a minimum version in Phase 2 and the full version in Phase 3.
-- The anonymization scanner blocks firm names, domains and phone numbers, and hides groups of fewer than 5 shops (Phase 4).
-- No rent pooling or benchmarking across firms, anywhere.
+- Every hook site carries a `// AI-HOOK(<module>): <what Claude will do>` comment. `pnpm ai-hooks` greps and lists them, and the README links to the list.
+- Hooks in the Free Build: `AI-HOOK(M5)` call prep → brief, `AI-HOOK(M8)` audit summary, `AI-HOOK(M14-L2)` fair-housing classifier.
+- The UI shows who wrote each piece of text ("Written by you" / later "Draft by Claude").
+- The number-grounding and fair-housing checks run **regardless of who wrote the text**. They live in `lib/domain` and are tested now.
+- No `@anthropic-ai/sdk` dependency is installed in the Free Build.
 
 ---
 
-## 7. Design system
-As in brief Part 8. `docs/design-contract.md` is written before any UI, in Phase 1 right after the scaffold. Checkpoint C (tokens, /design and app shell, with screenshots in both themes) comes before any module.
+## 7. Data model
+
+- As in brief Part 6, in Drizzle (`postgresql` dialect) with committed migrations. Every table has `id` (uuid), `workspaceId`, `createdById`, `createdAt` and `updatedAt`.
+- The tables for deferred modules are created now and stay empty.
+- Additions: `Workspace`, `User` and `Membership` (one row each for now); `ImportMapping` (saved CSV mappings); `MysteryShop.hoursBucket` (`business | saturday | after_hours`, computed in NY time and recomputed when the setting changes).
+- **No column anywhere stores a protected characteristic.**
+- AuditLog: every create, update and delete writes a row. (AI calls will too once hooks go live.)
 
 ---
 
-## 8. Phase plan (summary)
+## 8. Domain logic (`lib/domain`, ≥90% coverage)
 
-| Phase | Build | Needs from founder |
-|---|---|---|
-| 1. Foundation and prospecting | Scaffold, CI, full schema, Better Auth (Google), shell, tokens, /design, polite fetcher, M1, M4, M17 v1, M18 v1, seed data | A Google OAuth client, a Neon project and a Netlify account (walkthroughs in the README) |
-| 2. Selling | AI wrapper, M5–M9, minimum M14 | Anthropic API key |
-| 3. Delivery and proof | M2, M3, M10, M11, M13, full M14, M12 | Google billing + $1 alert, mailing address, Resend account + domain |
-| 4. Leverage and polish | M15, M16, performance pass, design review, backup-restore drill | 3 writing samples |
-
-Checkpoints B–E apply as in the brief.
+- **Scoring:** weights come from Settings, capped to 0–100, with a breakdown.
+- **Dedupe:** normalization + Jaro-Winkler.
+- **Stats:** percentiles, both medians (no-replies treated as +∞, never dropped), no-reply shares, and hours buckets across daylight-saving changes.
+- **ROI**, **guarantee**, **expected MRR**, **kill test**, **WoW growth** and the **7% projection**.
+- **Number grounding:** extracts numbers from free text and compares them to the source data.
+- **Fair-housing layer 1:** regex engine, outcome resolution, and false-positive fixtures.
+- **Reminders:** reply checks due and call-now ordering.
+- **Polite-fetcher policy:** robots.txt parse and the rate-limit bucket, which are pure parts.
 
 ---
 
-## 9. Risks
+## 9. Guardrails (unchanged; brief Part 11 is copied into `CLAUDE.md`)
+
+Added for the Free Build:
+- No dependency or step that needs a card, a paid plan or an API key. The founder is asked first.
+- No outbound network calls from the app at all in the Free Build. The polite fetcher exists but has no caller.
+- The dev server binds to `127.0.0.1` only.
+
+---
+
+## 10. For later: deployment research (from revision 1; not in scope)
+
+Kept so the work isn't lost. **Re-verify all figures before using them.**
+- **Vercel Hobby** is non-commercial only. **Netlify free** allows commercial use: 300 credits a month as a hard cap (a production deploy ≈ 15 credits; previews are free). The site pauses when the credits run out.
+- **Neon free:** 0.5 GB storage, 100 CU-hours, 10 branches, scales to zero after 5 minutes, never pauses permanently.
+- **Inngest free:** 100k executions a month, 5 concurrent steps.
+- **Better Auth** is recommended over Auth.js, which is in maintenance mode since Sept 2025.
+- **Places (New):** Place Details Enterprise + Atmosphere (reviews) ≈ 1,000 free a month, and **needs a billing account with a card.**
+- **Resend free:** 3,000 emails a month, 100 a day.
+
+---
+
+## 11. Risks
 
 | Risk | Mitigation |
 |---|---|
-| Netlify credits run out mid-month and the app pauses | Deliberate deploys, a usage widget with a 70% warning, cached RSC, and small bundles. If it happens often, bring the Netlify Personal ($9) or Vercel Pro ($20) decision back to Checkpoint E. |
-| AI calls longer than the function timeout | Run them as Inngest steps plus polling (verify in Phase 2) |
-| Many NYC firms are on AppFolio, so few leads survive the filter | Detector + scoring show the funnel. Add a second metro through Settings. |
-| Neon cold start (about 1s) | Acceptable for a single user. Skeletons cover it. |
-| Auth tables owned by us | Better Auth migrations are committed and tested in CI |
+| PGlite is single-process: a second `pnpm dev` or an open DB tool can conflict | The README warns about it, and a lock file check at startup prints a plain-English error |
+| Data lives only on one Mac | One-click backup to a file (suggest iCloud Drive), and a weekly reminder on the dashboard |
+| Manual detection is slower than automatic | The "Check portal" link + dropdown + hotkeys keep it to about 10s per firm. The 10-minute CSV-to-call-list target is measured **excluding** manual detection. |
+| Moving from PGlite to Neon later | Same dialect. A CI job runs migrations against a real Postgres service container too (free on GitHub Actions). |
+| CI free minutes run out (private repo) | CI pauses without charge, and every check runs locally via lefthook and `pnpm test` |
 
 ---
 
-## 10. Open items
-1. **Mailing address** (question 11): needed before Phase 3 email.
-2. **Scraper CSV sample** (question 9): optional, wanted before M1 is finished.
-3. **Writing samples** (question 12): Phase 4.
-4. Confirm or correct the assumptions in section 2.
-5. The superpowers plugin isn't installed in this session. Workflows are being followed by hand from the brief. `/plugin install superpowers@claude-plugins-official` is recommended.
+## 12. Success criteria (Free Build version)
+
+- A scraped CSV becomes a scored, deduplicated call list in under 10 minutes, **not counting manual software tagging**.
+- Logging a mystery shop takes ≤ 60 seconds.
+- Call prep takes 1 click, and the audit PDF takes 2.
+- At 1440×900 the dashboard answers "on track for the kill test and 7% WoW?" without scrolling.
+- Every audit and script text has passed a logged layer-1 fair-housing check.
+- **Running cost: $0.**
 
 ---
 
-## 11. Self-review (done 2026-09-28)
-- [x] Every Part 3 question has a decision or is an open item.
-- [x] Each of the four required areas has 2–3 options with trade-offs.
-- [x] Every change to the brief is listed with a reason (section 5). Guardrails are unchanged.
-- [x] $0 running cost holds: every paid path is behind founder approval.
-- [x] No secrets, PII or real firm names in this document.
-- [ ] Platform figures were re-checked on official pages in a browser. **Not possible from the container** (network policy). Marked for re-check before launch.
-- Consistency check: the brief's "Vercel Cron heartbeat" and "Neon preview branches" were both reworked for Netlify (sections 3.3 and 4.2). The Phase 4 GHL test item was removed (section 5). No other contradictions found.
+## 13. Open items
+1. **Day-90 kill-test start date:** asked.
+2. **Scraper CSV sample** (5 sanitized rows + header): optional, wanted before step 2 is finished.
+3. Confirm or correct the assumptions in section 2.
+4. The superpowers plugin isn't installed in this session. Workflows are followed by hand from the brief.
 
 ---
 
-## Sources
-1. Auth.js is now part of Better Auth: https://better-auth.com/blog/authjs-joins-better-auth
-2. Next.js 16.3 release: https://nextjs.org/blog/next-16-3
-3. Inngest pricing and usage limits: https://www.inngest.com/pricing, https://www.inngest.com/docs/usage-limits/inngest
-4. Netlify credits: https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work/, https://www.netlify.com/pricing/
-5. Resend quotas: https://resend.com/docs/knowledge-base/account-quotas-and-limits
-6. shadcn Base UI default: https://ui.shadcn.com/docs/changelog/2026-07-base-ui-default
-7. Anthropic TS SDK helpers: https://github.com/anthropics/anthropic-sdk-typescript/blob/main/helpers.md
-8. Neon free plan: https://neon.com/docs/introduction/plans
-9. Places API usage and billing: https://developers.google.com/maps/documentation/places/web-service/usage-and-billing
+## 14. Self-review (revision 2)
+- [x] Every one of the founder's hard rules maps to a section: $0 → sections 3 and 9; no AI/Places/email/GHL → sections 5 and 6; local → sections 3.3 and 9; database → 3.2; auth → 3.3; AI hooks → 6.
+- [x] All 10 Free Build items are present, in the founder's order (section 4).
+- [x] Every deferred item is listed (section 5) and mirrored in `docs/ideas.md`.
+- [x] No step needs a card or an account. GitHub, which already hosts the repo, is the only account involved.
+- [x] Part 3 questions for deferred features are skipped (section 1).
+- [x] Contradictions resolved: the brief's "shareable ROI link" (now local-only), "+10 review boost" (deferred with M3), "20 transcripts in the seed" (deferred with M12), and the "AI call audit-logging" rule (applies once hooks go live).
+- [x] No secrets, PII or real firm names.
