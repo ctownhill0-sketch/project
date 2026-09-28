@@ -22,3 +22,9 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/settings", label: "Settings", icon: "settings", step: 10 },
   { href: "/design", label: "Design system", icon: "design", step: 1 },
 ];
+
+export function navLabel(href: string): string {
+  const item = NAV_ITEMS.find((i) => i.href === href);
+  if (!item) throw new Error(`No nav item for ${href}`);
+  return item.label;
+}

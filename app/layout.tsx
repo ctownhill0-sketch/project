@@ -14,7 +14,7 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Vacancy Desk",
+  title: { default: "Vacancy Desk", template: "%s | Vacancy Desk" },
   description: "Command center for Vacancy Desk sales and pilots.",
 };
 
