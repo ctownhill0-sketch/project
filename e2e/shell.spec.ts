@@ -18,10 +18,10 @@ test.describe("app shell", () => {
     if (info.project.name === "desktop-1440") {
       await expect(sidebar).toBeVisible();
       await expect(sidebar.getByRole("link", { name: "Dashboard" })).toHaveAttribute("aria-current", "page");
-      await expect(page.getByRole("button", { name: "Menu" })).toBeHidden();
+      await expect(page.getByRole("button", { name: "Menu", exact: true })).toBeHidden();
     } else if (info.project.name === "tablet-768") {
       await expect(sidebar).toBeHidden();
-      await page.getByRole("button", { name: "Menu" }).click();
+      await page.getByRole("button", { name: "Menu", exact: true }).click();
       const drawer = page.getByRole("dialog", { name: "Menu" });
       await expect(drawer).toBeVisible();
       // Focus is trapped inside the drawer.
@@ -36,7 +36,7 @@ test.describe("app shell", () => {
         const box = await link.boundingBox();
         expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
       }
-      await bar.getByRole("button", { name: "Menu" }).click();
+      await bar.getByRole("button", { name: "Menu", exact: true }).click();
       await expect(page.getByRole("dialog", { name: "Menu" })).toBeVisible();
     }
   });

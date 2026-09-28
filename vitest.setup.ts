@@ -6,3 +6,13 @@ import { afterEach } from "vitest";
 afterEach(() => {
   cleanup();
 });
+
+// jsdom lacks these browser APIs that cmdk and Base UI popups use.
+if (typeof window !== "undefined") {
+  window.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+  Element.prototype.scrollIntoView ??= function scrollIntoView() {};
+}

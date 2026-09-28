@@ -32,7 +32,7 @@ export function MenuDrawer({ variant }: { variant: "header" | "bar" }) {
           <SheetTitle>Menu</SheetTitle>
         </SheetHeader>
         <nav aria-label="Menu" className="px-3 pb-4">
-          <NavList items={NAV_ITEMS} onNavigate={() => setOpen(false)} />
+          <NavList items={NAV_ITEMS} grouped onNavigate={() => setOpen(false)} />
         </nav>
       </SheetContent>
     </Sheet>
