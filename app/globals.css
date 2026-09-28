@@ -217,6 +217,22 @@
   * {
     border-color: var(--border);
   }
+  /* Touch screens: every control is at least 44×44px (brief 8.8). */
+  @media (pointer: coarse) {
+    [data-slot="button"],
+    [data-slot="select-trigger"],
+    [data-slot="tabs-trigger"],
+    [data-slot="dropdown-menu-trigger"],
+    [data-slot="popover-trigger"],
+    [data-slot="tooltip-trigger"],
+    [data-slot="dialog-trigger"],
+    [data-slot="input"] {
+      min-height: 2.75rem;
+    }
+    [data-slot="button"]:is([data-size^="icon"]) {
+      min-width: 2.75rem;
+    }
+  }
   /* Keep keyboard focus clear of the fixed phone bottom bar (WCAG 2.4.11). */
   @media (width < 48rem) {
     html {

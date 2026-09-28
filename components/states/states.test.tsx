@@ -81,3 +81,12 @@ describe("DisabledReason", () => {
     expect(button).toHaveAccessibleDescription("Add a mailing address in Settings first.");
   });
 });
+
+describe("EmptyState styling", () => {
+  it("gives its action link a visible outline border, not a transparent one", () => {
+    render(<EmptyState title="t" sentence="s" action={{ label: "Go", href: "/x" }} />);
+    const cls = screen.getByRole("link", { name: "Go" }).className.split(" ");
+    expect(cls).toContain("border-input");
+    expect(cls).not.toContain("border-transparent");
+  });
+});

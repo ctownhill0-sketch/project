@@ -65,3 +65,13 @@ test("the theme choice survives a reload", async ({ page }) => {
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
+
+test("on touch screens every button is at least 44px tall", async ({ page }, info) => {
+  test.skip(info.project.name !== "phone-320", "touch project only");
+  await page.goto("/design");
+  const heights = await page
+    .locator('[data-slot="button"]:visible')
+    .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height));
+  expect(heights.length).toBeGreaterThan(5);
+  expect(Math.min(...heights)).toBeGreaterThanOrEqual(44);
+});

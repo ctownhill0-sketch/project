@@ -2,7 +2,7 @@
 
 All notable changes to this project. Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow the Free Build steps.
 
-## [Unreleased]: Step 1 Foundation (in progress)
+## [Unreleased]: Step 1 Foundation (complete, awaiting Checkpoint C)
 
 ### Added
 
@@ -19,7 +19,22 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 - Domain logic: business/Saturday/after-hours bucketing across daylight saving and US federal holidays, pricing and expected MRR.
 - Fictional seed data: 50 NYC-metro firms (5 on AppFolio, 5 duplicates), 40 mystery shops (8 with no reply), 25 calls, 12 deals, 2 pilots on day 7 (one on track, one at risk), 12 weeks of metrics, and default settings (Day 0 29 Sept 2026, deadline 28 Dec 2026).
 
+- shadcn/ui on Base UI (21 components), with a tested normalizer (`pnpm ui:normalize`) that enforces the design contract on every added component.
+- Status badge, six-state components, icon set, theme toggle (no flash) and a responsive shell (sidebar, drawer, phone bar).
+- `/design` page and 12 screenshots (3 widths × 2 themes × shell/design).
+- End-to-end tests: axe in both themes, keyboard-only focus visibility, reduced motion, 44px touch targets and theme persistence.
+
+### Fixed (code and design review)
+
+- Do-not-call rows can no longer be deleted (the delete-and-re-add bypass).
+- `cn` now knows the type-scale utilities. getDb retries after a failed open. The lock is atomic. `db:reset` respects the lock.
+- Seed owner email is fictional. Audit redaction covers names, notes and snake_case keys.
+- Strict H:MM business-hours parsing. Valid section ids on `/design`.
+- Accessibility: focusable table scroll regions, focus kept clear of the phone bar, visible outline-button edges, readable inactive tabs.
+
 ### Changed (from the plan)
+
+- Execution mode: executing-plans (sequential tasks) instead of subagent-driven.
 
 - Next 16 renamed `middleware.ts` to `proxy.ts`.
 - Inter is self-hosted, so builds work offline.

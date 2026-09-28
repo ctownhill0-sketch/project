@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 
 interface EmptyStateProps {
@@ -12,14 +13,14 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, sentence, action }: EmptyStateProps) {
   return (
-    <Empty className="border-input border border-dashed">
+    <Empty className="bg-card">
       <EmptyHeader>
         <EmptyTitle>{title}</EmptyTitle>
         <EmptyDescription>{sentence}</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         {/* Navigation is a real link, styled like a button. */}
-        <Link href={action.href} className={buttonVariants({ variant: "outline" })}>
+        <Link href={action.href} className={cn(buttonVariants({ variant: "outline" }))}>
           {action.label}
         </Link>
       </EmptyContent>
