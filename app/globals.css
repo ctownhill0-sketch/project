@@ -102,10 +102,106 @@
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Exactly three shadows; Tailwind's built-ins are cleared. */
+  --shadow-*: initial;
+  --shadow-sm:
+    0px 2px 3px -1px rgba(0, 0, 0, 0.1), 0px 1px 0px 0px rgba(25, 28, 33, 0.02),
+    0px 0px 0px 1px rgba(25, 28, 33, 0.08);
+  --shadow-md:
+    0px 0px 0px 1px rgba(0, 0, 0, 0.06), 0px 1px 1px -0.5px rgba(0, 0, 0, 0.06),
+    0px 3px 3px -1.5px rgba(0, 0, 0, 0.06), 0px 6px 6px -3px rgba(0, 0, 0, 0.06),
+    0px 12px 12px -6px rgba(0, 0, 0, 0.06), 0px 24px 24px -12px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+    0 100px 80px rgba(0, 0, 0, 0.12);
+
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-modal: 16px;
+
+  /* Type scale: size / line height. */
+  --text-display: 48px;
+  --text-display--line-height: 56px;
+  --text-h1: 36px;
+  --text-h1--line-height: 44px;
+  --text-h2: 28px;
+  --text-h2--line-height: 36px;
+  --text-h3: 22px;
+  --text-h3--line-height: 30px;
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+  --text-small: 14px;
+  --text-small--line-height: 20px;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+:root {
+  --duration-color: 100ms;
+  --duration-press: 120ms;
+  --duration-tooltip: 150ms;
+  --duration-dropdown: 180ms;
+  --duration-dialog: 240ms;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* Focus: 2px navy outline + gold halo (light); gold outline (dark). Never hidden. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 4px var(--background),
+    0 0 0 6px var(--ring-halo);
+}
+:root[data-theme="dark"] :focus-visible {
+  box-shadow: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) :focus-visible {
+    box-shadow: none;
+  }
+}
+
+/* Numbers: tabular figures everywhere a number is shown. */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reduced motion: remove movement, keep short fades.
+   Positioning transforms (e.g. centred dialogs) are left alone; only the
+   enter/exit motion variables and press scaling are neutralised. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    --tw-enter-scale: 1 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
+    --tw-enter-rotate: 0 !important;
+    --tw-exit-rotate: 0 !important;
+    --press-scale: 1 !important;
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }
