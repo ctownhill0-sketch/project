@@ -1,26 +1,111 @@
 @import "tailwindcss";
 
+/* Semantic tokens. Source of truth: lib/design/tokens.ts (kept in sync by lib/design/css-sync.test.ts). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f7f5f0;
+  --foreground: #0f2a44;
+  --card: #ffffff;
+  --card-foreground: #0f2a44;
+  --muted: #efece4;
+  --muted-foreground: #4a5566;
+  --primary: #0f2a44;
+  --primary-foreground: #ffffff;
+  --accent: #e3a72f;
+  --accent-foreground: #0f2a44;
+  --link: #8c5f0a;
+  --success: #1e7a4c;
+  --warning: #8a5a00;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --border: #d9d4c7;
+  --input: #6f7a8a;
+  --ring: #0f2a44;
+  --ring-halo: #e3a72f;
+  --chart-1: #0f2a44;
+  --chart-2: #8c5f0a;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0b1b2e;
+  --foreground: #e8edf3;
+  --card: #12263d;
+  --card-foreground: #e8edf3;
+  --muted: #1a3150;
+  --muted-foreground: #a9b4c2;
+  --primary: #e3a72f;
+  --primary-foreground: #0b1b2e;
+  --accent: #e3a72f;
+  --accent-foreground: #0b1b2e;
+  --link: #e3a72f;
+  --success: #4cc38a;
+  --warning: #f0b44c;
+  --destructive: #f97066;
+  --destructive-foreground: #0b1b2e;
+  --border: #24395a;
+  --input: #6b7b91;
+  --ring: #e3a72f;
+  --ring-halo: #e3a72f;
+  --chart-1: #8ec5ff;
+  --chart-2: #e3a72f;
+}
+
+/* Follow the system when the viewer hasn't chosen a theme. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --background: #0b1b2e;
+    --foreground: #e8edf3;
+    --card: #12263d;
+    --card-foreground: #e8edf3;
+    --muted: #1a3150;
+    --muted-foreground: #a9b4c2;
+    --primary: #e3a72f;
+    --primary-foreground: #0b1b2e;
+    --accent: #e3a72f;
+    --accent-foreground: #0b1b2e;
+    --link: #e3a72f;
+    --success: #4cc38a;
+    --warning: #f0b44c;
+    --destructive: #f97066;
+    --destructive-foreground: #0b1b2e;
+    --border: #24395a;
+    --input: #6b7b91;
+    --ring: #e3a72f;
+    --ring-halo: #e3a72f;
+    --chart-1: #8ec5ff;
+    --chart-2: #e3a72f;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-link: var(--link);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-halo: var(--ring-halo);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
