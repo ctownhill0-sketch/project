@@ -36,6 +36,18 @@ describe("normalizeUiSource", () => {
     );
   });
 
+  it("replaces translucent foreground text with the contrast-tested muted token", () => {
+    expect(normalizeUiSource(`"text-foreground/60 hover:text-foreground/80 text-foreground"`)).toBe(
+      `"text-muted-foreground hover:text-foreground text-foreground"`,
+    );
+  });
+
+  it("gives outline controls a 3:1 boundary instead of the decorative border", () => {
+    expect(normalizeUiSource(`outline: "border-border bg-background hover:bg-muted"`)).toBe(
+      `outline: "border-input bg-card hover:bg-muted"`,
+    );
+  });
+
   it("leaves unrelated code alone", () => {
     const src = `const darkMode = "dark"; // dark: is a word here`;
     expect(normalizeUiSource(`"p-2"`)).toBe(`"p-2"`);

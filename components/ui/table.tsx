@@ -4,8 +4,16 @@ import * as React from "react";
 import { cn } from "cn";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
+  // Local change (tested in table.test.tsx): the scroll container is a focusable,
+  // labelled region so keyboard users can scroll wide tables (WCAG 2.1.1).
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    <div
+      data-slot="table-container"
+      role="region"
+      aria-label={props["aria-label"]}
+      tabIndex={0}
+      className="relative w-full overflow-x-auto"
+    >
       <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   );

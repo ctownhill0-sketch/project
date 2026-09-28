@@ -15,7 +15,9 @@ export function ThemeToggle() {
       onClick={() => setTheme(next)}
       aria-label={`Switch to ${next} theme`}
     >
-      {theme === "dark" ? <Icons.sun /> : <Icons.moon />}
+      {/* Both icons render; CSS keyed on data-theme (set before paint) shows the right one, so no flash. */}
+      <Icons.sun className="theme-icon-dark" />
+      <Icons.moon className="theme-icon-light" />
     </Button>
   );
 }

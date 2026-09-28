@@ -48,3 +48,20 @@ test.describe("app shell", () => {
     expect(await axeViolations(page)).toEqual([]);
   });
 });
+
+test("the theme toggle shows the right icon from the first paint", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/dashboard");
+  const toggle = page.getByRole("banner").getByRole("button", { name: /theme/ });
+  await expect(toggle.locator("svg[data-icon='sun']")).toBeVisible();
+  await expect(toggle.locator("svg[data-icon='moon']")).toBeHidden();
+});
+
+test("the theme choice survives a reload", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/dashboard");
+  await page.getByRole("banner").getByRole("button", { name: "Switch to dark theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+});

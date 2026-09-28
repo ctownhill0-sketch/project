@@ -33,3 +33,10 @@ describe("NavList", () => {
     expect(container.querySelectorAll("a svg[aria-hidden='true'][data-icon]")).toHaveLength(NAV_ITEMS.length);
   });
 });
+
+describe("NavList bar layout", () => {
+  it("uses short labels where space is tight, keeping the full name elsewhere", () => {
+    render(<NavList items={NAV_ITEMS.filter((i) => i.onPhoneBar)} layout="bar" />);
+    expect(screen.getAllByRole("link").map((a) => a.textContent)).toEqual(["Dashboard", "Shops", "Calls"]);
+  });
+});

@@ -217,6 +217,12 @@
   * {
     border-color: var(--border);
   }
+  /* Keep keyboard focus clear of the fixed phone bottom bar (WCAG 2.4.11). */
+  @media (width < 48rem) {
+    html {
+      scroll-padding-bottom: 5.5rem;
+    }
+  }
   html {
     font-family: var(--font-sans);
   }
@@ -247,6 +253,12 @@ h3 {
   :root:not([data-theme="light"]) :focus-visible {
     box-shadow: none;
   }
+}
+
+/* Theme toggle icons follow data-theme directly, before React hydrates. */
+:root:not([data-theme="dark"]) .theme-icon-dark,
+:root[data-theme="dark"] .theme-icon-light {
+  display: none;
 }
 
 /* Numbers: tabular figures everywhere a number is shown. */

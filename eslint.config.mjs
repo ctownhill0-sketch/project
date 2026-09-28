@@ -31,6 +31,8 @@ const eslintConfig = defineConfig([
     },
   },
   { files: ["components/icons.ts", "components/ui/**"], rules: { "no-restricted-imports": "off" } },
+  // Scrollable regions must be focusable so keyboard users can scroll them (axe scrollable-region-focusable).
+  { rules: { "jsx-a11y/no-noninteractive-tabindex": ["error", { roles: ["tabpanel", "region"] }] } },
   // The generic Label receives htmlFor through props, which the rule can't see.
   { files: ["components/ui/label.tsx"], rules: { "jsx-a11y/label-has-associated-control": "off" } },
   globalIgnores([

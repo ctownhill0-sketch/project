@@ -35,7 +35,7 @@ export function NavList({ items, onNavigate, layout = "list" }: NavListProps) {
               )}
             >
               <Icon className={layout === "bar" ? "size-5" : "size-4"} />
-              {item.label}
+              {layout === "bar" ? (item.shortLabel ?? item.label) : item.label}
             </Link>
           </li>
         );

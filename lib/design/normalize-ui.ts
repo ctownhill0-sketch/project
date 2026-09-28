@@ -17,6 +17,11 @@ export function normalizeUiSource(source: string): string {
         /(active:[\w\-[\]]*:?)translate-y-px\b/g,
         "$1scale-(--press-scale) duration-(--duration-press) ease-out",
       )
+      // Translucent text fails contrast on tinted fills; use tokens that are tested.
+      .replace(/(hover:)text-foreground\/\d+\b/g, "$1text-foreground")
+      .replace(/\btext-foreground\/\d+\b/g, "text-muted-foreground")
+      // Outline buttons need a visible 3:1 edge; --border is decorative only (design contract §2).
+      .replace(/(outline:\s*\n?\s*"[^"]*?)border-border bg-background/g, "$1border-input bg-card")
       .replace(/\bshadow-xs\b/g, "shadow-sm")
       .replace(/\bshadow-(xl|2xl)\b/g, "shadow-lg")
   );
