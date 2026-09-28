@@ -52,8 +52,11 @@ function localParts(instant: Date, timeZone: string): LocalParts {
   };
 }
 
+/** Parses "H:MM" or "HH:MM" (24-hour). Throws on anything else rather than guessing. */
 function toMinutes(hhmm: string): number {
-  return Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));
+  const match = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec(hhmm.trim());
+  if (!match) throw new Error(`Invalid business hours time "${hhmm}". Use 24-hour HH:MM, e.g. 09:00.`);
+  return Number(match[1]) * 60 + Number(match[2]);
 }
 
 export function hoursBucket(sentAt: Date, hours: BusinessHours = DEFAULT_BUSINESS_HOURS): HoursBucket {

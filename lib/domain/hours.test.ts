@@ -59,3 +59,15 @@ describe("hoursBucket with edited settings", () => {
     expect(hoursBucket(new Date("2026-10-28T21:15:00Z"), hours)).toBe("business"); // Wed 17:15 EDT
   });
 });
+
+describe("business-hours settings validation", () => {
+  it("accepts times without a leading zero", () => {
+    const hours = { ...DEFAULT_BUSINESS_HOURS, start: "9:00", end: "17:00" };
+    expect(hoursBucket(new Date("2026-10-28T13:30:00Z"), hours)).toBe("business"); // Wed 09:30 EDT
+  });
+
+  it("rejects malformed times instead of silently classing everything after-hours", () => {
+    const hours = { ...DEFAULT_BUSINESS_HOURS, start: "nine" };
+    expect(() => hoursBucket(new Date("2026-10-28T13:30:00Z"), hours)).toThrow(/business hours/i);
+  });
+});
