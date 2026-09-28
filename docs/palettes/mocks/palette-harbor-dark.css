@@ -1,0 +1,23 @@
+:root {
+  --background: #0C1419;
+  --foreground: #E5ECF0;
+  --card: #131E25;
+  --raised: #172630;
+  --muted: #1D2B35;
+  --muted-foreground: #A0AFB8;
+  --accent: #3FC6B8;
+  --link: #5CD3C6;
+  --success: #5FD37F;
+  --warning: #EE921A;
+  --destructive: #F0555B;
+  --info: #88ABEA;
+  --border: #283946;
+  --input: #6E8391;
+  --primary: #3FC6B8;
+  --primary-foreground: #04201D;
+  --chart-1: #17A7A2;
+  --chart-2: #DF5F32;
+  color-scheme: dark;
+}
+:root { --shadow-sm: 0 0 0 1px #6E8391; --shadow-md: 0 0 0 1px #283946; --shadow-lg: 0 0 0 1px #283946; }
+:focus-visible { outline: 2px solid #5CD3C6; outline-offset: 2px; }

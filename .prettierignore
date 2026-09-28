@@ -10,3 +10,4 @@ docs/screenshots
 
 # generated mock pages (docs/ui-directions/build.mjs)
 docs/ui-directions/*.html
+docs/palettes/mocks/

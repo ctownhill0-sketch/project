@@ -1,0 +1,22 @@
+:root {
+  --background: #F4F6F7;
+  --foreground: #132029;
+  --card: #FFFFFF;
+  --raised: #FFFFFF;
+  --muted: #EAEFF1;
+  --muted-foreground: #4C5B65;
+  --accent: #1C978B;
+  --link: #0B6461;
+  --success: #2D8014;
+  --warning: #774500;
+  --destructive: #D74030;
+  --info: #3A6FA3;
+  --border: #D6DEE2;
+  --input: #6E7E88;
+  --primary: #0D6B67;
+  --primary-foreground: #FFFFFF;
+  --chart-1: #139B87;
+  --chart-2: #95330B;
+  color-scheme: light;
+}
+:focus-visible { outline: 2px solid #0D6B67; outline-offset: 2px; }

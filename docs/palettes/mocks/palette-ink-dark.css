@@ -1,0 +1,23 @@
+:root {
+  --background: #0A0E0C;
+  --foreground: #E7EEEA;
+  --card: #111714;
+  --raised: #171F1B;
+  --muted: #1B2520;
+  --muted-foreground: #A1B0A8;
+  --accent: #34D399;
+  --link: #5EE0AE;
+  --success: #5FD37F;
+  --warning: #EE921A;
+  --destructive: #F0555B;
+  --info: #88ABEA;
+  --border: #26322C;
+  --input: #6B7C73;
+  --primary: #E7EEEA;
+  --primary-foreground: #0A0E0C;
+  --chart-1: #3BAB69;
+  --chart-2: #9D5036;
+  color-scheme: dark;
+}
+:root { --shadow-sm: 0 0 0 1px #6B7C73; --shadow-md: 0 0 0 1px #26322C; --shadow-lg: 0 0 0 1px #26322C; }
+:focus-visible { outline: 2px solid #34D399; outline-offset: 2px; }

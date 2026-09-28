@@ -298,27 +298,27 @@ function mrrChart(w = 560, h = 190) {
   const grid = [0, 200, 400, 600]
     .map(
       (v) =>
-        `<line x1="${pad.l}" x2="${w - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="#D9D4C7" stroke-width="1"/><text x="${pad.l - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="#4A5566" class="num">$${v}</text>`,
+        `<line x1="${pad.l}" x2="${w - pad.r}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--border)" stroke-width="1"/><text x="${pad.l - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11" style="fill:var(--muted-foreground)" class="num">$${v}</text>`,
     )
     .join("");
   const xlabels = [0, 5, 11, 15]
     .map(
       (i) =>
-        `<text x="${x(i)}" y="${h - 8}" text-anchor="middle" font-size="11" fill="#4A5566">${["Jul 6", "Aug 10", "Sep 21", "Oct 19"][[0, 5, 11, 15].indexOf(i)]}</text>`,
+        `<text x="${x(i)}" y="${h - 8}" text-anchor="middle" font-size="11" style="fill:var(--muted-foreground)">${["Jul 6", "Aug 10", "Sep 21", "Oct 19"][[0, 5, 11, 15].indexOf(i)]}</text>`,
     )
     .join("");
   const a = actual.map((v, i) => [i, v]);
   const p = proj.map((v, i) => [11 + i, v]);
   return `<svg width="${w}" height="${h}" role="img" aria-label="MRR by week with a 7% weekly growth projection">
     ${grid}${xlabels}
-    <line x1="${x(11)}" x2="${x(11)}" y1="${pad.t}" y2="${h - pad.b}" stroke="#D9D4C7" stroke-dasharray="2 3"/>
-    <path d="${line(p)}" fill="none" stroke="#8C5F0A" stroke-width="2" stroke-dasharray="5 4"/>
-    <path d="${line(a)}" fill="none" stroke="#0F2A44" stroke-width="2"/>
-    <circle cx="${x(11)}" cy="${y(400)}" r="4" fill="#0F2A44" stroke="#fff" stroke-width="2"/>
-    <text x="${x(15) + 6}" y="${y(proj[4]) + 4}" font-size="12" fill="#0F2A44" font-weight="500">7% a week</text>
-    <text x="${x(11) - 6}" y="${y(400) - 10}" font-size="12" fill="#0F2A44" font-weight="500" text-anchor="end">MRR $400</text>
+    <line x1="${x(11)}" x2="${x(11)}" y1="${pad.t}" y2="${h - pad.b}" style="stroke:var(--border)" stroke-dasharray="2 3"/>
+    <path d="${line(p)}" fill="none" style="stroke:var(--chart-2)" stroke-width="2" stroke-dasharray="5 4"/>
+    <path d="${line(a)}" fill="none" style="stroke:var(--chart-1)" stroke-width="2"/>
+    <circle cx="${x(11)}" cy="${y(400)}" r="4" style="fill:var(--chart-1);stroke:var(--card)" stroke-width="2"/>
+    <text x="${x(15) + 6}" y="${y(proj[4]) + 4}" font-size="12" style="fill:var(--foreground)" font-weight="500">7% a week</text>
+    <text x="${x(11) - 6}" y="${y(400) - 10}" font-size="12" style="fill:var(--foreground)" font-weight="500" text-anchor="end">MRR $400</text>
   </svg>
-  <div class="row small muted" style="gap:16px"><span class="row" style="gap:6px"><svg width="18" height="4"><line x1="0" x2="18" y1="2" y2="2" stroke="#0F2A44" stroke-width="2"/></svg>MRR</span><span class="row" style="gap:6px"><svg width="18" height="4"><line x1="0" x2="18" y1="2" y2="2" stroke="#8C5F0A" stroke-width="2" stroke-dasharray="4 3"/></svg>7% weekly growth projection</span><span class="link">View as table</span></div>`;
+  <div class="row small muted" style="gap:16px"><span class="row" style="gap:6px"><svg width="18" height="4"><line x1="0" x2="18" y1="2" y2="2" style="stroke:var(--chart-1)" stroke-width="2"/></svg>MRR</span><span class="row" style="gap:6px"><svg width="18" height="4"><line x1="0" x2="18" y1="2" y2="2" style="stroke:var(--chart-2)" stroke-width="2" stroke-dasharray="4 3"/></svg>7% weekly growth projection</span><span class="link">View as table</span></div>`;
 }
 
 const meter = (label, value, of, pct, note) => `<div class="meter">
