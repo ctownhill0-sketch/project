@@ -48,6 +48,14 @@ const EXPECTED_TABLES = [
   "pilot_metric",
   "owner_report",
   "report_view",
+  // brain, compliance, content
+  "company_brain",
+  "company_brain_version",
+  "fair_housing_rule",
+  "fair_housing_check",
+  "transcript",
+  "objection_tag",
+  "content_draft",
 ];
 
 /** Tables that sit above the workspace boundary. */
