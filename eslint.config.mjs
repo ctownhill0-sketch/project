@@ -33,6 +33,15 @@ const eslintConfig = defineConfig([
   { files: ["components/icons.ts", "components/ui/**"], rules: { "no-restricted-imports": "off" } },
   // Scrollable regions must be focusable so keyboard users can scroll them (axe scrollable-region-focusable).
   { rules: { "jsx-a11y/no-noninteractive-tabindex": ["error", { roles: ["tabpanel", "region"] }] } },
+  // InputGroupAddon: clicking the decorative addon focuses its input (a mouse convenience);
+  // keyboard users Tab straight to the input, so no key handler is needed.
+  {
+    files: ["components/ui/input-group.tsx"],
+    rules: {
+      "jsx-a11y/click-events-have-key-events": "off",
+      "jsx-a11y/no-noninteractive-element-interactions": "off",
+    },
+  },
   // The generic Label receives htmlFor through props, which the rule can't see.
   { files: ["components/ui/label.tsx"], rules: { "jsx-a11y/label-has-associated-control": "off" } },
   globalIgnores([

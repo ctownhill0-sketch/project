@@ -30,7 +30,13 @@ export function normalizeUiSource(source: string): string {
       // Outline buttons need a visible 3:1 edge; --border is decorative only (design contract §2).
       .replace(/(outline:\s*\n?\s*"[^"]*?)border-border bg-background/g, "$1border-input bg-card")
       .replace(/\bshadow-xs\b/g, "shadow-sm")
-      .replace(/from "cn";/g, 'from "@/lib/utils";')
+      .replace(/from "cn";?/g, 'from "@/lib/utils";')
+      .replace(/\bfont-mono ?/g, "")
+      // Charts theme per data-theme (our toggle), not a .dark class.
+      .replace(
+        /(const THEMES = \{ light: "", dark: )"\.dark"( \} as const;?)/g,
+        `$1'[data-theme="dark"]'$2 // design-rules-ignore`,
+      )
       .replace(/\bshadow-(xl|2xl)\b/g, "shadow-lg")
   );
 }

@@ -69,6 +69,20 @@ describe("normalizeUiSource", () => {
     );
   });
 
+  it("rewrites the cn import with or without a semicolon", () => {
+    expect(normalizeUiSource(`import { cn } from "cn"\n`)).toBe(`import { cn } from "@/lib/utils";\n`);
+  });
+
+  it("drops monospace (tabular figures already align numbers)", () => {
+    expect(normalizeUiSource(`"font-mono font-medium tabular-nums"`)).toBe(`"font-medium tabular-nums"`);
+  });
+
+  it("points chart theming at our data-theme attribute instead of a .dark class", () => {
+    expect(normalizeUiSource(`const THEMES = { light: "", dark: ".dark" } as const`)).toBe(
+      `const THEMES = { light: "", dark: '[data-theme="dark"]' } as const // design-rules-ignore`,
+    );
+  });
+
   it("leaves unrelated code alone", () => {
     const src = `const darkMode = "dark"; // dark: is a word here`;
     expect(normalizeUiSource(`"p-2"`)).toBe(`"p-2"`);
