@@ -22,6 +22,13 @@
       "when": 1790624595361,
       "tag": "0002_dnc_permanent",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790628453892,
+      "tag": "0003_dnc_no_delete",
+      "breakpoints": true
     }
   ]
 }

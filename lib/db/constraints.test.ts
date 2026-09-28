@@ -58,3 +58,24 @@ describe("do-not-call is permanent", () => {
     ).rejects.toMatchObject(PERMANENT_DNC);
   });
 });
+
+describe("do-not-call rows can't be deleted", () => {
+  it("rejects deleting a flagged contact or company, so re-importing can't reset the flag", async () => {
+    const { db } = handle;
+    const { own } = await insertOwner(db);
+    const firm = await insertCompany(db, own, "Lanternway Homes");
+    const person = await insertContact(db, own, firm.id);
+    await db.update(contact).set({ doNotCall: true }).where(eq(contact.id, person.id));
+    await db.update(company).set({ dncFlag: true }).where(eq(company.id, firm.id));
+
+    await expect(db.delete(contact).where(eq(contact.id, person.id))).rejects.toMatchObject(PERMANENT_DNC);
+    await expect(db.delete(company).where(eq(company.id, firm.id))).rejects.toMatchObject(PERMANENT_DNC);
+  });
+
+  it("still allows deleting rows without the flag", async () => {
+    const { db } = handle;
+    const { own } = await insertOwner(db);
+    const firm = await insertCompany(db, own, "Redfern Rentals");
+    await expect(db.delete(company).where(eq(company.id, firm.id))).resolves.toBeDefined();
+  });
+});
