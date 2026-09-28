@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { acquireLock, releaseLock } from "@/lib/db/lock";
+import * as fs from "node:fs";
 
 let dir: string;
 beforeEach(() => {
@@ -35,5 +36,15 @@ describe("pglite lock", () => {
     acquireLock(dir);
     releaseLock(dir);
     expect(() => readFileSync(path.join(dir, "pglite.lock"))).toThrow();
+  });
+});
+
+describe("pglite lock creation", () => {
+  it("creates the lock file atomically (exclusive create), so two starters can't both win", () => {
+    acquireLock(dir);
+    // A second exclusive create must fail: that's what makes the lock race-free.
+    expect(() => fs.writeFileSync(path.join(dir, "pglite.lock"), "1", { flag: "wx" })).toThrow(/EEXIST/);
+    const source = fs.readFileSync(path.join(process.cwd(), "lib/db/lock.ts"), "utf8");
+    expect(source).toMatch(/flag: "wx"/);
   });
 });

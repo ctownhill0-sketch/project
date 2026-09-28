@@ -4,7 +4,7 @@ import { acquireLock, releaseLock } from "@/lib/db/lock";
 import { parseEnv } from "@/lib/env";
 
 // Cached on globalThis so Next.js hot reload doesn't open a second PGlite instance.
-const cache = globalThis as unknown as { __vdDb?: Promise<DbHandle> };
+const cache = globalThis as unknown as { __vdDb?: Promise<DbHandle> | undefined };
 
 async function open(source: Record<string, string | undefined>): Promise<DbHandle> {
   const env = parseEnv(source);
@@ -19,8 +19,15 @@ async function open(source: Record<string, string | undefined>): Promise<DbHandl
   return createDb({ driver: "pglite", dir: env.PGLITE_DIR });
 }
 
-/** The app's database. Server-only. */
+/** The app's database. Server-only. A failed open isn't cached, so fixing the cause and retrying works. */
 export async function getDb(source: Record<string, string | undefined> = process.env): Promise<Db> {
-  cache.__vdDb ??= open(source);
+  cache.__vdDb ??= open(source).catch((error: unknown) => {
+    cache.__vdDb = undefined;
+    throw error;
+  });
   return (await cache.__vdDb).db;
+}
+
+export function resetDbCacheForTests(): void {
+  cache.__vdDb = undefined;
 }

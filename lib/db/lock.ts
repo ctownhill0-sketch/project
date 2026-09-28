@@ -32,10 +32,18 @@ function readOwner(file: string): number | undefined {
 export function acquireLock(dir: string): void {
   mkdirSync(dir, { recursive: true });
   const file = path.join(dir, LOCK_FILE);
+  try {
+    // Exclusive create: if two processes start together, only one can win.
+    writeFileSync(file, String(process.pid), { flag: "wx" });
+    return;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+  }
   const owner = readOwner(file);
   if (owner !== undefined && owner !== process.pid && isAlive(owner)) {
     throw new Error(LOCKED_MESSAGE);
   }
+  // Stale lock (its process has exited) or already ours: take it over.
   writeFileSync(file, String(process.pid));
 }
 
