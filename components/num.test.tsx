@@ -17,7 +17,13 @@ describe("Num", () => {
       </>,
     );
     expect(screen.getByText("$59.18")).toBeInTheDocument();
-    expect(screen.getByText("7%")).toBeInTheDocument();
+    // Growth always shows one decimal so 0.0% and 7.0% line up.
+    expect(screen.getByText("7.0%")).toBeInTheDocument();
+  });
+
+  it("formats whole-dollar money for MRR-style numbers", () => {
+    render(<Num value={400} format="money" />);
+    expect(screen.getByText("$400")).toBeInTheDocument();
   });
 
   it('shows "unknown" instead of inventing a number', () => {

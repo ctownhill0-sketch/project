@@ -1,0 +1,64 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import type { ReactNode } from "react";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useWide } from "@/components/split/use-wide";
+
+interface SplitViewProps {
+  list: ReactNode;
+  detail: ReactNode | null;
+  /** Accessible name for the detail region / sheet. */
+  detailLabel: string;
+  /** On narrow screens the detail opens as a sheet only when the URL asked for a record. */
+  openOnNarrow: boolean;
+  /** Where closing the sheet goes (same page, record param removed). */
+  closeHref: string;
+  /** Key for remembering the split size in this browser. */
+  id: string;
+}
+
+/**
+ * List + detail (brief §3). ≥1280px: side by side with an adjustable, keyboard-resizable split.
+ * Below that the detail slides over the list, so you never lose your place.
+ */
+export function SplitView({ list, detail, detailLabel, openOnNarrow, closeHref, id }: SplitViewProps) {
+  const wide = useWide();
+  const router = useRouter();
+  if (!wide) {
+    return (
+      <>
+        {list}
+        <Sheet
+          open={openOnNarrow && detail !== null}
+          onOpenChange={(open) => (open ? null : router.replace(closeHref, { scroll: false }))}
+        >
+          <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
+            <SheetHeader className="sr-only">
+              <SheetTitle>{detailLabel}</SheetTitle>
+            </SheetHeader>
+            {detail}
+          </SheetContent>
+        </Sheet>
+      </>
+    );
+  }
+  return (
+    <ResizablePanelGroup
+      id={id}
+      orientation="horizontal"
+      className="border-border bg-card min-h-0 flex-1 rounded-xl border"
+    >
+      <ResizablePanel id={`${id}-list`} defaultSize="44" minSize={300}>
+        <div className="h-full overflow-y-auto">{list}</div>
+      </ResizablePanel>
+      <ResizableHandle withHandle aria-label="Resize list and detail" />
+      <ResizablePanel id={`${id}-detail`} defaultSize="56" minSize={420}>
+        <section aria-label={detailLabel} className="h-full overflow-y-auto">
+          {detail}
+        </section>
+      </ResizablePanel>
+    </ResizablePanelGroup>
+  );
+}

@@ -1,9 +1,16 @@
-type NumFormat = "number" | "currency" | "percent";
+type NumFormat = "number" | "currency" | "money" | "percent";
 
 const formatters: Record<NumFormat, Intl.NumberFormat> = {
   number: new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }),
   currency: new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }),
-  percent: new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1 }),
+  /** Whole dollars (MRR, cash). */
+  money: new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }),
+  /** Always one decimal so growth figures line up. */
+  percent: new Intl.NumberFormat("en-US", {
+    style: "percent",
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }),
 };
 
 interface NumProps {
