@@ -1,0 +1,13 @@
+# Runs before every commit. Why: catch type errors, lint problems, failing
+# tests and leaked secrets before they reach GitHub.
+pre-commit:
+  parallel: false
+  commands:
+    typecheck:
+      run: pnpm typecheck
+    lint:
+      run: pnpm lint
+    test:
+      run: pnpm test
+    secrets:
+      run: 'if command -v gitleaks >/dev/null; then gitleaks protect --staged --redact; else echo "gitleaks not installed; CI will scan for secrets"; fi'
