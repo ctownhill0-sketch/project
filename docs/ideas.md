@@ -18,7 +18,8 @@ Things kept out of scope on purpose. **Nothing here gets built without the found
 | AI wrapper `lib/ai/client.ts` | Anthropic API key | `lib/ai/hooks.ts` interfaces |
 | Background jobs (Inngest) | Deployment | `JobRun` table empty |
 | Deployment (Netlify or Vercel Pro, Neon, Google sign-in) | Accounts; Vercel Hobby prohibits commercial use | `DATABASE_DRIVER`, `requireUser()` |
-| Automatic software detection | Polite fetcher (built, with no caller yet) | `SoftwarePattern` rows seeded |
+| Polite fetcher (`lib/fetcher`) | Nothing, it's free. Cut because nothing calls it yet. Rules: honest user agent `VacancyDeskBot/1.0 (+contact email)`, robots.txt, per-domain rate limit, Retry-After, backoff, 3 tries, 10s timeout, 2 MB cap, and never forms, logins, CAPTCHAs or headless browsers. | none |
+| Automatic software detection | The polite fetcher | `SoftwarePattern` rows seeded |
 | Public ROI share link | Deployment | ROI inputs already live in the URL |
 
 ## Other ideas

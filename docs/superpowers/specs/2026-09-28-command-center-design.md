@@ -1,7 +1,7 @@
 # Vacancy Desk Command Center: design spec
 
-- **Date:** 2026-09-28 (revision 2: "$0 Free Build" scope change)
-- **Status:** DRAFT, waiting for founder approval (Checkpoint A)
+- **Date:** 2026-09-28 (revision 3: Day 0 set, polite fetcher cut)
+- **Status:** APPROVED by founder, 2026-09-28 (Checkpoint A passed). Revision 3 records his answers.
 - **Classification:** ARCHITECTURAL
 - **Source brief:** "BUILD BRIEF: Vacancy Desk Command Center" (Parts 0–12) plus the founder's "SCOPE CHANGE: $0 BUILD ONLY" message. Where this spec says nothing, the brief applies. The workflow, TDD, design system (Part 8), guardrails (Part 11) and checkpoints all still apply.
 
@@ -34,11 +34,11 @@ Everything marked **⏸ DEFERRED** below is listed in `docs/ideas.md` and will *
 | 6 | GoHighLevel | Not used. `CrmAdapter` is not built in the Free Build. | ⏸ DEFERRED |
 | 7 | Google Places | Not used | ⏸ DEFERRED, question skipped |
 | 8 | Anthropic key and cap | Not used | ⏸ DEFERRED, question skipped |
-| 9 | Scraper CSV sample | Still useful for M1. The import wizard maps any header either way. | **Asked (optional)** |
+| 9 | Scraper CSV sample | Build the importer against a **generic fictional sample** now. Founder sends real (sanitized) rows later, and they become an extra fixture. | Decided (founder) |
 | 10 | Logo | Text wordmark "Vacancy Desk", swappable in Settings > Brand. It appears on the audit PDF. "Keyhour" appears nowhere. | Decided by Claude |
 | 11 | Mailing address | Only needed for email | ⏸ DEFERRED, question skipped |
 | 12 | Writing samples | Only needed for M16 | ⏸ DEFERRED, question skipped |
-| new | **Day-90 kill-test start date** | The countdown needs a Day 0 | **Asked** |
+| new | Day-90 kill-test dates | **Day 0 = Tue 29 Sept 2026; deadline = Mon 28 Dec 2026.** Both are editable settings. | Decided (founder) |
 
 ---
 
@@ -143,7 +143,7 @@ Each step ends with its tests green and a Checkpoint D demo on seed data. Checkp
 - **Software detection is MANUAL:** a dropdown per firm (appfolio | buildium | doorloop | rent_manager | yardi | none | unknown) plus an optional evidence note. There's a **"Check portal" link** that opens the firm's website in a new tab (`rel="noopener noreferrer"`). AppFolio still means excluded with score 0, which can be overridden. `SoftwarePattern` rows are seeded with the brief's patterns for later, and M18 can edit them.
 - Score with editable weights (+30 not AppFolio, +20 no software, +20 3–25 listings, +25 shop median > 2h with no-replies counting as > 2h, +15 50–500 units, +10 local). The +10 review boost is ⏸ DEFERRED with M3. The score is capped at 0–100, with a breakdown popover and score history.
 - Tags, statuses, a 5,000-row virtualized table, filters in the URL (nuqs), CSV export.
-- **Polite fetcher:** it needs no paid service, so it's **built** as `lib/fetcher` with unit tests: robots.txt, per-domain rate limit, Retry-After, 3 tries, 10s timeout, 2 MB cap, honest user agent. **It has no caller in the Free Build.** It exists so auto-detection can come back later without new guardrail work. It's the last task in step 2, and the founder can cut it at Checkpoint B.
+- **Polite fetcher: CUT** (founder, 2026-09-28). Nothing uses it yet, so it's ⏸ DEFERRED in `docs/ideas.md` and comes back with automatic detection or M2.
 
 ### Step 3: M4 Mystery-shop tracker (full)
 - 60-second logging form, a "Replied now" button, and a phone layout for quick logging.
@@ -200,7 +200,7 @@ Each step ends with its tests green and a Checkpoint D demo on seed data. Checkp
 
 ## 5. Deferred until revenue (do not build)
 
-Tracked in `docs/ideas.md`: M2 listings monitor · M3 review pain finder · M5 AI call briefs · M11 owner report + emails · M12 objection tagger (and its 20 seed transcripts) · M13 Company Brain + AI export · M14 layer 2 · M15 Metro Response Index · M16 content engine · background jobs (Inngest) · deployment (Netlify/Vercel, Neon, Google sign-in) · GoHighLevel sync · the AI wrapper `lib/ai/client.ts` · Google Places · Resend.
+Tracked in `docs/ideas.md`: M2 listings monitor · polite fetcher (`lib/fetcher`) · M3 review pain finder · M5 AI call briefs · M11 owner report + emails · M12 objection tagger (and its 20 seed transcripts) · M13 Company Brain + AI export · M14 layer 2 · M15 Metro Response Index · M16 content engine · background jobs (Inngest) · deployment (Netlify/Vercel, Neon, Google sign-in) · GoHighLevel sync · the AI wrapper `lib/ai/client.ts` · Google Places · Resend.
 
 The research on hosting and platform limits from revision 1 is kept in section 10 for when deployment comes back.
 
@@ -244,7 +244,6 @@ export const auditSummary: AuditSummaryProvider = manualAuditSummary; // returns
 - **Number grounding:** extracts numbers from free text and compares them to the source data.
 - **Fair-housing layer 1:** regex engine, outcome resolution, and false-positive fixtures.
 - **Reminders:** reply checks due and call-now ordering.
-- **Polite-fetcher policy:** robots.txt parse and the rate-limit bucket, which are pure parts.
 
 ---
 
@@ -252,7 +251,7 @@ export const auditSummary: AuditSummaryProvider = manualAuditSummary; // returns
 
 Added for the Free Build:
 - No dependency or step that needs a card, a paid plan or an API key. The founder is asked first.
-- No outbound network calls from the app at all in the Free Build. The polite fetcher exists but has no caller.
+- No outbound network calls from the app at all in the Free Build. There's no polite fetcher yet, and any future outbound request must go through one (brief Part 6).
 - The dev server binds to `127.0.0.1` only.
 
 ---
@@ -293,10 +292,9 @@ Kept so the work isn't lost. **Re-verify all figures before using them.**
 ---
 
 ## 13. Open items
-1. **Day-90 kill-test start date:** asked.
-2. **Scraper CSV sample** (5 sanitized rows + header): optional, wanted before step 2 is finished.
-3. Confirm or correct the assumptions in section 2.
-4. The superpowers plugin isn't installed in this session. Workflows are followed by hand from the brief.
+1. The founder will send sanitized scraper CSV rows later. They get added as an extra import fixture when they arrive.
+2. The superpowers plugin isn't installed in this session. Workflows are followed by hand from the brief.
+3. **Design token conflict (for Checkpoint C):** a gold focus ring on #F7F5F0 is only 1.96:1, below the 3:1 that WCAG 1.4.11/2.4.11 require. The fix is set out in the Phase 1 plan: a navy focus outline with a gold outer ring for decoration.
 
 ---
 
