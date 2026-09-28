@@ -140,4 +140,14 @@ describe("seed", () => {
     const owner = await handle.db.select().from(s.appUser).where(eq(s.appUser.email, SEED_OWNER_EMAIL));
     expect(owner).toHaveLength(1);
   });
+
+  it("scores every firm with the real scoring rules and records score history", async () => {
+    const firms = await handle.db.select().from(s.company);
+    const appfolio = firms.filter((f) => f.detectedSoftware === "appfolio");
+    expect(appfolio.every((f) => f.score === 0)).toBe(true);
+    const scored = firms.filter((f) => f.detectedSoftware !== "appfolio");
+    expect(scored.every((f) => f.score > 0 && f.score <= 100)).toBe(true);
+    expect(scored.every((f) => f.scoreBreakdown.length > 0)).toBe(true);
+    expect(await total(s.scoreHistory)).toBe(firms.length);
+  });
 });

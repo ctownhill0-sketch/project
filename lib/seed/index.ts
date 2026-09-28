@@ -3,6 +3,8 @@ import type { Db } from "@/lib/db/client";
 import * as s from "@/lib/db/schema";
 import { DEFAULT_BUSINESS_HOURS, hoursBucket } from "@/lib/domain/hours";
 import { expectedMrr, PRICING } from "@/lib/domain/pipeline";
+import { DEFAULT_WEIGHTS, scoreLead, type LeadFacts } from "@/lib/domain/scoring";
+import { shopStats } from "@/lib/domain/shop-stats";
 import {
   createRng,
   fictionalDomain,
@@ -91,14 +93,7 @@ export const DEFAULT_SETTINGS: Record<string, unknown> = {
     conversationsTarget: 60,
     afterHoursMedianMinutes: 10,
   },
-  scoringWeights: {
-    notAppfolio: 30,
-    noSoftware: 20,
-    listings3to25: 20,
-    slowReply: 25,
-    units50to500: 15,
-    local: 10,
-  },
+  scoringWeights: DEFAULT_WEIGHTS,
   guarantee: { tourTarget: 5, medianReplySeconds: 60, atRiskFromDay: 7, pilotDays: 14 },
   pricing: PRICING,
   growth: { weeklyTarget: 0.07, startsAfterClients: 3 },
@@ -557,6 +552,40 @@ export async function seed(
         };
       }),
     );
+
+    // Score every firm with the real rules (lib/domain/scoring) and record the history.
+    const shopsByFirm = new Map<string, typeof shops>();
+    for (const x of shops) shopsByFirm.set(x.companyId, [...(shopsByFirm.get(x.companyId) ?? []), x]);
+    const allFirms = [...firms, ...duplicates];
+    for (const firm of allFirms) {
+      const firmShops = shopsByFirm.get(firm.id) ?? [];
+      const stats = shopStats(firmShops, now);
+      const facts: LeadFacts = {
+        software: (firm.softwareOverride ?? firm.detectedSoftware) as LeadFacts["software"],
+        units: firm.estUnits,
+        liveListings: firm.liveListingsCount,
+        isLocal: firm.isLocal,
+        shop: firmShops.length
+          ? {
+              medianReplyMinutes: stats.medianRepliedMinutes,
+              anyNoReply: firmShops.some((x) => !x.firstReplyAt),
+              shopCount: firmShops.length,
+            }
+          : null,
+      };
+      const result = scoreLead(facts, DEFAULT_WEIGHTS);
+      await tx
+        .update(s.company)
+        .set({ score: result.score, scoreBreakdown: result.breakdown })
+        .where(eq(s.company.id, firm.id));
+      await tx.insert(s.scoreHistory).values({
+        ...own,
+        companyId: firm.id,
+        score: result.score,
+        breakdown: result.breakdown,
+        reason: "Seeded",
+      });
+    }
 
     await tx.insert(s.auditLog).values({
       ...own,
