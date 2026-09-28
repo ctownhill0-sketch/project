@@ -5,3 +5,4 @@ export * from "./shops";
 export * from "./calls";
 export * from "./clients";
 export * from "./compliance";
+export * from "./system";

@@ -56,6 +56,13 @@ const EXPECTED_TABLES = [
   "transcript",
   "objection_tag",
   "content_draft",
+  // system
+  "weekly_metric",
+  "setting",
+  "audit_log",
+  "job_run",
+  "ai_call",
+  "email_suppression",
 ];
 
 /** Tables that sit above the workspace boundary. */
