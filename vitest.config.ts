@@ -11,7 +11,12 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        test: { name: "node", environment: "node", include: ["**/*.test.ts"], exclude: ["node_modules/**", "e2e/**"] },
+        test: {
+          name: "node",
+          environment: "node",
+          include: ["**/*.test.ts"],
+          exclude: ["node_modules/**", "e2e/**"],
+        },
       },
       {
         extends: true,
