@@ -48,6 +48,10 @@ describe("normalizeUiSource", () => {
     );
   });
 
+  it("uses our cn, which knows the type-scale utilities", () => {
+    expect(normalizeUiSource(`import { cn } from "cn";`)).toBe(`import { cn } from "@/lib/utils";`);
+  });
+
   it("leaves unrelated code alone", () => {
     const src = `const darkMode = "dark"; // dark: is a word here`;
     expect(normalizeUiSource(`"p-2"`)).toBe(`"p-2"`);

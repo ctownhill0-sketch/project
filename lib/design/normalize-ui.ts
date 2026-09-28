@@ -23,6 +23,7 @@ export function normalizeUiSource(source: string): string {
       // Outline buttons need a visible 3:1 edge; --border is decorative only (design contract §2).
       .replace(/(outline:\s*\n?\s*"[^"]*?)border-border bg-background/g, "$1border-input bg-card")
       .replace(/\bshadow-xs\b/g, "shadow-sm")
+      .replace(/from "cn";/g, 'from "@/lib/utils";')
       .replace(/\bshadow-(xl|2xl)\b/g, "shadow-lg")
   );
 }
