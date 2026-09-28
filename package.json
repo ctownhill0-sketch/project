@@ -15,7 +15,10 @@
     "prepare": "lefthook install"
   },
   "dependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "drizzle-orm": "0.45.3",
     "next": "16.3.6",
+    "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "zod": "4.6.5"
@@ -29,10 +32,12 @@
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/coverage-v8": "^5.0.2",
+    "drizzle-kit": "0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -41,6 +46,7 @@
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "5.0.2"
   },

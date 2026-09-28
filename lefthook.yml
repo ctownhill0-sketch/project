@@ -1,3 +1,7 @@
+output:
+  - summary
+  - failure
+
 # Runs before every commit. Why: catch type errors, lint problems, failing
 # tests and leaked secrets before they reach GitHub.
 pre-commit:
