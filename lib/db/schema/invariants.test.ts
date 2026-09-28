@@ -31,6 +31,16 @@ const EXPECTED_TABLES = [
   "review_classification",
   // mystery shops
   "mystery_shop",
+  // calls and pipeline
+  "brief",
+  "script",
+  "objection",
+  "call",
+  "pipeline_stage",
+  "deal",
+  "stage_event",
+  "vacancy_audit",
+  "roi_scenario",
 ];
 
 /** Tables that sit above the workspace boundary. */
