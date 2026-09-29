@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { DbHandle } from "@/lib/db/client";
 import { eq } from "drizzle-orm";
-import { company, contact, deal } from "@/lib/db/schema";
+import { company, contact, deal, dncEntry } from "@/lib/db/schema";
 import { createTestDb } from "@/lib/db/test-db";
 import { insertCompany, insertContact, insertOwner, insertStage } from "@/lib/db/test-fixtures";
 
@@ -77,5 +77,20 @@ describe("do-not-call rows can't be deleted", () => {
     const { own } = await insertOwner(db);
     const firm = await insertCompany(db, own, "Redfern Rentals");
     await expect(db.delete(company).where(eq(company.id, firm.id))).resolves.toBeDefined();
+  });
+});
+
+describe("do-not-call list entries are permanent", () => {
+  it("rejects deleting or changing a dnc_entry", async () => {
+    const { db } = handle;
+    const { own } = await insertOwner(db);
+    const [entry] = await db
+      .insert(dncEntry)
+      .values({ ...own, kind: "phone", value: "2015550142", reason: "Asked not to be called" })
+      .returning();
+    await expect(db.delete(dncEntry).where(eq(dncEntry.id, entry!.id))).rejects.toMatchObject(PERMANENT_DNC);
+    await expect(
+      db.update(dncEntry).set({ value: "2015550199" }).where(eq(dncEntry.id, entry!.id)),
+    ).rejects.toMatchObject(PERMANENT_DNC);
   });
 });

@@ -63,6 +63,19 @@ const EXPECTED_TABLES = [
   "job_run",
   "ai_call",
   "email_suppression",
+  // lead finder (Checkpoint F, migration 0004)
+  "territory",
+  "territory_town",
+  "saved_search",
+  "search_run",
+  "search_query",
+  "place_result",
+  "enrichment_run",
+  "enrichment_evidence",
+  "exclusion_rule",
+  "triage_decision",
+  "api_usage",
+  "dnc_entry",
 ];
 
 /** Tables that sit above the workspace boundary. */

@@ -10,7 +10,7 @@ describe("migrations", () => {
     );
     const names = result.rows.map((r) => r.table_name);
     expect(names).toEqual(expect.arrayContaining(["company", "mystery_shop", "deal", "audit_log"]));
-    expect(names).toHaveLength(46); // must match EXPECTED_TABLES in schema/invariants.test.ts;
+    expect(names).toHaveLength(58); // must match EXPECTED_TABLES in schema/invariants.test.ts;
     await close();
   });
 });

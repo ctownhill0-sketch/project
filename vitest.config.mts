@@ -17,6 +17,9 @@ export default defineConfig({
         test: {
           name: "node",
           environment: "node",
+          // Each DB test opens a fresh in-memory PGlite (WASM) and runs every migration: allow for it.
+          testTimeout: 20_000,
+          hookTimeout: 30_000,
           include: ["**/*.test.ts"],
           exclude: ["node_modules/**", "e2e/**"],
         },

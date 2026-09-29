@@ -78,6 +78,10 @@ export const review = pgTable("review", {
   publishedAt: timestamp("published_at", { withTimezone: true }),
   /** Attribution text as required by the source's terms. */
   attribution: text("attribution"),
+  authorName: text("author_name"),
+  authorUri: text("author_uri"),
+  /** Google reviews are a short-lived cache (finder spec §1.4). */
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
 });
 
 export const reviewCategory = pgEnum("review_category", [

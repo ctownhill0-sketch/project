@@ -10,8 +10,13 @@ Day-90 kill test. Current scope: the **$0 Free Build**. The spec is
 ## Free Build rules (hard)
 
 - **$0 total.** No credit card, paid plan or API key. If a step needs one, STOP and ask the founder.
-- No Anthropic API, Google Places, email sending, GoHighLevel, deployment, background jobs or polite fetcher.
-  Deferred work lives in `docs/ideas.md`. Never build it without the founder's go-ahead.
+- No Anthropic API, email sending, GoHighLevel, deployment or background jobs. Deferred work lives in
+  `docs/ideas.md`. Never build it without the founder's go-ahead.
+- **Exception (founder, DECISION + UPGRADE BRIEF §4):** Google Places API (New) for the Lead Finder, within the
+  daily/monthly caps, server-side only, key in `.env.local` (`GOOGLE_PLACES_API_KEY`), never in code, the DB, logs
+  or the client bundle. Tests use recorded fixtures only. The **polite fetcher** is back for website enrichment
+  (spec: `docs/superpowers/specs/2026-09-29-lead-finder.md`).
+- Decisions made on the founder's behalf go in `docs/decisions.md`; progress notes in `docs/progress.md`.
 - Local only: `pnpm dev` binds to 127.0.0.1, and `proxy.ts` rejects non-localhost Host headers.
 - Keep it deployable: Postgres dialect, `requireUser()` everywhere, `workspaceId` on every query.
 

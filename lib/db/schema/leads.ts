@@ -7,6 +7,7 @@ import {
   pgEnum,
   pgTable,
   text,
+  timestamp,
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
@@ -18,6 +19,10 @@ export const softwareKind = pgEnum("software_kind", [
   "doorloop",
   "rent_manager",
   "yardi",
+  "propertyware",
+  "rentvine",
+  "tenantcloud",
+  "other",
   "none",
   "unknown",
 ]);
@@ -32,6 +37,11 @@ export const companyStatus = pgEnum("company_status", [
 ]);
 
 export const estimateSource = pgEnum("estimate_source", ["csv", "manual", "website", "unknown"]);
+export const companySource = pgEnum("company_source", ["csv", "finder", "manual"]);
+
+/** Where each display field came from; Google-sourced fields expire (finder spec §1.4). */
+export type FieldSource = "google" | "website" | "csv" | "manual";
+export type FieldSources = Partial<Record<"name" | "phone" | "websiteUrl" | "address", FieldSource>>;
 
 /** Score breakdown: one line per scoring rule, so the popover can explain the number. */
 export type ScoreBreakdown = { rule: string; points: number; reason: string }[];
@@ -60,6 +70,18 @@ export const company = pgTable(
     softwareEvidence: text("software_evidence"),
     availableRentalsUrl: text("available_rentals_url"),
     googlePlaceId: text("google_place_id"),
+    source: companySource("source").notNull().default("csv"),
+    fieldSources: jsonb("field_sources").$type<FieldSources>().notNull().default({}),
+    googleExpiresAt: timestamp("google_expires_at", { withTimezone: true }),
+    address: text("address"),
+    businessEmail: text("business_email"),
+    serviceTypes: jsonb("service_types").$type<string[]>().notNull().default([]),
+    reviewFlagCount: integer("review_flag_count").notNull().default(0),
+    fitStatus: text("fit_status").notNull().default("ok"),
+    fitReason: text("fit_reason"),
+    sizeQuote: text("size_quote"),
+    softwareConfidence: text("software_confidence"),
+    needsSoftwareReview: boolean("needs_software_review").notNull().default(false),
     score: integer("score").notNull().default(0),
     scoreBreakdown: jsonb("score_breakdown").$type<ScoreBreakdown>().notNull().default([]),
     status: companyStatus("status").notNull().default("new"),

@@ -29,6 +29,20 @@
       "when": 1790628453892,
       "tag": "0003_dnc_no_delete",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790696354314,
+      "tag": "0004_lead_finder",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790696361064,
+      "tag": "0005_dnc_entry_permanent",
+      "breakpoints": true
     }
   ]
 }
