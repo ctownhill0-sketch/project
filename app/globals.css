@@ -255,6 +255,11 @@
   }
   /* The focused skip link paints above the sticky sidebar (both are positioned; DOM order would
      otherwise put the sidebar on top). The one stacking rule outside shadcn's overlays. */
+  /* The resize handle gets its value only after the panel library measures the layout. Until then it
+     would be an unlabeled separator for screen readers (and axe), so keep it hidden for that moment. */
+  [data-slot="resizable-handle"]:not([aria-valuenow]) {
+    display: none;
+  }
   [data-skip-link]:focus {
     z-index: 1;
   }

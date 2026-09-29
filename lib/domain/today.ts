@@ -27,8 +27,8 @@ export interface TodayItem extends FirmRef {
 }
 
 const HOUR = 3_600_000;
-const CHECKPOINTS_H = [1, 4, 24, 72];
-const REPLY_CHECK_WINDOW_H = 24 * 7;
+export const CHECKPOINTS_H = [1, 4, 24, 72];
+export const REPLY_CHECK_WINDOW_H = 24 * 7;
 
 /**
  * Today's work, in the call workspace's order (brief M6): callbacks (overdue first),

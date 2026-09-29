@@ -2,6 +2,27 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-29: Step 3, Mystery-shop tracker (M4): done
+
+**Built**
+
+- **Log a shop in under a minute:** search for the firm, pick the channel, "Just now" or an earlier time, with optional listing and notes. The hours bucket (business, Saturday or after hours) is computed in New York time, correct across daylight saving.
+- **Replies:** "Replied now" in one tap (with reply type: a person, an auto-reply or an AI assistant), or an earlier reply time. Reply times are validated.
+- **Stats:** two medians side by side (replies only, and no reply counted as never), P75/P90, and no-reply share at 24h and 72h, for all shops and split into business, Saturday and after hours.
+- **In-app reply checks** at 1h, 4h, 24h and 72h, on the Shops page, the dashboard and the bell.
+- **Ethics:** a panel on the page, and enforced rules: the founder's real name (Settings `shopperName`, falling back to the user's name), one shop per firm per 30 days, and never a do-not-call firm (D-S1).
+- **"Plan mystery shops" checklist:** from the Leads bulk bar, the finder's triage finish, or your top new leads. It shows each rentals page link and a done state derived from logged shops.
+
+**Evidence**
+
+- `pnpm test`: 66 files, 495 tests passed. The shops spec passes 8/8, axe at 0 on /shops and /shops/plan in both themes at all widths.
+
+**Fixed**
+
+- One full e2e run showed a transient axe failure on /finder/results that didn't reproduce in 3 repeats or a full rerun.
+- Root cause (most likely): the resize handle exists for a moment after hydration before the panel library sets its `aria-valuenow`.
+- The handle is now hidden by CSS until it has a value, and a new test checks that it then appears.
+
 ## 2026-09-29: Step 2, Leads completion: done
 
 **Built**

@@ -25,7 +25,7 @@ interface LeadHit {
 
 const ACTIONS: RecentItem[] = [
   { label: "Find leads in a town", href: "/finder" },
-  { label: "Log a mystery shop", href: "/shops?new=1" },
+  { label: "Log a mystery shop", href: "/shops#new" },
   { label: "Start a call block", href: "/calls?mode=block" },
   { label: "New audit", href: "/audits?new=1" },
 ];

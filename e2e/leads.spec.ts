@@ -50,6 +50,13 @@ test.describe("Leads split view", () => {
     await expect(grid.getByRole("row", { selected: true }).getByRole("gridcell").nth(1)).toHaveText(first);
   });
 
+  test("the resize handle appears with a value once the split is measured", async ({ page }) => {
+    await page.goto("/leads");
+    const handle = page.getByRole("separator", { name: "Resize list and detail" });
+    await expect(handle).toBeVisible();
+    await expect(handle).toHaveAttribute("aria-valuenow", /\d/);
+  });
+
   test("a linked record opens directly", async ({ page }) => {
     await page.goto("/leads?status=excluded");
     const row = page.getByRole("grid").getByRole("row").nth(2);

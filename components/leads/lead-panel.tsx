@@ -89,7 +89,7 @@ export function LeadPanel({ lead }: { lead: LeadDetail }) {
               Call <span className="num">{formatPhone(lead.phone)}</span>
             </a>
           ) : null}
-          <Link href={`/shops?new=1&lead=${lead.id}`} className={cn(buttonVariants({ variant: "outline" }))}>
+          <Link href={`/shops?lead=${lead.id}#new`} className={cn(buttonVariants({ variant: "outline" }))}>
             Log a shop
           </Link>
         </div>

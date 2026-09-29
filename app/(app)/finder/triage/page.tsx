@@ -58,8 +58,8 @@ export default async function TriagePage({ searchParams }: PageProps<"/finder/tr
       {!detail ? (
         <EmptyState
           title="All triaged"
-          sentence="Every place from this search has a decision. New leads are waiting in Leads."
-          action={{ label: "Open leads", href: "/leads?status=new" }}
+          sentence="Every place from this search has a decision. Next, shop your best new leads."
+          action={{ label: "Plan mystery shops", href: "/shops/plan" }}
         />
       ) : (
         <TriageView
