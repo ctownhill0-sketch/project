@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { and, eq } from "drizzle-orm";
 import type { DbHandle } from "@/lib/db/client";
 import {
+  auditLog,
   apiUsage,
   company,
   dncEntry,
@@ -233,6 +234,41 @@ describe("enrichment", () => {
     expect(evidence.every((e) => e.sourceUrl.startsWith("https://"))).toBe(true);
   });
 
+  it("updates the lead too when a place is enriched after it was added", async () => {
+    const { ctx } = await workspace();
+    const run = await createSearchRun(
+      handle.db,
+      ctx,
+      { towns: [{ town: "Jersey City", state: "NJ" }], keywords: ["pm"] },
+      NOW,
+    );
+    await runAll(ctx, run.id);
+    const target = (await places(ctx.workspaceId)).find((p) => p.placeId === "fx-jersey-city-103")!;
+    const { companyId } = await triagePlace(handle.db, ctx, target.id, "add", NOW);
+    const home = target.websiteUri!;
+    const source: PageSource = {
+      get: async (url) =>
+        url === home
+          ? {
+              ok: true,
+              url,
+              status: 200,
+              html: `<a href="https://x.appfolio.com/connect">Portal</a><p>We manage 220 units.</p>`,
+              bytes: 10,
+              ms: 1,
+            }
+          : { ok: false, url, reason: "http", status: 404, bytes: 0, ms: 1 },
+    };
+    await enrichPending(handle.db, ctx, run.id, source, { only: [target.id] }, NOW);
+    const [lead] = await handle.db.select().from(company).where(eq(company.id, companyId!));
+    expect(lead).toMatchObject({
+      detectedSoftware: "appfolio",
+      estUnits: 220,
+      estUnitsSource: "website",
+      score: 0,
+    });
+  });
+
   it("records a failed site instead of hiding it", async () => {
     const { ctx } = await workspace();
     const run = await createSearchRun(
@@ -310,6 +346,32 @@ describe("triage", () => {
     expect(back).toMatchObject({ triageStatus: "pending", companyId: null });
   });
 
+  it("moves a place to Duplicates when adding finds it is already a lead", async () => {
+    const { ctx } = await workspace();
+    const run = await createSearchRun(
+      handle.db,
+      ctx,
+      {
+        towns: [
+          { town: "Hoboken", state: "NJ" },
+          { town: "Jersey City", state: "NJ" },
+        ],
+        keywords: ["pm"],
+      },
+      NOW,
+    );
+    await runAll(ctx, run.id);
+    const rows = await places(ctx.workspaceId);
+    // Fixture places 010 (Hoboken) and 110 (Jersey City) share the phone (201) 555-0110.
+    const first = rows.find((r) => r.placeId === "fx-hoboken-010")!;
+    const second = rows.find((r) => r.placeId === "fx-jersey-city-110")!;
+    await triagePlace(handle.db, ctx, first.id, "add", NOW);
+    const result = await triagePlace(handle.db, ctx, second.id, "add", NOW);
+    expect(result).toMatchObject({ companyId: null, blocked: expect.stringMatching(/Already a lead/) });
+    const after = (await places(ctx.workspaceId)).find((r) => r.id === second.id)!;
+    expect(after).toMatchObject({ dedupeStatus: "duplicate", triageStatus: "skipped" });
+  });
+
   it("skip and not-a-fit are undoable; do-not-call is permanent", async () => {
     const { ctx } = await workspace();
     const run = await createSearchRun(
@@ -357,7 +419,7 @@ describe("purgeExpiredGoogleContent", () => {
     const { companyId } = await triagePlace(handle.db, ctx, target.id, "add", NOW);
 
     const later = new Date(NOW.getTime() + 31 * 24 * 3600 * 1000);
-    const counts = await purgeExpiredGoogleContent(handle.db, ctx.workspaceId, later);
+    const counts = await purgeExpiredGoogleContent(handle.db, ctx, later);
     expect(counts.places).toBeGreaterThan(40);
     expect(counts.reviews).toBe(3);
 
@@ -379,6 +441,12 @@ describe("purgeExpiredGoogleContent", () => {
     });
     expect(lead!.fieldSources.name).toBe("website");
     expect(await handle.db.select().from(review).where(eq(review.placeResultId, target.id))).toHaveLength(0);
+    const audits = await handle.db
+      .select()
+      .from(auditLog)
+      .where(and(eq(auditLog.workspaceId, ctx.workspaceId), eq(auditLog.entity, "google_cache")));
+    expect(audits).toHaveLength(1);
+    expect(audits[0]!.diff).toMatchObject({ after: { places: counts.places, companies: 1, reviews: 3 } });
   });
 
   it("does nothing before expiry", async () => {
@@ -390,7 +458,7 @@ describe("purgeExpiredGoogleContent", () => {
       NOW,
     );
     await runAll(ctx, run.id);
-    expect(await purgeExpiredGoogleContent(handle.db, ctx.workspaceId, NOW)).toEqual({
+    expect(await purgeExpiredGoogleContent(handle.db, ctx, NOW)).toEqual({
       places: 0,
       companies: 0,
       reviews: 0,

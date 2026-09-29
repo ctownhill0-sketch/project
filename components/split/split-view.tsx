@@ -58,6 +58,21 @@ export function SplitView({
       </>
     );
   }
+  if (!hydrated) {
+    // Server render and hydration: the resizable panels only get their sizes in the browser, so paint
+    // the same split with CSS grid first (otherwise the panels lay out at their content's width).
+    return (
+      <div
+        className="border-border bg-card hidden min-h-0 min-w-0 flex-1 overflow-hidden rounded-xl border xl:grid"
+        style={{ gridTemplateColumns: `minmax(0, ${listSize}fr) minmax(0, ${100 - listSize}fr)` }}
+      >
+        <div className="border-border h-full min-w-0 overflow-y-auto border-r">{list}</div>
+        <section aria-label={detailLabel} className="h-full min-w-0 overflow-y-auto">
+          {detail}
+        </section>
+      </div>
+    );
+  }
   return (
     // Hidden below 1280px by CSS too, so narrow screens never paint the split before hydration.
     <div className="hidden min-h-0 min-w-0 flex-1 xl:flex">
@@ -66,12 +81,16 @@ export function SplitView({
         orientation="horizontal"
         className="border-border bg-card min-h-0 flex-1 rounded-xl border"
       >
-        <ResizablePanel id={`${id}-list`} defaultSize={`${listSize}`} minSize={300}>
-          <div className="h-full overflow-y-auto">{list}</div>
+        <ResizablePanel id={`${id}-list`} defaultSize={`${listSize}`} minSize={300} className="min-w-0">
+          <div className="h-full min-w-0 overflow-y-auto">{list}</div>
         </ResizablePanel>
-        {/* The resize handle only works once hydrated, and until then it has no value to announce. */}
-        {hydrated ? <ResizableHandle withHandle aria-label="Resize list and detail" /> : null}
-        <ResizablePanel id={`${id}-detail`} defaultSize={`${100 - listSize}`} minSize={420}>
+        <ResizableHandle withHandle aria-label="Resize list and detail" />
+        <ResizablePanel
+          id={`${id}-detail`}
+          defaultSize={`${100 - listSize}`}
+          minSize={420}
+          className="min-w-0"
+        >
           <section aria-label={detailLabel} className="h-full overflow-y-auto">
             {detail}
           </section>

@@ -18,7 +18,8 @@ test.describe("Leads", () => {
     await page.goto("/leads");
     await page.getByRole("link", { name: "Excluded", exact: true }).click();
     await expect(page).toHaveURL(/status=excluded/);
-    await expect(page.getByText(/Showing 5 of 50/)).toBeVisible();
+    // Other specs may add leads to the shared e2e database, so only the filtered count is fixed.
+    await expect(page.getByText(/Showing 5 of \d+/)).toBeVisible();
     await expect(page.getByRole("link", { name: "Excluded", exact: true })).toHaveAttribute(
       "aria-current",
       "true",

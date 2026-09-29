@@ -133,6 +133,9 @@ describe("seed", () => {
         "tenantcloud.com",
       ].sort(),
     );
+    const exclusions = await handle.db.select().from(s.exclusionRule);
+    expect(exclusions.some((r) => r.kind === "chain" && r.pattern === "Greystar")).toBe(true);
+    expect(exclusions.some((r) => r.kind === "not_a_fit" && r.category === "hoa")).toBe(true);
     const rules = await handle.db.select().from(s.fairHousingRule);
     expect(rules.length).toBeGreaterThanOrEqual(8);
     expect(rules.some((r) => r.category === "source_of_income")).toBe(true);

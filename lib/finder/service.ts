@@ -167,8 +167,8 @@ function usageHooks(
 export interface RunInput {
   towns: TownRef[];
   keywords: string[];
-  territoryId?: string | null;
-  savedSearchId?: string | null;
+  territoryId?: string | null | undefined;
+  savedSearchId?: string | null | undefined;
 }
 
 export async function createSearchRun(db: Db, ctx: Ctx, input: RunInput, now: Date) {
@@ -649,6 +649,8 @@ export async function enrichPending(
           ...scored(placeFacts(next, evidence), config.weights),
         })
         .where(eq(placeResult.id, place.id));
+      if (place.companyId && drafts.length)
+        await applyEvidenceToCompany(tx, ctx, place.companyId, evidence, config.weights, now);
       return {
         result: null,
         entityId: run!.id,
@@ -774,78 +776,107 @@ export async function triagePlace(
   placeResultId: string,
   decision: TriageKind,
   now: Date,
-): Promise<{ companyId: string | null }> {
+): Promise<{ companyId: string | null; blocked?: string }> {
   const config = await getFinderConfig(db, ctx.workspaceId);
-  return withAudit(db, ctx, { action: "update", entity: "place_result" }, async (tx) => {
-    const [place] = await tx
-      .select()
-      .from(placeResult)
-      .where(and(eq(placeResult.id, placeResultId), eq(placeResult.workspaceId, ctx.workspaceId)));
-    if (!place) throw new Error("Place not found.");
-    if (place.triageStatus !== "pending")
-      throw new Error("This place was already triaged. Undo first to change it.");
-    let companyId: string | null = null;
+  return withAudit<{ companyId: string | null; blocked?: string }>(
+    db,
+    ctx,
+    { action: "update", entity: "place_result" },
+    async (tx) => {
+      const [place] = await tx
+        .select()
+        .from(placeResult)
+        .where(and(eq(placeResult.id, placeResultId), eq(placeResult.workspaceId, ctx.workspaceId)));
+      if (!place) throw new Error("Place not found.");
+      if (place.triageStatus !== "pending")
+        throw new Error("This place was already triaged. Undo first to change it.");
+      let companyId: string | null = null;
 
-    if (decision === "add") {
-      // Re-check against today's leads and do-not-call list, not just what the search saw.
-      const [existing, dncList] = await Promise.all([
-        loadExisting(tx, ctx.workspaceId),
-        loadDncList(tx, ctx.workspaceId),
-      ]);
-      const check = findDuplicate(
-        {
-          placeId: place.placeId,
-          normalizedDomain: place.normalizedDomain,
-          normalizedPhone: place.normalizedPhone,
-          normalizedName: normalizeFirmName(place.displayName ?? place.websiteName ?? ""),
-          city: place.town,
-        },
-        existing,
-        dncList,
-      );
-      if (place.dedupeStatus === "dnc" || check.status === "dnc") {
-        throw new Error("This firm is on the do-not-call list and can't be added.");
+      if (decision === "add") {
+        // Re-check against today's leads and do-not-call list, not just what the search saw.
+        const [existing, dncList] = await Promise.all([
+          loadExisting(tx, ctx.workspaceId),
+          loadDncList(tx, ctx.workspaceId),
+        ]);
+        const check = findDuplicate(
+          {
+            placeId: place.placeId,
+            normalizedDomain: place.normalizedDomain,
+            normalizedPhone: place.normalizedPhone,
+            normalizedName: normalizeFirmName(place.displayName ?? place.websiteName ?? ""),
+            city: place.town,
+          },
+          existing,
+          dncList,
+        );
+        if (place.dedupeStatus === "dnc")
+          throw new Error("This firm is on the do-not-call list and can't be added.");
+        if (check.status === "dnc" || check.status === "duplicate") {
+          // Found since the search ran (e.g. another place with the same phone was just added):
+          // record it on the place so it leaves the triage queue, and say why.
+          await tx
+            .update(placeResult)
+            .set({
+              dedupeStatus: check.status,
+              dedupeCompanyId: check.companyId,
+              dedupeReason: check.reason,
+              // Resolved without a decision from the founder: count it as done in the triage progress.
+              triageStatus: "skipped",
+            })
+            .where(eq(placeResult.id, place.id));
+          const blocked =
+            check.status === "dnc"
+              ? `Not added: ${check.reason ?? "do not call"}.`
+              : `${check.reason ?? "Already a lead"}. Moved to Duplicates.`;
+          return {
+            result: { companyId: null, blocked },
+            entityId: place.id,
+            after: { dedupeStatus: check.status, reason: check.reason },
+          };
+        }
+        companyId = await createCompanyFromPlace(tx, ctx, place, config, now);
+      } else if (decision === "dnc") {
+        const entries = [
+          { kind: "place_id" as const, value: place.placeId },
+          ...(place.normalizedDomain ? [{ kind: "domain" as const, value: place.normalizedDomain }] : []),
+          ...(place.normalizedPhone ? [{ kind: "phone" as const, value: place.normalizedPhone }] : []),
+        ];
+        await tx
+          .insert(dncEntry)
+          .values(
+            entries.map((e) => ({
+              ...e,
+              workspaceId: ctx.workspaceId,
+              createdById: ctx.userId,
+              reason: "Marked do not call in triage",
+            })),
+          )
+          .onConflictDoNothing();
+        if (place.dedupeCompanyId)
+          await tx.update(company).set({ dncFlag: true }).where(eq(company.id, place.dedupeCompanyId));
       }
-      if (check.status === "duplicate") throw new Error(`Already a lead (${check.reason ?? "duplicate"}).`);
-      companyId = await createCompanyFromPlace(tx, ctx, place, config, now);
-    } else if (decision === "dnc") {
-      const entries = [
-        { kind: "place_id" as const, value: place.placeId },
-        ...(place.normalizedDomain ? [{ kind: "domain" as const, value: place.normalizedDomain }] : []),
-        ...(place.normalizedPhone ? [{ kind: "phone" as const, value: place.normalizedPhone }] : []),
-      ];
-      await tx
-        .insert(dncEntry)
-        .values(
-          entries.map((e) => ({
-            ...e,
-            workspaceId: ctx.workspaceId,
-            createdById: ctx.userId,
-            reason: "Marked do not call in triage",
-          })),
-        )
-        .onConflictDoNothing();
-      if (place.dedupeCompanyId)
-        await tx.update(company).set({ dncFlag: true }).where(eq(company.id, place.dedupeCompanyId));
-    }
 
-    const status = decision === "add" ? "added" : decision === "skip" ? "skipped" : decision;
-    await tx.update(placeResult).set({ triageStatus: status, companyId }).where(eq(placeResult.id, place.id));
-    await tx.insert(triageDecision).values({
-      workspaceId: ctx.workspaceId,
-      createdById: ctx.userId,
-      placeResultId: place.id,
-      decision,
-      previousStatus: place.triageStatus,
-      companyId,
-    });
-    return {
-      result: { companyId },
-      entityId: place.id,
-      before: { triageStatus: place.triageStatus },
-      after: { triageStatus: status, companyId },
-    };
-  });
+      const status = decision === "add" ? "added" : decision === "skip" ? "skipped" : decision;
+      await tx
+        .update(placeResult)
+        .set({ triageStatus: status, companyId })
+        .where(eq(placeResult.id, place.id));
+      await tx.insert(triageDecision).values({
+        workspaceId: ctx.workspaceId,
+        createdById: ctx.userId,
+        placeResultId: place.id,
+        decision,
+        previousStatus: place.triageStatus,
+        companyId,
+      });
+      return {
+        result: { companyId },
+        entityId: place.id,
+        before: { triageStatus: place.triageStatus },
+        after: { triageStatus: status, companyId },
+      };
+    },
+  );
 }
 
 async function createCompanyFromPlace(
@@ -953,6 +984,55 @@ async function createCompanyFromPlace(
   return firm.id;
 }
 
+/** When a place that is already a lead gets enriched, the lead gets the new facts too (and a new score). */
+async function applyEvidenceToCompany(
+  tx: Tx,
+  ctx: Ctx,
+  companyId: string,
+  evidence: Evidence[],
+  weights: ScoringWeights,
+  now: Date,
+) {
+  const latest = (kind: Evidence["kind"]) => evidence.filter((e) => e.kind === kind).at(-1);
+  const software = latest("software");
+  const units = latest("size_units");
+  const listings = latest("listing_count");
+  const email = latest("email");
+  const patch: Partial<typeof company.$inferInsert> = {};
+  if (software) {
+    patch.detectedSoftware = software.value as Software;
+    patch.softwareEvidence = software.quote;
+    patch.softwareConfidence = software.confidence;
+    patch.needsSoftwareReview = software.confidence === "low";
+  }
+  if (units)
+    Object.assign(patch, {
+      estUnits: Number(units.value),
+      estUnitsSource: "website" as const,
+      sizeQuote: units.quote,
+    });
+  if (listings)
+    Object.assign(patch, {
+      liveListingsCount: Number(listings.value),
+      liveListingsSource: "website" as const,
+      availableRentalsUrl: listings.sourceUrl,
+    });
+  if (email) patch.businessEmail = email.value;
+  const services = [...new Set(evidence.filter((e) => e.kind === "service_type").map((e) => e.value))];
+  if (services.length) patch.serviceTypes = services;
+  await tx.update(company).set(patch).where(eq(company.id, companyId));
+  await tx
+    .update(enrichmentEvidence)
+    .set({ companyId })
+    .where(
+      inArray(
+        enrichmentEvidence.id,
+        evidence.map((e) => e.id),
+      ),
+    );
+  await rescoreCompany(tx, ctx, companyId, weights, "Website checked", now);
+}
+
 async function bumpTerritory(tx: Tx, place: PlaceRow, delta: number) {
   const runId = place.lastRunId ?? place.firstRunId;
   if (!runId || !place.town || !place.state) return;
@@ -1044,8 +1124,25 @@ export async function undoLastTriage(
 // Google content expiry (spec §1.4)
 
 /** Replaces or blanks Google-sourced fields older than the cache window. Place IDs are kept. */
-export async function purgeExpiredGoogleContent(db: Db, workspaceId: string, now: Date) {
+export async function purgeExpiredGoogleContent(db: Db, ctx: Ctx, now: Date) {
+  const workspaceId = ctx.workspaceId;
   const cutoff = now.toISOString();
+  return db.transaction(async (tx) => {
+    const counts = await purge(tx, workspaceId, cutoff);
+    // One summary audit row per purge that changed something (never on a no-op page load).
+    if (counts.places + counts.companies + counts.reviews > 0) {
+      await writeAudit(
+        tx,
+        ctx,
+        { action: "update", entity: "google_cache" },
+        { after: { ...counts, reason: "Google cache window passed" } },
+      );
+    }
+    return counts;
+  });
+}
+
+async function purge(db: Tx, workspaceId: string, cutoff: string) {
   const places = await db
     .update(placeResult)
     .set({

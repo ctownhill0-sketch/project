@@ -155,3 +155,61 @@ describe("DataGrid", () => {
     expect(screen.getByText("No leads match.")).toBeInTheDocument();
   });
 });
+
+describe("DataGrid selection", () => {
+  function renderSelectable() {
+    const bulk = vi.fn();
+    render(
+      <DataGrid
+        label="Places"
+        rows={firms}
+        columns={columns}
+        getRowId={(f) => f.id}
+        rowLabel={(f) => f.name}
+        selectedId="a"
+        hrefPrefix="/finder/results?place="
+        storageKey="test-grid-select"
+        bulkActions={(ids, clear) => (
+          <button type="button" onClick={() => (bulk(ids), clear())}>
+            Add {ids.length}
+          </button>
+        )}
+      />,
+    );
+    return bulk;
+  }
+
+  it("selects rows with checkboxes and shows the bulk bar with a count", () => {
+    const bulk = renderSelectable();
+    expect(screen.queryByRole("toolbar", { name: "Bulk actions" })).toBeNull();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select Birch" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select Cedar" }));
+    const bar = screen.getByRole("toolbar", { name: "Bulk actions" });
+    expect(bar).toHaveTextContent("2 selected");
+    fireEvent.click(within(bar).getByRole("button", { name: "Add 2" }));
+    expect(bulk).toHaveBeenCalledWith(["b", "c"]);
+    expect(screen.queryByRole("toolbar", { name: "Bulk actions" })).toBeNull();
+  });
+
+  it("selects all and clears", () => {
+    renderSelectable();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select all" }));
+    expect(screen.getByRole("toolbar", { name: "Bulk actions" })).toHaveTextContent("3 selected");
+    fireEvent.click(screen.getByRole("button", { name: "Clear selection" }));
+    expect(screen.queryByRole("toolbar", { name: "Bulk actions" })).toBeNull();
+  });
+
+  it("toggles the current row with X", () => {
+    renderSelectable();
+    fireEvent.keyDown(screen.getByRole("grid"), { key: "x" });
+    expect(screen.getByRole("checkbox", { name: "Select Alder" })).toBeChecked();
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("clicking a checkbox doesn't open the row", () => {
+    renderSelectable();
+    push.mockClear();
+    fireEvent.click(screen.getByRole("checkbox", { name: "Select Cedar" }));
+    expect(push).not.toHaveBeenCalled();
+  });
+});

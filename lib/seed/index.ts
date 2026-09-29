@@ -86,6 +86,7 @@ export const PIPELINE_STAGES = [
 
 export { DEFAULT_SETTINGS } from "@/lib/settings/defaults";
 import { DEFAULT_SOFTWARE_PATTERNS } from "@/lib/domain/software";
+import { DEFAULT_EXCLUSION_RULES } from "@/lib/domain/exclusion";
 
 const SOFTWARE_PATTERNS = DEFAULT_SOFTWARE_PATTERNS;
 
@@ -289,6 +290,7 @@ export async function seed(
       .insert(s.setting)
       .values(Object.entries(DEFAULT_SETTINGS).map(([key, value]) => ({ ...own, key, value })));
     await tx.insert(s.softwarePattern).values(SOFTWARE_PATTERNS.map((p) => ({ ...own, ...p })));
+    await tx.insert(s.exclusionRule).values(DEFAULT_EXCLUSION_RULES.map((r) => ({ ...own, ...r })));
     await tx.insert(s.fairHousingRule).values(FAIR_HOUSING_RULES.map((r) => ({ ...own, ...r })));
     await tx.insert(s.script).values(SCRIPTS.map((x) => ({ ...own, ...x })));
     await tx.insert(s.objection).values(OBJECTIONS.map((x) => ({ ...own, ...x })));

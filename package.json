@@ -19,7 +19,8 @@
     "db:setup": "pnpm db:migrate && pnpm db:seed",
     "db:reset": "tsx scripts/reset.ts && pnpm db:setup",
     "ui:add": "shadcn add --yes",
-    "ui:normalize": "tsx scripts/normalize-ui.ts && prettier --write components/ui"
+    "ui:normalize": "tsx scripts/normalize-ui.ts && prettier --write components/ui",
+    "scan:key": "node scripts/scan-client-bundle.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

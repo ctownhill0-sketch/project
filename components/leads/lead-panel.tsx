@@ -109,7 +109,7 @@ export function LeadPanel({ lead }: { lead: LeadDetail }) {
         {stats.count === 0 ? (
           <p className="text-muted-foreground">Not shopped yet. Log a shop to measure how fast they reply.</p>
         ) : (
-          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5">
+          <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-6 gap-y-1.5 [&_dd]:min-w-0 [&_dd]:break-words">
             <dt className="text-muted-foreground">Median, replies only</dt>
             <dd>{minutesOrUnknown(stats.medianRepliedMinutes)}</dd>
             <dt className="text-muted-foreground">Median, no reply counted</dt>
@@ -123,7 +123,7 @@ export function LeadPanel({ lead }: { lead: LeadDetail }) {
       </Section>
 
       <Section title="Details">
-        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5">
+        <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-6 gap-y-1.5 [&_dd]:min-w-0 [&_dd]:break-words">
           <dt className="text-muted-foreground">Software</dt>
           <dd className="flex flex-wrap items-center gap-2">
             {softwareLabel(lead.software)}

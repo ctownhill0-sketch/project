@@ -11,7 +11,7 @@ export default defineConfig({
   retries: 0,
   reporter: process.env.CI ? "github" : "list",
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: "http://127.0.0.1:3100",
     trace: "retain-on-failure",
     ...(executablePath ? { launchOptions: { executablePath } } : {}),
   },
@@ -23,10 +23,14 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], viewport: { width: 320, height: 640 }, hasTouch: true },
     },
   ],
+  // Its own port and database folder, reset on every run, with recorded Google responses and
+  // fixture websites: e2e never touches the founder's data or the internet, and never spends a
+  // real Google request (finder spec §3, D-F7).
   webServer: {
-    command: "pnpm db:setup && pnpm dev",
-    url: "http://127.0.0.1:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    command: "pnpm db:reset && next dev -H 127.0.0.1 -p 3100",
+    url: "http://127.0.0.1:3100",
+    reuseExistingServer: false,
+    timeout: 180_000,
+    env: { PGLITE_DIR: ".data/e2e/pglite", PLACES_TRANSPORT: "fixtures", WEB_TRANSPORT: "fixtures" },
   },
 });
