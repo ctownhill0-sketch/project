@@ -85,20 +85,9 @@ export const PIPELINE_STAGES = [
 ] as const;
 
 export { DEFAULT_SETTINGS } from "@/lib/settings/defaults";
+import { DEFAULT_SOFTWARE_PATTERNS } from "@/lib/domain/software";
 
-const SOFTWARE_PATTERNS: {
-  software: (typeof s.softwareKind.enumValues)[number];
-  pattern: string;
-  kind: "domain" | "substring";
-}[] = [
-  { software: "appfolio", pattern: "appfolio.com", kind: "domain" },
-  { software: "buildium", pattern: "managebuilding.com", kind: "domain" },
-  { software: "doorloop", pattern: "doorloop.com", kind: "domain" },
-  { software: "rent_manager", pattern: "rentmanager", kind: "substring" },
-  { software: "rent_manager", pattern: "rmresident", kind: "substring" },
-  { software: "yardi", pattern: "rentcafe", kind: "substring" },
-  { software: "yardi", pattern: "yardibreeze", kind: "substring" },
-];
+const SOFTWARE_PATTERNS = DEFAULT_SOFTWARE_PATTERNS;
 
 /** Layer-1 fair-housing patterns (M14). Editable in Settings. Screening aid, not legal advice. */
 export const FAIR_HOUSING_RULES = [

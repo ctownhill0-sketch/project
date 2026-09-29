@@ -106,3 +106,63 @@ describe("formatMinutes", () => {
     expect(formatMinutes(3060)).toBe("2d 3h");
   });
 });
+
+describe("finder signals (spec §6)", () => {
+  it("adds +10 when reviews mention slow or no responses", () => {
+    const r = scoreLead({ ...base, isLocal: false, reviewFlags: 2 }, DEFAULT_WEIGHTS);
+    expect(r.breakdown.find((b) => b.rule === "reviewSignals")).toEqual({
+      rule: "reviewSignals",
+      points: 10,
+      reason: "2 reviews mention slow or no responses",
+    });
+    expect(
+      scoreLead({ ...base, reviewFlags: 0 }, DEFAULT_WEIGHTS).breakdown.some(
+        (b) => b.rule === "reviewSignals",
+      ),
+    ).toBe(false);
+  });
+
+  it("takes 30 off a likely chain or not-a-fit, never below 0", () => {
+    const r = scoreLead(
+      { ...base, fit: { status: "not_a_fit", reason: "Probably not a fit: HOA or condo association only" } },
+      DEFAULT_WEIGHTS,
+    );
+    expect(r.score).toBe(70);
+    expect(r.breakdown.at(-1)).toMatchObject({ rule: "chainOrNotFit", points: -30 });
+    const low = scoreLead(
+      {
+        software: "unknown",
+        units: null,
+        liveListings: null,
+        isLocal: false,
+        shop: null,
+        fit: { status: "excluded", reason: "Chain" },
+      },
+      DEFAULT_WEIGHTS,
+    );
+    expect(low.score).toBe(0);
+  });
+
+  it("fills in missing new weights from the defaults for older saved settings", () => {
+    const old = {
+      notAppfolio: 30,
+      noSoftware: 20,
+      listings3to25: 20,
+      slowReply: 25,
+      units50to500: 15,
+      local: 10,
+    };
+    const r = scoreLead({ ...base, isLocal: false, reviewFlags: 1 }, old as typeof DEFAULT_WEIGHTS);
+    expect(r.breakdown.some((b) => b.rule === "reviewSignals" && b.points === 10)).toBe(true);
+  });
+
+  it("mentions review flags and fit problems in the why line", () => {
+    expect(whyThisLead({ ...base, reviewFlags: 2 })).toBe(
+      "Buildium, ~180 units, 14 listings, first reply 4h 12m, 2 reviews mention no callback",
+    );
+    expect(whyThisLead({ ...base, reviewFlags: 1 })).toContain("1 review mentions no callback");
+    expect(
+      whyThisLead({ ...base, fit: { status: "not_a_fit", reason: "Probably not a fit: Single building" } }),
+    ).toContain("Probably not a fit: Single building");
+  });
+});

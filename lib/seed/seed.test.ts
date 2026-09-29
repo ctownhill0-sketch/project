@@ -120,12 +120,17 @@ describe("seed", () => {
     expect(patterns.map((p) => p.pattern).sort()).toEqual(
       [
         "appfolio.com",
+        "buildium.com",
         "doorloop.com",
         "managebuilding.com",
         "rentcafe",
         "rentmanager",
         "rmresident",
+        "securecafe",
         "yardibreeze",
+        "propertyware.com",
+        "rentvine.com",
+        "tenantcloud.com",
       ].sort(),
     );
     const rules = await handle.db.select().from(s.fairHousingRule);

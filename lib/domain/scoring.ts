@@ -1,4 +1,15 @@
-export type Software = "appfolio" | "buildium" | "doorloop" | "rent_manager" | "yardi" | "none" | "unknown";
+export type Software =
+  | "appfolio"
+  | "buildium"
+  | "doorloop"
+  | "rent_manager"
+  | "yardi"
+  | "propertyware"
+  | "rentvine"
+  | "tenantcloud"
+  | "other"
+  | "none"
+  | "unknown";
 
 export interface ScoringWeights {
   notAppfolio: number;
@@ -7,6 +18,10 @@ export interface ScoringWeights {
   slowReply: number;
   units50to500: number;
   local: number;
+  /** +10 when reviews mention slow or no responses (finder spec §6). */
+  reviewSignals: number;
+  /** −30 for a likely chain or "probably not a fit". */
+  chainOrNotFit: number;
 }
 
 export const DEFAULT_WEIGHTS: ScoringWeights = {
@@ -16,6 +31,8 @@ export const DEFAULT_WEIGHTS: ScoringWeights = {
   slowReply: 25,
   units50to500: 15,
   local: 10,
+  reviewSignals: 10,
+  chainOrNotFit: -30,
 };
 
 export interface ShopFacts {
@@ -33,6 +50,9 @@ export interface LeadFacts {
   liveListings: number | null;
   isLocal: boolean;
   shop: ShopFacts | null;
+  /** Reviews flagged for slow/no responses (from the sample of up to 5). */
+  reviewFlags?: number;
+  fit?: { status: "ok" | "excluded" | "not_a_fit"; reason: string | null };
 }
 
 export type BreakdownLine = { rule: string; points: number; reason: string };
@@ -51,6 +71,10 @@ const SOFTWARE_LABEL: Record<Software, string> = {
   doorloop: "DoorLoop",
   rent_manager: "Rent Manager",
   yardi: "Yardi",
+  propertyware: "Propertyware",
+  rentvine: "Rentvine",
+  tenantcloud: "TenantCloud",
+  other: "Other software",
   none: "No portal found",
   unknown: "Software unknown",
 };
@@ -60,7 +84,9 @@ export function softwareLabel(software: Software): string {
 }
 
 /** Lead score (brief M1): editable weights, capped 0–100, AppFolio excluded. */
-export function scoreLead(facts: LeadFacts, weights: ScoringWeights): ScoreResult {
+export function scoreLead(facts: LeadFacts, saved: ScoringWeights): ScoreResult {
+  // Settings saved before a weight existed fall back to its default.
+  const weights: ScoringWeights = { ...DEFAULT_WEIGHTS, ...saved };
   if (facts.software === "appfolio") {
     return {
       score: 0,
@@ -98,6 +124,21 @@ export function scoreLead(facts: LeadFacts, weights: ScoringWeights): ScoreResul
     lines.push({ rule: "units50to500", points: weights.units50to500, reason: `About ${facts.units} units` });
   }
   if (facts.isLocal) lines.push({ rule: "local", points: weights.local, reason: "In the target metro" });
+  const flags = facts.reviewFlags ?? 0;
+  if (flags > 0) {
+    lines.push({
+      rule: "reviewSignals",
+      points: weights.reviewSignals,
+      reason: `${flags} review${flags === 1 ? "" : "s"} mention slow or no responses`,
+    });
+  }
+  if (facts.fit && facts.fit.status !== "ok") {
+    lines.push({
+      rule: "chainOrNotFit",
+      points: weights.chainOrNotFit,
+      reason: facts.fit.reason ?? (facts.fit.status === "excluded" ? "Likely chain" : "Probably not a fit"),
+    });
+  }
   const total = lines.reduce((sum, l) => sum + l.points, 0);
   return { score: Math.min(100, Math.max(0, total)), excluded: false, breakdown: lines };
 }
@@ -120,5 +161,8 @@ export function whyThisLead(facts: LeadFacts): string {
   else if (shop.anyNoReply) parts.push("no reply to shop");
   else if (shop.medianReplyMinutes !== null)
     parts.push(`first reply ${formatMinutes(shop.medianReplyMinutes)}`);
+  const flags = facts.reviewFlags ?? 0;
+  if (flags > 0) parts.push(`${flags} review${flags === 1 ? " mentions" : "s mention"} no callback`);
+  if (facts.fit && facts.fit.status !== "ok" && facts.fit.reason) parts.push(facts.fit.reason);
   return parts.join(", ");
 }

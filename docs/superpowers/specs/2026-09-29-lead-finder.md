@@ -14,7 +14,7 @@
 - Google's own pages, as quoted in search-engine snippets of `developers.google.com`, `cloud.google.com` and `mapsplatform.google.com`.
 - Independent pricing write-ups, used only as corroboration.
 
-**Action for the founder (once):** open the three links in §1.5 and confirm the numbers. If Google has changed them, only `lib/finder/pricing.ts` needs editing. It is the single source for every figure shown in the UI.
+**Action for the founder (once):** open the three links in §1.5 and confirm the numbers. If Google has changed them, only `lib/domain/finder-cost.ts` needs editing. It is the single source for every figure shown in the UI.
 
 ### 1.1 Text Search (New)
 
@@ -262,9 +262,9 @@ All new tables use `...baseColumns()` and snake_case, and are covered by the inv
 
 ## 10. Risks
 
-| Risk                                                      | Mitigation                                                                                                                                            |
-| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Pricing drifts from §1.2                                  | One file, `lib/finder/pricing.ts`, plus the founder's one-time check. Caps are counted in requests, not dollars, so a price change can't raise usage. |
-| Free usage is shared across the founder's billing account | The usage page says so. Default caps sit under the free tier, and a $1 budget alert is the backstop.                                                  |
-| Website enrichment is slow (5s per host)                  | Different hosts run in parallel (4 at a time), in chunks of 5 places per server action, with progress shown.                                          |
-| The cache-window interpretation (§1.4)                    | Logged as D-F3, and it can be tightened to 0 days with one setting (`finder.googleCacheDays`).                                                        |
+| Risk                                                      | Mitigation                                                                                                                                                |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pricing drifts from §1.2                                  | One file, `lib/domain/finder-cost.ts`, plus the founder's one-time check. Caps are counted in requests, not dollars, so a price change can't raise usage. |
+| Free usage is shared across the founder's billing account | The usage page says so. Default caps sit under the free tier, and a $1 budget alert is the backstop.                                                      |
+| Website enrichment is slow (5s per host)                  | Different hosts run in parallel (4 at a time), in chunks of 5 places per server action, with progress shown.                                              |
+| The cache-window interpretation (§1.4)                    | Logged as D-F3, and it can be tightened to 0 days with one setting (`finder.googleCacheDays`).                                                            |
