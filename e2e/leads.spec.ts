@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+// The first cell of each row is the selection checkbox; the firm name is the second.
 import { axeViolations } from "./axe";
 
 test.describe("Leads", () => {
@@ -37,22 +38,22 @@ test.describe("Leads split view", () => {
   test("J/K move the selection, the URL and the detail panel", async ({ page }) => {
     await page.goto("/leads");
     const grid = page.getByRole("grid", { name: "Leads" });
-    const first = await grid.getByRole("row", { selected: true }).getByRole("gridcell").first().innerText();
+    const first = await grid.getByRole("row", { selected: true }).getByRole("gridcell").nth(1).innerText();
     await page.locator("main h1").click();
     await page.keyboard.press("j");
     await expect(page).toHaveURL(/lead=/);
-    const second = grid.getByRole("row", { selected: true }).getByRole("gridcell").first();
+    const second = grid.getByRole("row", { selected: true }).getByRole("gridcell").nth(1);
     await expect(second).not.toHaveText(first);
     const name = await second.innerText();
     await expect(page.getByRole("region", { name: `Lead: ${name}` })).toBeVisible();
     await page.keyboard.press("k");
-    await expect(grid.getByRole("row", { selected: true }).getByRole("gridcell").first()).toHaveText(first);
+    await expect(grid.getByRole("row", { selected: true }).getByRole("gridcell").nth(1)).toHaveText(first);
   });
 
   test("a linked record opens directly", async ({ page }) => {
     await page.goto("/leads?status=excluded");
     const row = page.getByRole("grid").getByRole("row").nth(2);
-    const name = await row.getByRole("gridcell").first().innerText();
+    const name = await row.getByRole("gridcell").nth(1).innerText();
     await row.click();
     await expect(page).toHaveURL(/status=excluded&lead=/);
     const url = page.url();
@@ -69,7 +70,7 @@ test.describe("Leads below 1280px", () => {
   test("a row opens the detail as a sheet, Escape closes it", async ({ page }) => {
     await page.goto("/leads");
     const row = page.getByRole("grid").getByRole("row").nth(1);
-    const name = await row.getByRole("gridcell").first().innerText();
+    const name = await row.getByRole("gridcell").nth(1).innerText();
     await row.click();
     const sheet = page.getByRole("dialog", { name: `Lead: ${name}` });
     await expect(sheet).toBeVisible();

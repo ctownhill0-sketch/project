@@ -4,6 +4,7 @@ import { FilterChips } from "@/components/filter-chips";
 import { Icons } from "@/components/icons";
 import { LeadPanel } from "@/components/leads/lead-panel";
 import { LeadsGrid } from "@/components/leads/leads-grid";
+import { SavedViews } from "@/components/leads/saved-views";
 import { Num } from "@/components/num";
 import { PageHeader } from "@/components/page-header";
 import { navLabel } from "@/components/shell/nav-items";
@@ -16,6 +17,8 @@ import { getDb } from "@/lib/db";
 import { softwareLabel } from "@/lib/domain/scoring";
 import { LEAD_STATUSES, SOFTWARE_KINDS, leadsHref, parseLeadFilters } from "@/lib/queries/lead-filters";
 import { getLeadDetail, leadCounts, listLeads } from "@/lib/queries/leads";
+import { possibleDuplicatePairs, softwareReviewQueue } from "@/lib/leads/manage";
+import { listSavedViews } from "@/lib/leads/views";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: navLabel("/leads") };
@@ -34,10 +37,14 @@ export default async function LeadsPage({ searchParams }: PageProps<"/leads">) {
   const db = await getDb();
   const params = await searchParams;
   const filters = parseLeadFilters(params);
-  const [rows, counts] = await Promise.all([
+  const [rows, counts, views, dupes, review] = await Promise.all([
     listLeads(db, workspaceId, filters),
     leadCounts(db, workspaceId),
+    listSavedViews(db, workspaceId),
+    possibleDuplicatePairs(db, workspaceId),
+    softwareReviewQueue(db, workspaceId),
   ]);
+  const query = leadsHref(filters).replace(/^\/leads\??/, "");
   const requested = typeof params.lead === "string" ? params.lead : null;
   const selectedId = requested ?? rows[0]?.id ?? null;
   const lead = selectedId ? await getLeadDetail(db, workspaceId, selectedId) : null;
@@ -74,12 +81,30 @@ export default async function LeadsPage({ searchParams }: PageProps<"/leads">) {
           { label: "Excluded", value: <Num value={counts.excluded} />, note: "AppFolio or do not call" },
           {
             label: "Possible duplicates",
-            value: <Num value={counts.possibleDuplicates} />,
-            note: "Same domain or phone",
+            value: <Num value={dupes.length} />,
+            note: "Same website, phone or similar name",
           },
         ]}
         action={findLeads}
       />
+
+      <nav aria-label="Lead tools" className="flex flex-wrap gap-2">
+        <Link href="/leads/import" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+          Import CSV
+        </Link>
+        <a
+          href={`/leads/export${query ? `?${query}` : ""}`}
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+        >
+          Export CSV
+        </a>
+        <Link href="/leads/duplicates" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+          Duplicates (<Num value={dupes.length} />)
+        </Link>
+        <Link href="/leads/review" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+          Software review (<Num value={review.length} />)
+        </Link>
+      </nav>
 
       <section aria-label="Filters" className="flex flex-col gap-3">
         <form role="search" action="/leads" className="flex max-w-md gap-2">
@@ -112,6 +137,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/leads">) {
             })),
           ]}
         />
+        <SavedViews views={views} currentQuery={query} />
         <FilterChips
           label="Software"
           chips={[

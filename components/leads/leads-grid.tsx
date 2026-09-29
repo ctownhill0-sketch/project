@@ -1,7 +1,13 @@
 "use client";
 
-import type { ReactNode } from "react";
+import Link from "next/link";
+import { useTransition, type ReactNode } from "react";
+import { toast } from "sonner";
+import { bulkStatusAction } from "@/app/(app)/leads/actions";
 import { DataGrid, type GridColumn } from "@/components/data-grid/data-grid";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { toCsv } from "@/lib/csv";
+import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/states/status-badge";
 import { formatMinutes, softwareLabel } from "@/lib/domain/scoring";
 import { formatPhone } from "@/lib/format";
@@ -104,8 +110,79 @@ export function LeadsGrid({
   hrefPrefix: string;
   summary: ReactNode;
 }) {
+  const [pending, start] = useTransition();
+  const setStatus = (ids: string[], clear: () => void, status: "researching" | "ready" | "archived") =>
+    start(async () => {
+      const res = await bulkStatusAction(ids, status);
+      if (!res.ok) return void toast.error(res.error);
+      const skipped = ids.length - res.data.updated;
+      toast.success(
+        `Updated ${res.data.updated}${skipped ? ` (${skipped} excluded or do-not-call left as they are)` : ""}`,
+      );
+      clear();
+    });
+  const exportSelected = (ids: string[]) => {
+    const picked = rows.filter((r) => ids.includes(r.id));
+    const csv = toCsv(
+      ["Firm", "Town", "State", "Phone", "Score", "Software", "Status", "Why this lead"],
+      picked.map((l) => [
+        l.name,
+        l.city,
+        l.state,
+        l.phone,
+        l.score,
+        softwareLabel(l.software),
+        STATUS_LABEL[l.status] ?? l.status,
+        l.why,
+      ]),
+    );
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "leads-selected.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   return (
     <DataGrid
+      rowLabel={(l) => l.name}
+      bulkActions={(ids, clear) => (
+        <>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={pending}
+            onClick={() => setStatus(ids, clear, "researching")}
+          >
+            Researching
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={pending}
+            onClick={() => setStatus(ids, clear, "ready")}
+          >
+            Ready to call
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={pending}
+            onClick={() => setStatus(ids, clear, "archived")}
+          >
+            Archive
+          </Button>
+          <Link
+            href={`/shops/plan?ids=${ids.slice(0, 50).join(",")}`}
+            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+          >
+            Plan mystery shops
+          </Link>
+          <Button size="sm" variant="ghost" onClick={() => exportSelected(ids)}>
+            Export CSV
+          </Button>
+        </>
+      )}
       label="Leads"
       rows={rows}
       columns={COLUMNS}

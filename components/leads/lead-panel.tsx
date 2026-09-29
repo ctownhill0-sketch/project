@@ -6,9 +6,11 @@ import { Estimated } from "@/components/states/estimated";
 import { StatusBadge } from "@/components/states/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { formatMinutes, softwareLabel } from "@/lib/domain/scoring";
+import { formatMinutes, softwareLabel, type Software } from "@/lib/domain/scoring";
 import type { getLeadDetail } from "@/lib/queries/leads";
 import { formatPhone, telHref } from "@/lib/format";
+import { GoogleContent } from "@/components/finder/google-attribution";
+import { SoftwareOverrideForm } from "@/components/leads/lead-actions";
 import { cn } from "@/lib/utils";
 
 export type LeadDetail = NonNullable<Awaited<ReturnType<typeof getLeadDetail>>>;
@@ -20,6 +22,16 @@ const STATUS_LABEL: Record<string, string> = {
   contacted: "Contacted",
   excluded: "Excluded",
   archived: "Archived",
+};
+
+const EVIDENCE_LABEL: Record<string, string> = {
+  software: "Software",
+  size_units: "Size",
+  listing_count: "Live listings",
+  phone: "Phone",
+  email: "Email",
+  name: "Name on site",
+  service_type: "Service",
 };
 
 const DISPOSITION_LABEL: Record<string, string> = {
@@ -166,6 +178,87 @@ export function LeadPanel({ lead }: { lead: LeadDetail }) {
           </dd>
         </dl>
       </Section>
+
+      <Section title="Software">
+        <p className="text-small text-muted-foreground">
+          {lead.softwareOverride
+            ? "Set by you"
+            : lead.softwareConfidence
+              ? `Detected, ${lead.softwareConfidence} confidence`
+              : "Detected"}
+          {lead.softwareEvidence ? `: ${lead.softwareEvidence}` : ""}
+        </p>
+        <SoftwareOverrideForm key={lead.id} companyId={lead.id} current={lead.softwareOverride} />
+      </Section>
+
+      {lead.finderEvidence.length ? (
+        <Section title="From their website">
+          <ul className="flex flex-col gap-2">
+            {lead.finderEvidence.map((e) => (
+              <li key={e.id} className="flex flex-col gap-0.5">
+                <span>
+                  <span className="text-muted-foreground">{EVIDENCE_LABEL[e.kind] ?? e.kind}: </span>
+                  {e.kind === "software"
+                    ? softwareLabel(e.value as Software)
+                    : e.kind === "phone"
+                      ? formatPhone(e.value)
+                      : e.value}
+                  {e.kind === "size_units" || e.kind === "listing_count" ? (
+                    <span className="text-muted-foreground"> (Estimated)</span>
+                  ) : null}
+                </span>
+                {e.quote && e.quote !== e.value ? (
+                  <span className="text-caption text-muted-foreground break-all">“{e.quote}”</span>
+                ) : null}
+                <a
+                  href={e.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-link text-caption break-all underline underline-offset-2"
+                >
+                  {e.sourceUrl}
+                  <span className="sr-only"> (source, opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
+
+      {lead.address || lead.reviews.length ? (
+        <Section title="From Google">
+          <GoogleContent>
+            {lead.address ? <p>{lead.address}</p> : null}
+            {lead.reviews.length ? (
+              <>
+                <p className="text-caption text-muted-foreground">Sample of up to 5 Google reviews</p>
+                <ul className="flex flex-col gap-2">
+                  {lead.reviews.map((r) => (
+                    <li key={r.id} className="flex flex-col gap-0.5">
+                      <p>{r.text}</p>
+                      <p className="text-caption text-muted-foreground">
+                        {r.authorUri ? (
+                          <a
+                            href={r.authorUri}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-link underline underline-offset-2"
+                          >
+                            {r.authorName ?? "Google user"}
+                            <span className="sr-only"> (opens in a new tab)</span>
+                          </a>
+                        ) : (
+                          (r.authorName ?? "Google user")
+                        )}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+          </GoogleContent>
+        </Section>
+      ) : null}
 
       <Section title="Contacts">
         {lead.contacts.length === 0 ? (

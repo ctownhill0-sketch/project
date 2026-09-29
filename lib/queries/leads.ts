@@ -1,6 +1,6 @@
-import { and, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
 import type { Db } from "@/lib/db/client";
-import { call, company, contact, mysteryShop } from "@/lib/db/schema";
+import { call, company, contact, enrichmentEvidence, mysteryShop, review } from "@/lib/db/schema";
 import { whyThisLead, type Software } from "@/lib/domain/scoring";
 import { shopStats } from "@/lib/domain/shop-stats";
 import { groupBy, leadFacts } from "@/lib/queries/facts";
@@ -117,7 +117,7 @@ export async function getLeadDetail(db: Db, workspaceId: string, id: string, now
     .from(company)
     .where(and(eq(company.id, id), eq(company.workspaceId, workspaceId)));
   if (!firm) return null;
-  const [people, shops, calls] = await Promise.all([
+  const [people, shops, calls, evidence, reviews] = await Promise.all([
     db
       .select()
       .from(contact)
@@ -133,6 +133,16 @@ export async function getLeadDetail(db: Db, workspaceId: string, id: string, now
       .where(and(eq(call.companyId, id), eq(call.workspaceId, workspaceId)))
       .orderBy(desc(call.calledAt))
       .limit(5),
+    db
+      .select()
+      .from(enrichmentEvidence)
+      .where(and(eq(enrichmentEvidence.companyId, id), eq(enrichmentEvidence.workspaceId, workspaceId)))
+      .orderBy(asc(enrichmentEvidence.createdAt)),
+    db
+      .select()
+      .from(review)
+      .where(and(eq(review.companyId, id), eq(review.workspaceId, workspaceId)))
+      .orderBy(desc(review.publishedAt)),
   ]);
   const facts = leadFacts(firm, shops, now);
   return {
@@ -144,6 +154,13 @@ export async function getLeadDetail(db: Db, workspaceId: string, id: string, now
     shops,
     shopStats: shopStats(shops, now),
     calls,
+    /** What the Lead Finder learned from the firm's own website, newest per kind, with sources. */
+    finderEvidence: [
+      ...new Map(
+        evidence.map((e) => [e.kind === "service_type" ? `${e.kind}:${e.value}` : e.kind, e]),
+      ).values(),
+    ],
+    reviews,
   };
 }
 

@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@electric-sql/pglite"],
   // The dev-tools badge overlaps the phone bottom bar and screenshots.
   devIndicators: false,
+  // CSV imports of up to 5,000 rows go through a Server Action (default limit 1 MB).
+  experimental: { serverActions: { bodySizeLimit: "5mb" } },
 };
 
 export default nextConfig;

@@ -2,6 +2,34 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-29: Step 2, Leads completion: done
+
+**Built**
+
+- **CSV import wizard:** upload, match columns (guessed, plus saved mappings), preview the first 20 rows, then import.
+  - Rows are checked against existing leads (website, phone, similar name + town), the do-not-call list and earlier rows of the same file.
+  - Do-not-call matches and duplicates are never imported. Similar names are imported and flagged for the merge screen.
+  - The chain and not-a-fit rules apply, scores are computed, and every import has an ImportBatch plus audit rows.
+- **CSV export:** the current filtered list, audit-logged as an export. Cells that would run as spreadsheet formulas are neutralized.
+- **Merge screen:** possible-duplicate pairs shown side by side; keep either one.
+  - Calls, shops, contacts, deals and other attached records move over, and blank fields are filled in.
+  - Do-not-call carries over, and it refuses if both firms have an open deal.
+- **Software:** a manual override (with an evidence note) in the lead panel, plus a software review queue for low-confidence or unknown firms.
+- **Saved views** for Leads filters.
+- **Bulk bar:** Researching, Ready, Archive, Plan mystery shops and Export CSV. Excluded and do-not-call firms are never bulk-changed.
+- **Lead panel:** now shows the finder's website evidence with sources, and Google data and reviews under attribution.
+
+**Evidence**
+
+- `pnpm test`: 63 files, 481 tests passed.
+- The import and manage tests were written after the code (a TDD slip). Mutation checks confirm they fail when the merge do-not-call carry-over or the bulk do-not-call exclusion is removed.
+- `pnpm e2e`: the leads-tools spec passes 13/13, axe at 0 on the import, duplicates and review pages in both themes. The full run was green after the fix below.
+
+**Fixed along the way**
+
+- A similar-name repeat inside one CSV was skipped instead of flagged.
+- The Leads spec now targets the name cell, since the grid has a checkbox column.
+
 ## 2026-09-29: Step 1, Lead Finder: done
 
 **Built**
