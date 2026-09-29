@@ -3,7 +3,7 @@ import type { DbHandle } from "@/lib/db/client";
 import { auditLog, company } from "@/lib/db/schema";
 import { createTestDb } from "@/lib/db/test-db";
 import { insertOwner } from "@/lib/db/test-fixtures";
-import { redact, withAudit } from "@/lib/audit/audit";
+import { redact, withAudit, writeAudit } from "@/lib/audit/audit";
 
 let handle: DbHandle;
 beforeEach(async () => {
@@ -11,6 +11,27 @@ beforeEach(async () => {
 });
 afterEach(async () => {
   await handle.close();
+});
+
+describe("writeAudit", () => {
+  it("adds a second redacted row inside the same audited transaction", async () => {
+    const { db } = handle;
+    const { userId, workspaceId } = await insertOwner(db);
+    await withAudit(db, { userId, workspaceId }, { action: "update", entity: "place_result" }, async (tx) => {
+      await writeAudit(
+        tx,
+        { userId, workspaceId },
+        { action: "create", entity: "company" },
+        {
+          after: { name: "Harborline Residential", phone: "+12125550142" },
+        },
+      );
+      return { result: null };
+    });
+    const rows = await db.select().from(auditLog);
+    expect(rows.map((r) => r.entity).sort()).toEqual(["company", "place_result"]);
+    expect(rows.find((r) => r.entity === "company")?.diff).toMatchObject({ after: { phone: "[redacted]" } });
+  });
 });
 
 describe("withAudit", () => {

@@ -20,6 +20,11 @@ export function leadFacts(firm: Company, shops: Shop[], now: Date): LeadFacts {
           shopCount: shops.length,
         }
       : null,
+    reviewFlags: firm.reviewFlagCount,
+    fit: {
+      status: (firm.fitStatus as "ok" | "excluded" | "not_a_fit") ?? "ok",
+      reason: firm.fitReason,
+    },
   };
 }
 

@@ -75,3 +75,26 @@ export async function withAudit<T>(
     return result;
   });
 }
+
+/**
+ * An extra audit row inside a transaction that `withAudit` already opened, for work that
+ * changes more than one entity (e.g. triage "add" updates a place and creates a company).
+ */
+export async function writeAudit(
+  tx: Tx,
+  ctx: AuditContext,
+  meta: AuditMeta,
+  change: { entityId?: string; before?: unknown; after?: unknown },
+): Promise<void> {
+  await tx.insert(auditLog).values({
+    workspaceId: ctx.workspaceId,
+    createdById: ctx.userId,
+    action: meta.action,
+    entity: meta.entity,
+    entityId: change.entityId ?? null,
+    diff: redact({ before: change.before, after: change.after }, { entity: meta.entity }) as Record<
+      string,
+      unknown
+    >,
+  });
+}

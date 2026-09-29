@@ -12,6 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { baseColumns } from "@/lib/db/columns";
 import { company } from "@/lib/db/schema/leads";
+import { placeResult } from "@/lib/db/schema/finder";
 
 // M2 listings monitor and M3 review finder are deferred in the Free Build.
 // These tables exist so reviving them needs no schema change.
@@ -69,9 +70,9 @@ export const alert = pgTable(
 
 export const review = pgTable("review", {
   ...baseColumns(),
-  companyId: uuid("company_id")
-    .notNull()
-    .references(() => company.id),
+  companyId: uuid("company_id").references(() => company.id),
+  /** Set when the review was fetched during triage, before the place became a lead. */
+  placeResultId: uuid("place_result_id").references(() => placeResult.id),
   source: text("source").notNull().default("google_places"),
   rating: integer("rating"),
   text: text("text"),
