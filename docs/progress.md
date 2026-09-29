@@ -2,6 +2,33 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-29: Step 4, Call workspace (M6) and call-block mode: done
+
+**Built**
+
+- **Today's call list:**
+  - order: callbacks due (oldest first), then "call now" firms (a fresh slow or no-reply shop since the last call), then highest score;
+  - skips do-not-call, excluded and archived firms, firms without a phone, firms called in the last 2 days, and finished ones (not interested, wrong number, audit booked).
+- **Call workspace:**
+  - a big `tel:` link (the app never dials);
+  - scripts with `{{variables}}` filled from the firm's own data, and missing values highlighted as "unknown";
+  - the objection library with a "heard it" count;
+  - dispositions on keys 1–9 (9 = do not call, press twice);
+  - notes, a decision-maker flag, and next-step scheduling (suggested as the next business day(s) in NY time if left blank).
+- **Call prep** from the lead, shops, the finder's website evidence, ROI and recent calls. `AI-HOOK(M5)` marks where the Claude brief goes.
+- **Call-block mode** (`/calls?mode=block`, also from the Dashboard): a focus view with "call N of M", the next firm loaded automatically after each disposition, and Esc to exit.
+- **Do not call** sets the firm's permanent flag, closes its open deal as lost, and blocks further calls.
+- **Pipeline core (for Step 5):** one open deal per company, a stage event for every move, a required lost reason, expected MRR recomputed on each change. Calls move the deal forward only, never back.
+
+**Evidence**
+
+- `pnpm test`: 70 files, 513 tests passed.
+- `pnpm e2e`: 113 passed, 0 failed. The calls spec covers hotkey logging, block-mode auto-advance and Esc, the do-not-call double press, and axe in both themes.
+
+**Fixed**
+
+- React key warnings for JSX passed in props arrays from Server Components (Calls and Dashboard lists).
+
 ## 2026-09-29: Step 3, Mystery-shop tracker (M4): done
 
 **Built**

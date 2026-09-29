@@ -147,7 +147,11 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
                       title: i.name,
                       subtitle: i.reason,
                       meta: i.score,
-                      badge: <span className="text-caption text-muted-foreground">{KIND_BADGE[i.kind]}</span>,
+                      badge: (
+                        <span key={i.companyId} className="text-caption text-muted-foreground">
+                          {KIND_BADGE[i.kind]}
+                        </span>
+                      ),
                     }))}
                   />
                 }
