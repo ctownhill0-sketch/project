@@ -107,7 +107,12 @@ export function CallPrep({ prep }: { prep: CallPrepData }) {
               <Num value={prep.roi.results.dailyCost ?? null} format="currency" /> a vacant day
             </Estimated>
           ) : (
-            unknown
+            <>
+              unknown ·{" "}
+              <Link href={`/roi?lead=${lead.id}`} className="text-link underline underline-offset-2">
+                Work it out
+              </Link>
+            </>
           )}
         </Fact>
         <Fact label="Next step">

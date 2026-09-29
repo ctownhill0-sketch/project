@@ -2,6 +2,14 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-29: Step 6, ROI calculator (M9): done
+
+- **Formulas** in `lib/domain/roi.ts`: rent × 12 ÷ 365 per vacant day ($1,800 → $59.18), annual vacancy loss, savings from leasing N days faster, fee (price by vacancies + $300 setup), net savings and payback. Every result is labeled "Estimated".
+- **The URL holds the inputs**, so "Copy link" gives a local shareable link. Out-of-range or invalid values fall back to defaults, and the screen shows the same clamped numbers the link restores.
+- **Present mode** (`?present=1`): big type, no form, "Exit present mode".
+- **"Save for {firm}"** (opened with `?lead=`) stores a `roi_scenario` through `withAudit`. Call prep quotes it; with no scenario, it shows "unknown · Work it out", linking to the calculator.
+- **Evidence:** `pnpm test` passes 73 files and 522 tests. The ROI e2e passes 3/3, with axe at 0 at 1440/768/320, including Present mode. Routes, calls and ROI together: 18 passed.
+
 ## 2026-09-29: Step 5, Pipeline (M7): done
 
 - **Kanban board:**
