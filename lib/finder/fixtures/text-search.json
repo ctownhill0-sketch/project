@@ -1,0 +1,966 @@
+{
+  "Hoboken, NJ": [
+    {
+      "places": [
+        {
+          "id": "fx-hoboken-000",
+          "displayName": {
+            "text": "Greystar Real Estate Partners",
+            "languageCode": "en"
+          },
+          "formattedAddress": "100 Main St, Hoboken, NJ 07030, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.greystar-fixture.example/",
+          "nationalPhoneNumber": "(201) 555-0100",
+          "userRatingCount": 5,
+          "googleMapsUri": "https://maps.google.com/?cid=900000"
+        },
+        {
+          "id": "fx-hoboken-001",
+          "displayName": {
+            "text": "Maple Court Homeowners Association",
+            "languageCode": "en"
+          },
+          "formattedAddress": "101 Main St, Hoboken, NJ 07031, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.quarryoak.example/",
+          "nationalPhoneNumber": "(201) 555-0101",
+          "userRatingCount": 12,
+          "googleMapsUri": "https://maps.google.com/?cid=900001"
+        },
+        {
+          "id": "fx-hoboken-002",
+          "displayName": {
+            "text": "Brightwater Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "102 Main St, Hoboken, NJ 07032, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "nationalPhoneNumber": "(201) 555-0102",
+          "userRatingCount": 19,
+          "googleMapsUri": "https://maps.google.com/?cid=900002"
+        },
+        {
+          "id": "fx-hoboken-003",
+          "displayName": {
+            "text": "Harbourline Property Mgmt",
+            "languageCode": "en"
+          },
+          "formattedAddress": "103 Main St, Hoboken, NJ 07033, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.larkspur.example/",
+          "nationalPhoneNumber": "(201) 555-0142",
+          "userRatingCount": 26,
+          "googleMapsUri": "https://maps.google.com/?cid=900003"
+        },
+        {
+          "id": "fx-hoboken-004",
+          "displayName": {
+            "text": "Ironbridge Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "104 Main St, Hoboken, NJ 07034, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.ironbridge.example/",
+          "nationalPhoneNumber": "(201) 555-0104",
+          "userRatingCount": 33,
+          "googleMapsUri": "https://maps.google.com/?cid=900004"
+        },
+        {
+          "id": "fx-hoboken-005",
+          "displayName": {
+            "text": "Kestrel Park Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "105 Main St, Hoboken, NJ 07035, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.kestrelpark.example/",
+          "nationalPhoneNumber": "(201) 555-0105",
+          "userRatingCount": 40,
+          "googleMapsUri": "https://maps.google.com/?cid=900005"
+        },
+        {
+          "id": "fx-hoboken-006",
+          "displayName": {
+            "text": "Cobble Lane Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "106 Main St, Hoboken, NJ 07036, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.cobblelane.example/",
+          "nationalPhoneNumber": "(201) 555-0106",
+          "userRatingCount": 47,
+          "googleMapsUri": "https://maps.google.com/?cid=900006"
+        },
+        {
+          "id": "fx-hoboken-007",
+          "displayName": {
+            "text": "Riverbend Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "107 Main St, Hoboken, NJ 07037, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.riverbend.example/",
+          "nationalPhoneNumber": "(201) 555-0107",
+          "userRatingCount": 54,
+          "googleMapsUri": "https://maps.google.com/?cid=900007"
+        },
+        {
+          "id": "fx-hoboken-008",
+          "displayName": {
+            "text": "Halcyon Hill Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "108 Main St, Hoboken, NJ 07038, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.halcyonhill.example/",
+          "nationalPhoneNumber": "(201) 555-0108",
+          "userRatingCount": 61,
+          "googleMapsUri": "https://maps.google.com/?cid=900008"
+        },
+        {
+          "id": "fx-hoboken-009",
+          "displayName": {
+            "text": "Seabright Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "109 Main St, Hoboken, NJ 07039, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.seabright.example/",
+          "nationalPhoneNumber": "(201) 555-0109",
+          "userRatingCount": 68,
+          "googleMapsUri": "https://maps.google.com/?cid=900009"
+        },
+        {
+          "id": "fx-hoboken-010",
+          "displayName": {
+            "text": "Maple Court Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "110 Main St, Hoboken, NJ 07040, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.maplecourt.example/",
+          "nationalPhoneNumber": "(201) 555-0110",
+          "userRatingCount": 75,
+          "googleMapsUri": "https://maps.google.com/?cid=900010"
+        },
+        {
+          "id": "fx-hoboken-011",
+          "displayName": {
+            "text": "Lanternway Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "111 Main St, Hoboken, NJ 07041, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.lanternway.example/",
+          "nationalPhoneNumber": "(201) 555-0111",
+          "userRatingCount": 82,
+          "googleMapsUri": "https://maps.google.com/?cid=900011"
+        },
+        {
+          "id": "fx-hoboken-012",
+          "displayName": {
+            "text": "Crestline Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "112 Main St, Hoboken, NJ 07042, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.crestline.example/",
+          "nationalPhoneNumber": "(201) 555-0112",
+          "userRatingCount": 89,
+          "googleMapsUri": "https://maps.google.com/?cid=900012"
+        },
+        {
+          "id": "fx-hoboken-013",
+          "displayName": {
+            "text": "Hearthstone Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "113 Main St, Hoboken, NJ 07043, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.hearthstone.example/",
+          "nationalPhoneNumber": "(201) 555-0113",
+          "userRatingCount": 6,
+          "googleMapsUri": "https://maps.google.com/?cid=900013"
+        },
+        {
+          "id": "fx-hoboken-014",
+          "displayName": {
+            "text": "Willowmere Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "114 Main St, Hoboken, NJ 07044, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.willowmere.example/",
+          "nationalPhoneNumber": "(201) 555-0114",
+          "userRatingCount": 13,
+          "googleMapsUri": "https://maps.google.com/?cid=900014"
+        },
+        {
+          "id": "fx-hoboken-015",
+          "displayName": {
+            "text": "Foxglove Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "115 Main St, Hoboken, NJ 07045, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.foxglove.example/",
+          "nationalPhoneNumber": "(201) 555-0115",
+          "userRatingCount": 20,
+          "googleMapsUri": "https://maps.google.com/?cid=900015"
+        },
+        {
+          "id": "fx-hoboken-016",
+          "displayName": {
+            "text": "Stonegate Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "116 Main St, Hoboken, NJ 07046, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.stonegate.example/",
+          "nationalPhoneNumber": "(201) 555-0116",
+          "userRatingCount": 27,
+          "googleMapsUri": "https://maps.google.com/?cid=900016"
+        },
+        {
+          "id": "fx-hoboken-017",
+          "displayName": {
+            "text": "Juniper Row Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "117 Main St, Hoboken, NJ 07047, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.juniperrow.example/",
+          "nationalPhoneNumber": "(201) 555-0117",
+          "userRatingCount": 34,
+          "googleMapsUri": "https://maps.google.com/?cid=900017"
+        },
+        {
+          "id": "fx-hoboken-018",
+          "displayName": {
+            "text": "Ashgrove Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "118 Main St, Hoboken, NJ 07048, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.ashgrove.example/",
+          "nationalPhoneNumber": "(201) 555-0118",
+          "userRatingCount": 41,
+          "googleMapsUri": "https://maps.google.com/?cid=900018"
+        },
+        {
+          "id": "fx-hoboken-019",
+          "displayName": {
+            "text": "Bellhaven Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "119 Main St, Hoboken, NJ 07049, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.bellhaven.example/",
+          "nationalPhoneNumber": "(201) 555-0119",
+          "userRatingCount": 48,
+          "googleMapsUri": "https://maps.google.com/?cid=900019"
+        }
+      ],
+      "nextPageToken": "tok-hoboken-1"
+    },
+    {
+      "places": [
+        {
+          "id": "fx-hoboken-020",
+          "displayName": {
+            "text": "Copperfield Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "120 Main St, Hoboken, NJ 07050, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.copperfield.example/",
+          "nationalPhoneNumber": "(201) 555-0120",
+          "userRatingCount": 55,
+          "googleMapsUri": "https://maps.google.com/?cid=900020"
+        },
+        {
+          "id": "fx-hoboken-021",
+          "displayName": {
+            "text": "Driftwood Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "121 Main St, Hoboken, NJ 07051, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.driftwood.example/",
+          "nationalPhoneNumber": "(201) 555-0121",
+          "userRatingCount": 62,
+          "googleMapsUri": "https://maps.google.com/?cid=900021"
+        },
+        {
+          "id": "fx-hoboken-022",
+          "displayName": {
+            "text": "Elmhurst Gate Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "122 Main St, Hoboken, NJ 07052, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.elmhurstgate.example/",
+          "nationalPhoneNumber": "(201) 555-0122",
+          "userRatingCount": 69,
+          "googleMapsUri": "https://maps.google.com/?cid=900022"
+        },
+        {
+          "id": "fx-hoboken-023",
+          "displayName": {
+            "text": "Fernbrook Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "123 Main St, Hoboken, NJ 07053, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.fernbrook.example/",
+          "nationalPhoneNumber": "(201) 555-0123",
+          "userRatingCount": 76,
+          "googleMapsUri": "https://maps.google.com/?cid=900023"
+        },
+        {
+          "id": "fx-hoboken-024",
+          "displayName": {
+            "text": "Glenmoor Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "124 Main St, Hoboken, NJ 07054, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.glenmoor.example/",
+          "nationalPhoneNumber": "(201) 555-0124",
+          "userRatingCount": 83,
+          "googleMapsUri": "https://maps.google.com/?cid=900024"
+        },
+        {
+          "id": "fx-hoboken-025",
+          "displayName": {
+            "text": "Hollis Bay Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "125 Main St, Hoboken, NJ 07055, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.hollisbay.example/",
+          "nationalPhoneNumber": "(201) 555-0125",
+          "userRatingCount": 90,
+          "googleMapsUri": "https://maps.google.com/?cid=900025"
+        },
+        {
+          "id": "fx-hoboken-026",
+          "displayName": {
+            "text": "Ivy Crest Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "126 Main St, Hoboken, NJ 07056, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.ivycrest.example/",
+          "nationalPhoneNumber": "(201) 555-0126",
+          "userRatingCount": 7,
+          "googleMapsUri": "https://maps.google.com/?cid=900026"
+        },
+        {
+          "id": "fx-hoboken-027",
+          "displayName": {
+            "text": "Jasper Mill Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "127 Main St, Hoboken, NJ 07057, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.jaspermill.example/",
+          "nationalPhoneNumber": "(201) 555-0127",
+          "userRatingCount": 14,
+          "googleMapsUri": "https://maps.google.com/?cid=900027"
+        },
+        {
+          "id": "fx-hoboken-028",
+          "displayName": {
+            "text": "Kingsbridge Way Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "128 Main St, Hoboken, NJ 07058, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.kingsbridgeway.example/",
+          "nationalPhoneNumber": "(201) 555-0128",
+          "userRatingCount": 21,
+          "googleMapsUri": "https://maps.google.com/?cid=900028"
+        },
+        {
+          "id": "fx-hoboken-029",
+          "displayName": {
+            "text": "Linden Square Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "129 Main St, Hoboken, NJ 07059, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.lindensquare.example/",
+          "nationalPhoneNumber": "(201) 555-0129",
+          "userRatingCount": 28,
+          "googleMapsUri": "https://maps.google.com/?cid=900029"
+        },
+        {
+          "id": "fx-hoboken-030",
+          "displayName": {
+            "text": "Marlow Point Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "130 Main St, Hoboken, NJ 07060, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.marlowpoint.example/",
+          "nationalPhoneNumber": "(201) 555-0130",
+          "userRatingCount": 35,
+          "googleMapsUri": "https://maps.google.com/?cid=900030"
+        },
+        {
+          "id": "fx-hoboken-031",
+          "displayName": {
+            "text": "Northfield Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "131 Main St, Hoboken, NJ 07061, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.northfield.example/",
+          "nationalPhoneNumber": "(201) 555-0131",
+          "userRatingCount": 42,
+          "googleMapsUri": "https://maps.google.com/?cid=900031"
+        },
+        {
+          "id": "fx-hoboken-032",
+          "displayName": {
+            "text": "Oakhaven Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "132 Main St, Hoboken, NJ 07062, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.oakhaven.example/",
+          "nationalPhoneNumber": "(201) 555-0132",
+          "userRatingCount": 49,
+          "googleMapsUri": "https://maps.google.com/?cid=900032"
+        },
+        {
+          "id": "fx-hoboken-033",
+          "displayName": {
+            "text": "Pinecrest Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "133 Main St, Hoboken, NJ 07063, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.pinecrest.example/",
+          "nationalPhoneNumber": "(201) 555-0133",
+          "userRatingCount": 56,
+          "googleMapsUri": "https://maps.google.com/?cid=900033"
+        },
+        {
+          "id": "fx-hoboken-034",
+          "displayName": {
+            "text": "Quillon Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "134 Main St, Hoboken, NJ 07064, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.quillon.example/",
+          "nationalPhoneNumber": "(201) 555-0134",
+          "userRatingCount": 63,
+          "googleMapsUri": "https://maps.google.com/?cid=900034"
+        },
+        {
+          "id": "fx-hoboken-035",
+          "displayName": {
+            "text": "Rosewood Park Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "135 Main St, Hoboken, NJ 07065, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.rosewoodpark.example/",
+          "nationalPhoneNumber": "(201) 555-0135",
+          "userRatingCount": 70,
+          "googleMapsUri": "https://maps.google.com/?cid=900035"
+        },
+        {
+          "id": "fx-hoboken-036",
+          "displayName": {
+            "text": "Sterling Brook Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "136 Main St, Hoboken, NJ 07066, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.sterlingbrook.example/",
+          "nationalPhoneNumber": "(201) 555-0136",
+          "userRatingCount": 77,
+          "googleMapsUri": "https://maps.google.com/?cid=900036"
+        },
+        {
+          "id": "fx-hoboken-037",
+          "displayName": {
+            "text": "Thornbury Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "137 Main St, Hoboken, NJ 07067, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.thornbury.example/",
+          "nationalPhoneNumber": "(201) 555-0137",
+          "userRatingCount": 84,
+          "googleMapsUri": "https://maps.google.com/?cid=900037"
+        },
+        {
+          "id": "fx-hoboken-038",
+          "displayName": {
+            "text": "Upland Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "138 Main St, Hoboken, NJ 07068, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.upland.example/",
+          "nationalPhoneNumber": "(201) 555-0138",
+          "userRatingCount": 91,
+          "googleMapsUri": "https://maps.google.com/?cid=900038"
+        },
+        {
+          "id": "fx-hoboken-039",
+          "displayName": {
+            "text": "Vale Street Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "139 Main St, Hoboken, NJ 07069, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.valestreet.example/",
+          "nationalPhoneNumber": "(201) 555-0139",
+          "userRatingCount": 8,
+          "googleMapsUri": "https://maps.google.com/?cid=900039"
+        }
+      ],
+      "nextPageToken": "tok-hoboken-2"
+    },
+    {
+      "places": [
+        {
+          "id": "fx-hoboken-040",
+          "displayName": {
+            "text": "Westbrook Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "140 Main St, Hoboken, NJ 07070, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.westbrook.example/",
+          "nationalPhoneNumber": "(201) 555-0140",
+          "userRatingCount": 15,
+          "googleMapsUri": "https://maps.google.com/?cid=900040"
+        },
+        {
+          "id": "fx-hoboken-041",
+          "displayName": {
+            "text": "Yarrow Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "141 Main St, Hoboken, NJ 07071, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.yarrow.example/",
+          "nationalPhoneNumber": "(201) 555-0141",
+          "userRatingCount": 22,
+          "googleMapsUri": "https://maps.google.com/?cid=900041"
+        },
+        {
+          "id": "fx-hoboken-042",
+          "displayName": {
+            "text": "Zephyr Hill Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "142 Main St, Hoboken, NJ 07072, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.zephyrhill.example/",
+          "nationalPhoneNumber": "(201) 555-0142",
+          "userRatingCount": 29,
+          "googleMapsUri": "https://maps.google.com/?cid=900042"
+        },
+        {
+          "id": "fx-hoboken-043",
+          "displayName": {
+            "text": "Amberly Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "143 Main St, Hoboken, NJ 07073, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.amberly.example/",
+          "nationalPhoneNumber": "(201) 555-0143",
+          "userRatingCount": 36,
+          "googleMapsUri": "https://maps.google.com/?cid=900043"
+        },
+        {
+          "id": "fx-hoboken-044",
+          "displayName": {
+            "text": "Birchwood Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "144 Main St, Hoboken, NJ 07074, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.birchwood.example/",
+          "nationalPhoneNumber": "(201) 555-0144",
+          "userRatingCount": 43,
+          "googleMapsUri": "https://maps.google.com/?cid=900044"
+        }
+      ]
+    }
+  ],
+  "Jersey City, NJ": [
+    {
+      "places": [
+        {
+          "id": "fx-jersey-city-100",
+          "displayName": {
+            "text": "The Larkspur Apartments",
+            "languageCode": "en"
+          },
+          "formattedAddress": "200 Main St, Jersey City, NJ 07070, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.westbrook.example/",
+          "nationalPhoneNumber": "(201) 555-0100",
+          "userRatingCount": 75,
+          "googleMapsUri": "https://maps.google.com/?cid=900100"
+        },
+        {
+          "id": "fx-jersey-city-101",
+          "displayName": {
+            "text": "Yarrow Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "201 Main St, Jersey City, NJ 07071, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.yarrow.example/",
+          "nationalPhoneNumber": "(201) 555-0101",
+          "userRatingCount": 82,
+          "googleMapsUri": "https://maps.google.com/?cid=900101"
+        },
+        {
+          "id": "fx-jersey-city-102",
+          "displayName": {
+            "text": "Zephyr Hill Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "202 Main St, Jersey City, NJ 07072, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.zephyrhill.example/",
+          "nationalPhoneNumber": "(201) 555-0102",
+          "userRatingCount": 89,
+          "googleMapsUri": "https://maps.google.com/?cid=900102"
+        },
+        {
+          "id": "fx-jersey-city-103",
+          "displayName": {
+            "text": "Amberly Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "203 Main St, Jersey City, NJ 07073, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.amberly.example/",
+          "nationalPhoneNumber": "(201) 555-0103",
+          "userRatingCount": 6,
+          "googleMapsUri": "https://maps.google.com/?cid=900103"
+        },
+        {
+          "id": "fx-jersey-city-104",
+          "displayName": {
+            "text": "Birchwood Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "204 Main St, Jersey City, NJ 07074, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.birchwood.example/",
+          "nationalPhoneNumber": "(201) 555-0104",
+          "userRatingCount": 13,
+          "googleMapsUri": "https://maps.google.com/?cid=900104"
+        },
+        {
+          "id": "fx-jersey-city-105",
+          "displayName": {
+            "text": "Cedar Knoll Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "205 Main St, Jersey City, NJ 07075, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.cedarknoll.example/",
+          "nationalPhoneNumber": "(201) 555-0105",
+          "userRatingCount": 20,
+          "googleMapsUri": "https://maps.google.com/?cid=900105"
+        },
+        {
+          "id": "fx-jersey-city-106",
+          "displayName": {
+            "text": "Dover Lane Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "206 Main St, Jersey City, NJ 07076, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.doverlane.example/",
+          "nationalPhoneNumber": "(201) 555-0106",
+          "userRatingCount": 27,
+          "googleMapsUri": "https://maps.google.com/?cid=900106"
+        },
+        {
+          "id": "fx-jersey-city-107",
+          "displayName": {
+            "text": "Everett Row Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "207 Main St, Jersey City, NJ 07077, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.everettrow.example/",
+          "nationalPhoneNumber": "(201) 555-0107",
+          "userRatingCount": 34,
+          "googleMapsUri": "https://maps.google.com/?cid=900107"
+        },
+        {
+          "id": "fx-jersey-city-108",
+          "displayName": {
+            "text": "Fairhaven Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "208 Main St, Jersey City, NJ 07078, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.fairhaven.example/",
+          "nationalPhoneNumber": "(201) 555-0108",
+          "userRatingCount": 41,
+          "googleMapsUri": "https://maps.google.com/?cid=900108"
+        },
+        {
+          "id": "fx-jersey-city-109",
+          "displayName": {
+            "text": "Greenleaf Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "209 Main St, Jersey City, NJ 07079, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.greenleaf.example/",
+          "nationalPhoneNumber": "(201) 555-0109",
+          "userRatingCount": 48,
+          "googleMapsUri": "https://maps.google.com/?cid=900109"
+        },
+        {
+          "id": "fx-jersey-city-110",
+          "displayName": {
+            "text": "Hawthorne Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "210 Main St, Jersey City, NJ 07080, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.hawthorne.example/",
+          "nationalPhoneNumber": "(201) 555-0110",
+          "userRatingCount": 55,
+          "googleMapsUri": "https://maps.google.com/?cid=900110"
+        },
+        {
+          "id": "fx-jersey-city-111",
+          "displayName": {
+            "text": "Inverness Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "211 Main St, Jersey City, NJ 07081, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.inverness.example/",
+          "nationalPhoneNumber": "(201) 555-0111",
+          "userRatingCount": 62,
+          "googleMapsUri": "https://maps.google.com/?cid=900111"
+        },
+        {
+          "id": "fx-jersey-city-112",
+          "displayName": {
+            "text": "Juno Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "212 Main St, Jersey City, NJ 07082, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.juno.example/",
+          "nationalPhoneNumber": "(201) 555-0112",
+          "userRatingCount": 69,
+          "googleMapsUri": "https://maps.google.com/?cid=900112"
+        },
+        {
+          "id": "fx-jersey-city-113",
+          "displayName": {
+            "text": "Kinsley Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "213 Main St, Jersey City, NJ 07083, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.kinsley.example/",
+          "nationalPhoneNumber": "(201) 555-0113",
+          "userRatingCount": 76,
+          "googleMapsUri": "https://maps.google.com/?cid=900113"
+        },
+        {
+          "id": "fx-jersey-city-114",
+          "displayName": {
+            "text": "Lakeside Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "214 Main St, Jersey City, NJ 07084, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.lakeside.example/",
+          "nationalPhoneNumber": "(201) 555-0114",
+          "userRatingCount": 83,
+          "googleMapsUri": "https://maps.google.com/?cid=900114"
+        },
+        {
+          "id": "fx-jersey-city-115",
+          "displayName": {
+            "text": "Meadowbrook Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "215 Main St, Jersey City, NJ 07085, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.meadowbrook.example/",
+          "nationalPhoneNumber": "(201) 555-0115",
+          "userRatingCount": 90,
+          "googleMapsUri": "https://maps.google.com/?cid=900115"
+        },
+        {
+          "id": "fx-jersey-city-116",
+          "displayName": {
+            "text": "Newhall Realty & Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "216 Main St, Jersey City, NJ 07086, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.newhall.example/",
+          "nationalPhoneNumber": "(201) 555-0116",
+          "userRatingCount": 7,
+          "googleMapsUri": "https://maps.google.com/?cid=900116"
+        },
+        {
+          "id": "fx-jersey-city-117",
+          "displayName": {
+            "text": "Orchard Hill Rentals",
+            "languageCode": "en"
+          },
+          "formattedAddress": "217 Main St, Jersey City, NJ 07087, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.orchardhill.example/",
+          "nationalPhoneNumber": "(201) 555-0117",
+          "userRatingCount": 14,
+          "googleMapsUri": "https://maps.google.com/?cid=900117"
+        },
+        {
+          "id": "fx-jersey-city-118",
+          "displayName": {
+            "text": "Parkside Property Group",
+            "languageCode": "en"
+          },
+          "formattedAddress": "218 Main St, Jersey City, NJ 07088, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.parkside.example/",
+          "nationalPhoneNumber": "(201) 555-0118",
+          "userRatingCount": 21,
+          "googleMapsUri": "https://maps.google.com/?cid=900118"
+        },
+        {
+          "id": "fx-jersey-city-119",
+          "displayName": {
+            "text": "Ridgeview Management Co",
+            "languageCode": "en"
+          },
+          "formattedAddress": "219 Main St, Jersey City, NJ 07089, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.ridgeview.example/",
+          "nationalPhoneNumber": "(201) 555-0119",
+          "userRatingCount": 28,
+          "googleMapsUri": "https://maps.google.com/?cid=900119"
+        }
+      ],
+      "nextPageToken": "tok-jersey city-1"
+    },
+    {
+      "places": [
+        {
+          "id": "fx-jersey-city-120",
+          "displayName": {
+            "text": "Harborline Property Management",
+            "languageCode": "en"
+          },
+          "formattedAddress": "220 Main St, Jersey City, NJ 07030, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.harborline.example/",
+          "nationalPhoneNumber": "(201) 555-0120",
+          "userRatingCount": 35,
+          "googleMapsUri": "https://maps.google.com/?cid=900120"
+        },
+        {
+          "id": "fx-jersey-city-121",
+          "displayName": {
+            "text": "Quarry Oak Residential",
+            "languageCode": "en"
+          },
+          "formattedAddress": "221 Main St, Jersey City, NJ 07031, USA",
+          "types": ["real_estate_agency", "point_of_interest", "establishment"],
+          "businessStatus": "OPERATIONAL",
+          "websiteUri": "https://www.quarryoak.example/",
+          "nationalPhoneNumber": "(201) 555-0121",
+          "userRatingCount": 42,
+          "googleMapsUri": "https://maps.google.com/?cid=900121"
+        }
+      ]
+    }
+  ]
+}

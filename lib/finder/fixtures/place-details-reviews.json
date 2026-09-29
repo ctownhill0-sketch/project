@@ -1,0 +1,46 @@
+{
+  "id": "fx-hoboken-004",
+  "reviews": [
+    {
+      "name": "places/fx-hoboken-004/reviews/1",
+      "rating": 1,
+      "text": {
+        "text": "Left three messages about a showing and they never called back.",
+        "languageCode": "en"
+      },
+      "relativePublishTimeDescription": "2 months ago",
+      "publishTime": "2026-07-12T14:00:00Z",
+      "authorAttribution": {
+        "displayName": "Reviewer A.",
+        "uri": "https://www.google.com/maps/contrib/100000000000000000001",
+        "photoUri": ""
+      }
+    },
+    {
+      "name": "places/fx-hoboken-004/reviews/2",
+      "rating": 2,
+      "text": {
+        "text": "Hard to reach anyone in the office.",
+        "languageCode": "en"
+      },
+      "publishTime": "2026-06-02T14:00:00Z",
+      "authorAttribution": {
+        "displayName": "Reviewer B.",
+        "uri": "https://www.google.com/maps/contrib/100000000000000000002"
+      }
+    },
+    {
+      "name": "places/fx-hoboken-004/reviews/3",
+      "rating": 5,
+      "text": {
+        "text": "Great team, fixed my sink the same day.",
+        "languageCode": "en"
+      },
+      "publishTime": "2026-05-20T14:00:00Z",
+      "authorAttribution": {
+        "displayName": "Reviewer C.",
+        "uri": "https://www.google.com/maps/contrib/100000000000000000003"
+      }
+    }
+  ]
+}
