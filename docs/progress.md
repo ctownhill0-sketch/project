@@ -2,6 +2,17 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-29: Step 5, Pipeline (M7): done
+
+- **Kanban board:**
+  - cards can be dragged between columns, and every card also has a "Move to…" menu (the keyboard equivalent of dragging);
+  - moving a deal to Lost opens a dialog that requires a reason;
+  - each card shows its stage history, days in stage and expected MRR, and vacancies can be edited (expected MRR recomputes).
+- **Table view** at `?view=table`.
+- **Page header:** open deals, expected MRR (Estimated), won and lost this month.
+- **"Add to pipeline"** in the lead panel. Deals also open and advance automatically from calls.
+- **Evidence:** `pnpm test` passes 71 files and 514 tests. The pipeline e2e spec passes 5/5 at desktop, and axe is at 0 on the board and table in both themes at all widths.
+
 ## 2026-09-29: Step 4, Call workspace (M6) and call-block mode: done
 
 **Built**

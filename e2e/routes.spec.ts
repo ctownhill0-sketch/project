@@ -3,7 +3,16 @@ import { NAV_ITEMS } from "../components/shell/nav-items";
 import { axeViolations } from "./axe";
 
 // Pages that are built have their own specs (dashboard, leads, design).
-const BUILT = new Set(["/design", "/dashboard", "/leads", "/finder", "/settings", "/shops", "/calls"]);
+const BUILT = new Set([
+  "/design",
+  "/dashboard",
+  "/leads",
+  "/finder",
+  "/settings",
+  "/shops",
+  "/calls",
+  "/pipeline",
+]);
 const PLACEHOLDERS = NAV_ITEMS.filter((item) => !BUILT.has(item.href));
 
 test("the home page redirects to the dashboard", async ({ page }) => {

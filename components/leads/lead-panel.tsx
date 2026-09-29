@@ -10,7 +10,7 @@ import { formatMinutes, softwareLabel, type Software } from "@/lib/domain/scorin
 import type { getLeadDetail } from "@/lib/queries/leads";
 import { formatPhone, telHref } from "@/lib/format";
 import { GoogleContent } from "@/components/finder/google-attribution";
-import { SoftwareOverrideForm } from "@/components/leads/lead-actions";
+import { AddToPipelineButton, SoftwareOverrideForm } from "@/components/leads/lead-actions";
 import { cn } from "@/lib/utils";
 
 export type LeadDetail = NonNullable<Awaited<ReturnType<typeof getLeadDetail>>>;
@@ -92,6 +92,7 @@ export function LeadPanel({ lead }: { lead: LeadDetail }) {
           <Link href={`/shops?lead=${lead.id}#new`} className={cn(buttonVariants({ variant: "outline" }))}>
             Log a shop
           </Link>
+          {!lead.dncFlag ? <AddToPipelineButton companyId={lead.id} /> : null}
         </div>
       </header>
 

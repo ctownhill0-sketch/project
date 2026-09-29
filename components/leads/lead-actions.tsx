@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { mergeAction, softwareOverrideAction } from "@/app/(app)/leads/actions";
+import { openDealAction } from "@/app/(app)/pipeline/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -106,5 +107,24 @@ export function SoftwareOverrideForm({
         Save
       </Button>
     </form>
+  );
+}
+
+export function AddToPipelineButton({ companyId }: { companyId: string }) {
+  const [pending, start] = useTransition();
+  return (
+    <Button
+      variant="outline"
+      disabled={pending}
+      onClick={() =>
+        start(async () => {
+          const res = await openDealAction(companyId);
+          if (res.ok) toast.success("In the pipeline");
+          else toast.error(res.error);
+        })
+      }
+    >
+      Add to pipeline
+    </Button>
   );
 }
