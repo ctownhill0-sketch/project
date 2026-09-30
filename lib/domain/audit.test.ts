@@ -138,3 +138,62 @@ describe("exportProblems", () => {
     expect(exportProblems("You took 14 hours. Renters move on. Let's fix it.", s)).toEqual([]);
   });
 });
+
+describe("audit wording edge cases", () => {
+  it("covers a saved ROI, a single inquiry, no tour offered, the speed ratio and an unnamed metro", () => {
+    const s = buildSnapshot({
+      firm: { name: "Harborline Residential", metro: null },
+      firmShops: [
+        {
+          sentAt: S1,
+          firstReplyAt: mins(S1, 90),
+          hoursBucket: "business",
+          channel: "website_form",
+          replyType: "auto",
+          tourOffered: false,
+        },
+      ],
+      metroShops,
+      roi: { inputs: { ...DEFAULT_ROI_INPUTS, rent: 2400 }, source: "saved" },
+      now: NOW,
+    });
+    const text = auditText(s, "");
+    expect(text).toContain("Estimated from the inputs agreed on the call.");
+    expect(text).toContain("1 genuine rental inquiry was sent");
+    expect(text).toContain("no tour offered");
+    expect(text).toContain("via their website form: first reply after 1h 30m, from an auto-reply");
+    expect(text).toContain("Your median is 2.0× the metro median.");
+  });
+
+  it("shows unknown values and falls back to raw labels it doesn't know", () => {
+    const s = buildSnapshot({
+      firm: { name: "Harborline Residential", metro: "New York metro" },
+      firmShops: [],
+      metroShops: metroShops.map((m) => ({ ...m, firstReplyAt: null })),
+      roi: { inputs: DEFAULT_ROI_INPUTS, source: "default" },
+      now: NOW,
+    });
+    const text = auditText(s, "");
+    expect(text).toContain("No inquiries logged yet.");
+    expect(text).toContain("Median first reply, replies only: unknown | Metro: unknown");
+    expect(text).toContain("Compared with the New York metro median, without naming any firm.");
+    const odd = {
+      ...s,
+      shops: [
+        {
+          sentAt: S1.toISOString(),
+          hoursBucket: "odd",
+          channel: "fax",
+          replyMinutes: 5,
+          replyType: "robot",
+          tourOffered: null,
+        },
+      ],
+    };
+    expect(auditText(odd, "")).toContain("(odd), via fax: first reply after 5m, from unknown.");
+  });
+
+  it("names a single sentence in the problem list", () => {
+    expect(exportProblems("Just one.", snapshot())).toEqual(["The summary has 1 sentence. Use exactly 3."]);
+  });
+});

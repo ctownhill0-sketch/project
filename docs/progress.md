@@ -2,6 +2,15 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-30: Step 9, Pilot scorecard (M10): done
+
+- **Guarantee** (`lib/domain/guarantee.ts`): tours, projected tours (tours × 14 ÷ days elapsed) and an inquiry-weighted median reply.
+  - Status is on track before day 7 ("too early to judge"), then on track or at risk, then met or missed from day 14. Each status comes with its reasons.
+  - Rules come from the `guarantee` setting; the tour target is per pilot.
+- **Daily entry:** a grid per pilot with 8 numbers per vacancy. Tab moves across, the arrow keys move up and down, and Enter saves. It's an upsert per vacancy per day through `withAudit`. Future days, days outside the pilot and other pilots' vacancies are refused.
+- **Pilots page:** start a pilot (firm, day 0, up to 3 vacancies with their usual days on market). "Close pilot" appears from day 14 and records met (every vacancy met) or missed. Status always shows icon + label + color.
+- **Evidence:** `pnpm test` passes 80 files and 566 tests. Full `pnpm e2e`: 132 passed, 87 skipped by viewport, with axe at 0. Domain coverage: guarantee.ts 97% lines, and audit.ts branches went from 74% to 95% with new tests.
+
 ## 2026-09-29: Step 8, Fair-housing checker layer 1 (M14): done
 
 - **Checker:** `lib/domain/fair-housing.ts` runs an editable regex list with pass / warn / block; block wins over warn.
