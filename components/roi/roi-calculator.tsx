@@ -108,9 +108,9 @@ export function RoiCalculator({
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-h2 font-semibold">
+          <h1 className="text-h2 font-semibold">
             {lead ? `What vacancy costs ${lead.name}` : "What vacancy costs you"}
-          </p>
+          </h1>
           <Link href={`${pathname}?${query}${extra}`} className={cn(buttonVariants({ variant: "outline" }))}>
             Exit present mode
           </Link>

@@ -109,10 +109,13 @@ export default async function CallsPage({ searchParams }: PageProps<"/calls">) {
           className="border-border bg-card flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4"
           role="status"
         >
-          <p className="font-medium">
-            Call block · call <Num value={Math.max(index + 1, 1)} /> of <Num value={list.length} />
-            {next ? <span className="text-muted-foreground font-normal"> · next: {next.name}</span> : null}
-          </p>
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <h1 className="font-semibold">Call block</h1>
+            <p>
+              call <Num value={Math.max(index + 1, 1)} /> of <Num value={list.length} />
+              {next ? <span className="text-muted-foreground"> · next: {next.name}</span> : null}
+            </p>
+          </div>
           <Link href="/calls" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
             Exit (Esc)
           </Link>

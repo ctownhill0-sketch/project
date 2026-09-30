@@ -29,7 +29,8 @@ test.describe("Call workspace", () => {
 
   test("call block mode loads the next firm after each call; Esc exits", async ({ page }) => {
     await page.goto("/calls?mode=block");
-    await expect(page.getByRole("status").filter({ hasText: /^Call block · call 1 of \d+/ })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Call block" })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: /^Call block\s*call 1 of \d+/ })).toBeVisible();
     const first = (await current(page).innerText()).trim();
     await expect(page.getByRole("tabpanel")).toBeVisible();
     await page.keyboard.press("5");

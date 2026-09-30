@@ -54,12 +54,42 @@ test("seed finder data (fixture Google responses)", async ({ page }) => {
 const PAGES: [string, string][] = [
   ["dashboard", "/dashboard"],
   ["leads", "/leads"],
+  ["leads-import", "/leads/import"],
+  ["leads-duplicates", "/leads/duplicates"],
+  ["leads-review", "/leads/review"],
   ["finder", "/finder"],
   ["finder-results", "/finder/results"],
   ["finder-triage", "/finder/triage"],
   ["finder-usage", "/finder/usage"],
+  ["shops", "/shops"],
+  ["shops-plan", "/shops/plan"],
+  ["calls", "/calls"],
+  ["calls-block", "/calls?mode=block"],
+  ["pipeline", "/pipeline"],
+  ["pipeline-table", "/pipeline?view=table"],
+  ["roi", "/roi"],
+  ["roi-present", "/roi?present=1"],
+  ["audits", "/audits"],
+  ["pilots", "/pilots"],
   ["settings", "/settings"],
+  ["fair-housing", "/settings/fair-housing"],
+  ["design", "/design"],
 ];
+
+test("screenshots: audit detail", async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.goto("/audits");
+  await page.getByRole("button", { name: "Start audit" }).click();
+  await expect(page).toHaveURL(/\/audits\/[0-9a-f-]{36}$/);
+  await page
+    .getByLabel("Summary, in your words")
+    .fill(
+      "Your inquiries waited far longer than renters will. Renters usually lease from whoever answers first. We answer every inquiry in under a minute, day or night.",
+    );
+  await page.getByRole("button", { name: "Check and export PDF" }).click();
+  await expect(page.getByText("No flagged phrases.")).toBeVisible();
+  await shoot(page, "audit-detail", new URL(page.url()).pathname);
+});
 
 for (const [name, path] of PAGES) {
   test(`screenshots: ${name}`, async ({ page }) => {

@@ -2,6 +2,20 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-30: Step 11, Final polish: done
+
+- **Code review (high):** 10 findings, all fixed with tests (`docs/reviews/2026-09-30-final.md`).
+- **Design review:** none 🔴. Three 🟠 fixed: an h1 in call-block and Present modes (plus a test that every page has exactly one), one primary action on Pilots, and Edit buttons sized to their label. Four 🟡 recorded.
+- **Performance:** every page server-renders in 23–103 ms on a production build. `pdf-lib` and the fixtures stay server-side.
+- **Screenshots:** every page at 1440/768/320 in both themes, 138 files in `docs/screenshots/pages/`.
+- **README:** a "Start here" section covering install, the Google key (restricted to Places API (New), with a $1 budget alert), wiping the demo data, and the daily routine.
+- **Evidence:**
+  - Typecheck is clean, and lint has 0 errors.
+  - Unit tests: 86 files, 593 passed.
+  - e2e: 139 passed, 143 skipped (viewport flows and the on-demand screenshots), with axe at 0.
+  - `pnpm build` passes, and `pnpm scan:key` passes.
+  - Domain coverage: 97.5% statements, 92.5% branches, 98.7% lines.
+
 ## 2026-09-30: Step 10, Dashboard and Settings completion (M17, M18): done
 
 - **Dashboard:** a "Getting started" checklist (7 steps, collapsed to one line, so the dashboard still fits 1440×900). It counts only real data: demo firms are recognized by reserved `.example` domains and 555-01xx phones.

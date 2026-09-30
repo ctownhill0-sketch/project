@@ -16,7 +16,7 @@ test.describe("ROI calculator", () => {
     await expect(page.getByText("$78.90")).toBeVisible();
 
     await page.getByRole("link", { name: "Present" }).click();
-    await expect(page.getByText("What vacancy costs you")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "What vacancy costs you" })).toBeVisible();
     await expect(page.getByText("$78.90")).toBeVisible();
     expect(await axeViolations(page)).toEqual([]);
     await page.getByRole("link", { name: "Exit present mode" }).click();

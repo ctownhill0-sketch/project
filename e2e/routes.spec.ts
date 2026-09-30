@@ -35,3 +35,38 @@ for (const item of PLACEHOLDERS) {
     expect(await axeViolations(page)).toEqual([]);
   });
 }
+
+const EVERY_PAGE = [
+  "/dashboard",
+  "/leads",
+  "/leads/import",
+  "/leads/duplicates",
+  "/leads/review",
+  "/finder",
+  "/finder/results",
+  "/finder/triage",
+  "/finder/usage",
+  "/shops",
+  "/shops/plan",
+  "/calls",
+  "/calls?mode=block",
+  "/pipeline",
+  "/pipeline?view=table",
+  "/roi",
+  "/roi?present=1",
+  "/audits",
+  "/pilots",
+  "/settings",
+  "/settings/fair-housing",
+  "/design",
+];
+
+test("every page and mode has exactly one h1", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop-1440", "structure is the same at every width");
+  test.setTimeout(120_000);
+  for (const path of EVERY_PAGE) {
+    await page.goto(path);
+    await expect(page.getByRole("main")).toBeVisible();
+    await expect(page.locator("h1"), path).toHaveCount(1);
+  }
+});

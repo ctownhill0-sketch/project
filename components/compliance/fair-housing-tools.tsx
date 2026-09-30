@@ -73,7 +73,13 @@ export function ScriptEditor({ script }: { script: { id: string; name: string; b
 
   if (!editing)
     return (
-      <Button variant="outline" size="sm" onClick={() => setEditing(true)} aria-label={`Edit ${script.name}`}>
+      <Button
+        variant="outline"
+        size="sm"
+        className="self-start"
+        onClick={() => setEditing(true)}
+        aria-label={`Edit ${script.name}`}
+      >
         Edit
       </Button>
     );

@@ -106,7 +106,7 @@ export function DayEntry({
             ))}
           </select>
         </div>
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" variant="outline" disabled={pending}>
           Save day
         </Button>
       </div>
