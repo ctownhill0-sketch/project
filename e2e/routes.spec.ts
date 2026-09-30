@@ -13,6 +13,7 @@ const BUILT = new Set([
   "/calls",
   "/pipeline",
   "/roi",
+  "/audits",
 ]);
 const PLACEHOLDERS = NAV_ITEMS.filter((item) => !BUILT.has(item.href));
 

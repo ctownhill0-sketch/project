@@ -11,6 +11,10 @@ const STATUSES = {
   missed: { label: "Missed", tone: "destructive", icon: Icons.error },
   excluded: { label: "Excluded", tone: "neutral", icon: Icons.excluded },
   do_not_call: { label: "Do not call", tone: "destructive", icon: Icons.excluded },
+  check_pass: { label: "Pass", tone: "success", icon: Icons.success },
+  check_warn: { label: "Warning", tone: "warning", icon: Icons.warning },
+  check_block: { label: "Blocked", tone: "destructive", icon: Icons.error },
+  check_overridden: { label: "Overridden", tone: "neutral", icon: Icons.info },
 } as const satisfies Record<string, { label: string; tone: Tone; icon: unknown }>;
 
 export type Status = keyof typeof STATUSES;

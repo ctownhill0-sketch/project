@@ -196,7 +196,7 @@ export class PoliteFetcher {
               accept: "text/html,application/xhtml+xml,text/plain;q=0.8",
             },
           });
-        } catch (error) {
+        } catch {
           return controller.signal.aborted ? ("timeout" as const) : ("network" as const);
         } finally {
           clearTimeout(timer);

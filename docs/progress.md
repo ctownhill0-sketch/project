@@ -2,6 +2,25 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-29: Step 8, Fair-housing checker layer 1 (M14): done
+
+- **Checker:** `lib/domain/fair-housing.ts` runs an editable regex list with pass / warn / block; block wins over warn.
+  - It's seeded with the brief's examples plus NY/NYC/NJ source-of-income rules: vouchers, Section 8, CityFHEPS, HRA, HASA, SEPS, LINC, SRAP/RAP, public assistance, and "income must be from employment".
+  - False-positive tests pass: "family room", "walk to church", "Section 8 welcome", "Kids' playroom" and "no pets; assistance animals welcome" are all clean.
+- **Logging:** every check is logged in `fair_housing_check` (a hash of the text plus the flagged phrases, never the text) and audited.
+- **Overrides:** a warning can be overridden with a reason of 10+ characters. A block can't be overridden (D-C1).
+- **Rule edits:** a rule is refused if it's broken, catastrophic (nested repeats) or matches everything. Rules are turned off, never deleted (D-C3).
+- **Page:** `/settings/fair-housing` has a text tester, a call-script editor (each save is checked: blocked wording isn't saved, and a warning needs a reason), the rule editor and the check log. Everything is labeled "Screening aid, not legal advice."
+
+## 2026-09-29: Step 7, Vacancy audit PDF (M8): done
+
+- **Snapshot:** starting an audit freezes the firm's shops and stats, the metro median (anonymous, and only with 3+ firms shopped in the metro; otherwise "unknown") and the ROI (the latest saved scenario, or defaults, labeled as such).
+- **Summary:** the founder writes the 3-sentence summary, with a live sentence counter and number check. Every number must match a figure on the page (rounding allowed). `AI-HOOK(M8)` marks the spot.
+- **Export:** "Check and export PDF" saves the summary, runs the number check, then the fair-housing check on the whole page. The PDF route (`/audits/[id]/pdf`) serves the file only when the linked check is cleared _and_ its hash matches the current text, so an edit after the check needs a new check. The export is audit-logged.
+- **PDF:** one Letter page drawn with `pdf-lib` (MIT, no service): wordmark, summary box, response-time table vs the metro median, the renter's experience (up to 8 shops), the ROI marked Estimated, the method note, and a footer ("response behavior only; screening aid, not legal advice").
+- **Links:** the lead panel links to "ROI for this firm" and "Start a vacancy audit" (shopped, non-do-not-call firms).
+- **Evidence:** typecheck is clean, and lint has 0 errors (1 known TanStack warning). `pnpm test` passes 78 files and 551 tests. Full `pnpm e2e`: 129 passed, 81 skipped by viewport, with axe at 0. Mutation checks: breaking the number check fails 2 tests, and dropping the hash check fails 1.
+
 ## 2026-09-29: Step 6, ROI calculator (M9): done
 
 - **Formulas** in `lib/domain/roi.ts`: rent × 12 ÷ 365 per vacant day ($1,800 → $59.18), annual vacancy loss, savings from leasing N days faster, fee (price by vacancies + $300 setup), net savings and payback. Every result is labeled "Estimated".

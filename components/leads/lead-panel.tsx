@@ -94,6 +94,16 @@ export function LeadPanel({ lead }: { lead: LeadDetail }) {
           </Link>
           {!lead.dncFlag ? <AddToPipelineButton companyId={lead.id} /> : null}
         </div>
+        <p className="text-small flex flex-wrap gap-x-3 gap-y-1">
+          <Link href={`/roi?lead=${lead.id}`} className="text-link underline underline-offset-2">
+            ROI for this firm
+          </Link>
+          {lead.shops.length > 0 && !lead.dncFlag ? (
+            <Link href={`/audits?lead=${lead.id}`} className="text-link underline underline-offset-2">
+              Start a vacancy audit
+            </Link>
+          ) : null}
+        </p>
       </header>
 
       <Section title="Why this lead">

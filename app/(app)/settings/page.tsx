@@ -71,6 +71,9 @@ export default async function SettingsPage() {
         <Link href="#places" className="text-link text-small underline underline-offset-2">
           Google Places
         </Link>
+        <Link href="/settings/fair-housing" className="text-link text-small underline underline-offset-2">
+          Fair-housing check
+        </Link>
       </nav>
       <Section
         id="places"
