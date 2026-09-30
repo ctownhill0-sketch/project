@@ -28,6 +28,12 @@ export async function getDb(source: Record<string, string | undefined> = process
   return (await cache.__vdDb).db;
 }
 
+/** The open handle, for the few callers that need more than queries (the backup download). */
+export async function getDbHandle(): Promise<DbHandle> {
+  await getDb();
+  return cache.__vdDb!;
+}
+
 export function resetDbCacheForTests(): void {
   cache.__vdDb = undefined;
 }

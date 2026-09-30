@@ -1,6 +1,11 @@
 import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import type { Db } from "@/lib/db/client";
 import { call, company, mysteryShop, pilot, weeklyMetric } from "@/lib/db/schema";
+import { firstRunChecklist } from "@/lib/domain/first-run";
+import { nyDateKey } from "@/lib/domain/ny-time";
+import { placesKeyStatus } from "@/lib/finder/runtime";
+import { DEMO_WEEK_NOTE, isDemoFirm } from "@/lib/seed/markers";
+import { mondayOf } from "@/lib/settings/service";
 import { killTestProgress, projection, weekOverWeek, type KillTestSettings } from "@/lib/domain/progress";
 import { whyThisLead } from "@/lib/domain/scoring";
 import { shopStats } from "@/lib/domain/shop-stats";
@@ -107,6 +112,18 @@ export async function getDashboard(db: Db, workspaceId: string, now = new Date()
   const candidates = callable.filter((f) => !called.has(f.id)).map((f) => refs.get(f.id)!);
   const today = buildToday({ now, dueBy: endOfDayNY(now), callbacks, openShops, candidates }, 12);
 
+  const demoIds = new Set(firms.filter(isDemoFirm).map((f) => f.id));
+  const thisMonday = mondayOf(nyDateKey(now));
+  const firstRun = firstRunChecklist({
+    shopperNameSet: Boolean(await getSetting<string | null>(db, workspaceId, "shopperName", null)),
+    placesKeySet: placesKeyStatus().configured,
+    demoFirmsLeft: demoIds.size,
+    realLeads: firms.length - demoIds.size,
+    realShops: shops.filter((s) => !demoIds.has(s.companyId)).length,
+    realCalls: allCalls.filter((c) => !demoIds.has(c.companyId)).length,
+    thisWeekEntered: weeks.some((w) => w.weekStart === thisMonday && w.notes !== DEMO_WEEK_NOTE),
+  });
+
   const nextUpFirm = today.nextUp ? firms.find((f) => f.id === today.nextUp!.companyId) : undefined;
   return {
     mrr,
@@ -123,6 +140,7 @@ export async function getDashboard(db: Db, workspaceId: string, now = new Date()
       afterHoursShops: afterHours.count,
     },
     today,
+    firstRun,
     nextUp: today.nextUp ? { ...today.nextUp, phone: nextUpFirm?.phone ?? null } : null,
     mrrSeries: weeks.map((w) => ({ weekStart: w.weekStart, mrr: Number(w.mrr) })),
     projection:

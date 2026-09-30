@@ -25,9 +25,25 @@ interface LeadHit {
 
 const ACTIONS: RecentItem[] = [
   { label: "Find leads in a town", href: "/finder" },
+  { label: "Triage finder results", href: "/finder/triage" },
+  { label: "Import leads from a CSV", href: "/leads/import" },
+  { label: "Review possible duplicates", href: "/leads/duplicates" },
+  { label: "Review software detection", href: "/leads/review" },
+  { label: "Plan mystery shops", href: "/shops/plan" },
   { label: "Log a mystery shop", href: "/shops#new" },
   { label: "Start a call block", href: "/calls?mode=block" },
-  { label: "New audit", href: "/audits?new=1" },
+  { label: "Open the call list", href: "/calls" },
+  { label: "Open the pipeline board", href: "/pipeline" },
+  { label: "Work out ROI", href: "/roi" },
+  { label: "Present ROI", href: "/roi?present=1" },
+  { label: "New vacancy audit", href: "/audits#new-audit" },
+  { label: "Start a pilot", href: "/pilots#start" },
+  { label: "Enter pilot numbers", href: "/pilots" },
+  { label: "Check text for fair-housing issues", href: "/settings/fair-housing" },
+  { label: "Edit call scripts", href: "/settings/fair-housing#scripts" },
+  { label: "Enter this week's numbers", href: "/settings#weekly" },
+  { label: "Back up or export data", href: "/settings#data" },
+  { label: "Check the Google Places key", href: "/settings#places" },
 ];
 
 export function CommandMenu({

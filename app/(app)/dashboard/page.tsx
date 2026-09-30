@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FirstRunChecklist } from "@/components/dashboard/first-run";
 import { KillTest } from "@/components/dashboard/kill-test";
 import { MrrChart, type MrrPoint } from "@/components/dashboard/mrr-chart";
 import { NextUp } from "@/components/dashboard/next-up";
@@ -113,6 +114,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
       />
 
       {d.nextUp ? <NextUp next={d.nextUp} /> : null}
+      <FirstRunChecklist run={d.firstRun} />
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <section aria-labelledby="today" className="flex min-w-0 flex-col gap-2">

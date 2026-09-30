@@ -2,6 +2,26 @@
 
 A short note after every step, newest first. Evidence (test output) is pasted in each entry.
 
+## 2026-09-30: Step 10, Dashboard and Settings completion (M17, M18): done
+
+- **Dashboard:** a "Getting started" checklist (7 steps, collapsed to one line, so the dashboard still fits 1440×900). It counts only real data: demo firms are recognized by reserved `.example` domains and 555-01xx phones.
+- **Notification bell:** callbacks, reply checks, call-now leads (a shop unanswered for 24h and not called since; links to the call workspace), finder places waiting for triage, and pilots at risk.
+- **⌘K:** 20 actions, covering finder, triage, import, duplicates, software review, shops, call block, pipeline, ROI and Present, audit, pilot, fair-housing, scripts, weekly numbers, backup and the Places key. The broken "New audit" link is fixed.
+- **Shortcut sheet (?):** grouped tables for Everywhere, Call workspace (1–9 and Esc), Finder triage (A/S/N/D/O/U) and Pilot daily entry.
+- **Settings:**
+  - Weekly numbers, stored per Monday as an upsert.
+  - Scoring weights; saving rescores every lead with a history row.
+  - Software patterns and the exclusion list: add, and turn off or on.
+  - Business hours; saving re-buckets every shop.
+  - Thresholds: kill test, guarantee and call blocks, validated.
+  - Brand wordmark (used on the audit PDF) and the shopper's real name.
+  - Google Places.
+  - Data:
+    - JSON export of every workspace table and a PGlite backup (`.tar.gz`), both audit-logged.
+    - Leads CSV.
+    - "Delete demo data", which only runs after typing DELETE DEMO DATA. A catalog test proves every table that points at a firm is handled.
+- **Evidence:** typecheck is clean, and lint has 0 errors (1 known warning). `pnpm test` passes 86 files and 584 tests. Full `pnpm e2e`: 138 passed, 93 skipped by viewport, with axe at 0.
+
 ## 2026-09-30: Step 9, Pilot scorecard (M10): done
 
 - **Guarantee** (`lib/domain/guarantee.ts`): tours, projected tours (tours × 14 ÷ days elapsed) and an inquiry-weighted median reply.

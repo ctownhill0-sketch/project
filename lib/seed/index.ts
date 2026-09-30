@@ -91,6 +91,7 @@ import { DEFAULT_EXCLUSION_RULES } from "@/lib/domain/exclusion";
 const SOFTWARE_PATTERNS = DEFAULT_SOFTWARE_PATTERNS;
 
 /** Layer-1 fair-housing patterns (M14). Editable in Settings. Screening aid, not legal advice. */
+import { DEMO_WEEK_NOTE } from "@/lib/seed/markers";
 export { FAIR_HOUSING_RULES } from "@/lib/seed/rules";
 import { FAIR_HOUSING_RULES } from "@/lib/seed/rules";
 
@@ -440,6 +441,7 @@ export async function seed(
           netBurn: "35.00",
           paidClients: paying ? 1 : 0,
           insuranceStudyHours: (2 + (k % 4)).toFixed(1),
+          notes: DEMO_WEEK_NOTE,
         };
       }),
     );

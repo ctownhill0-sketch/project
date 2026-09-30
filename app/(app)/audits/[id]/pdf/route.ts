@@ -16,7 +16,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/audits/[id]/pdf
   } catch (error) {
     return new Response(error instanceof Error ? error.message : "Can't export this audit.", { status: 409 });
   }
-  const brand = await getSetting(db, user.workspaceId, "brandName", "Vacancy Desk");
+  const { wordmark: brand } = await getSetting(db, user.workspaceId, "brand", { wordmark: "Vacancy Desk" });
   const bytes = await renderAuditPdf({
     brand,
     snapshot: released.snapshot,

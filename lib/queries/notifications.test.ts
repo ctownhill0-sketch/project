@@ -47,6 +47,39 @@ describe("getNotifications", () => {
     expect(n.items.find((i) => i.kind === "callback")?.label).toMatch(/Callback overdue/);
     expect(n.items.find((i) => i.kind === "reply_check")?.label).toMatch(/4h reply check/);
     expect(n.total).toBeGreaterThanOrEqual(2);
-    expect(n.items.every((i) => i.href.startsWith("/leads?lead="))).toBe(true);
+    expect(
+      n.items
+        .filter((i) => i.kind === "callback" || i.kind === "reply_check")
+        .every((i) => i.href.startsWith("/leads?lead=")),
+    ).toBe(true);
+  });
+
+  it("adds call-now leads: a shop unanswered for 24h and no call since", async () => {
+    const [, , , firm] = await handle.db.select().from(company).where(eq(company.workspaceId, ws)).limit(4);
+    await handle.db.update(company).set({ dncFlag: false, status: "new" }).where(eq(company.id, firm!.id));
+    await handle.db.insert(mysteryShop).values({
+      workspaceId: ws,
+      createdById: userId,
+      companyId: firm!.id,
+      channel: "email",
+      sentAt: new Date(NOW.getTime() - 30 * 3_600_000),
+      hoursBucket: "after_hours",
+      shopperName: "Demo Shopper",
+    });
+    const n = await getNotifications(handle.db, ws, NOW);
+    const item = n.items.find((i) => i.kind === "call_now" && i.name === firm!.name);
+    expect(item).toMatchObject({
+      href: `/calls?lead=${firm!.id}`,
+      label: expect.stringMatching(/No reply in 24h/),
+    });
+  });
+
+  it("adds finder results waiting for triage and pilots at risk", async () => {
+    const n = await getNotifications(handle.db, ws, NOW);
+    const kinds = n.items.map((i) => i.kind);
+    expect(kinds).toContain("pilot_at_risk");
+    expect(n.items.find((i) => i.kind === "pilot_at_risk")!.href).toBe("/pilots");
+    if (kinds.includes("finder"))
+      expect(n.items.find((i) => i.kind === "finder")!.href).toBe("/finder/triage");
   });
 });

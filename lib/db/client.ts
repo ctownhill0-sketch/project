@@ -15,13 +15,20 @@ export interface DbHandle {
   db: Db;
   driver: DbOptions["driver"];
   close: () => Promise<void>;
+  /** A gzip tarball of the whole database (PGlite only). */
+  backup?: () => Promise<Blob>;
 }
 
 export async function createDb(options: DbOptions): Promise<DbHandle> {
   if (options.driver === "pglite") {
     const client = new PGlite(options.dir);
     await client.waitReady;
-    return { db: drizzlePglite({ client }), driver: "pglite", close: () => client.close() };
+    return {
+      db: drizzlePglite({ client }),
+      driver: "pglite",
+      close: () => client.close(),
+      backup: () => client.dumpDataDir("gzip"),
+    };
   }
   if (!options.url) {
     throw new Error("DATABASE_URL is required when DATABASE_DRIVER=neon");

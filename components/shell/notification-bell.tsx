@@ -19,7 +19,7 @@ export interface BellItem {
   href: string;
 }
 
-/** Due reply checks and callbacks (finder results and call-now alerts join later). */
+/** Due reply checks and callbacks, call-now leads, finder results and pilots at risk. */
 export function NotificationBell({ total, items }: { total: number; items: BellItem[] }) {
   return (
     <Popover>
@@ -40,8 +40,8 @@ export function NotificationBell({ total, items }: { total: number; items: BellI
           <PopoverTitle>Due now</PopoverTitle>
           <PopoverDescription>
             {total
-              ? "Reply checks and callbacks, oldest first."
-              : "Nothing is due. New reply checks and callbacks show here."}
+              ? "Callbacks, reply checks, leads to call now, finder results and pilots at risk."
+              : "Nothing is due. Callbacks, reply checks and new finder results show here."}
           </PopoverDescription>
         </PopoverHeader>
         {items.length ? (

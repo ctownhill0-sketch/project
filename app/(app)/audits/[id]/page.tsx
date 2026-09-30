@@ -19,7 +19,7 @@ export default async function AuditPage({ params }: PageProps<"/audits/[id]">) {
   const db = await getDb();
   const audit = await getAudit(db, workspaceId, id).catch(() => null);
   if (!audit) notFound();
-  const brand = await getSetting(db, workspaceId, "brandName", "Vacancy Desk");
+  const { wordmark: brand } = await getSetting(db, workspaceId, "brand", { wordmark: "Vacancy Desk" });
   const s = audit.snapshot;
 
   return (
