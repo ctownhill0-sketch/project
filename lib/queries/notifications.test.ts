@@ -82,4 +82,29 @@ describe("getNotifications", () => {
     if (kinds.includes("finder"))
       expect(n.items.find((i) => i.kind === "finder")!.href).toBe("/finder/triage");
   });
+
+  it("uses only each firm's latest call for callbacks", async () => {
+    const firms = await handle.db.select().from(company).where(eq(company.workspaceId, ws)).limit(8);
+    const firm = firms[7]!;
+    await handle.db.update(company).set({ status: "new" }).where(eq(company.id, firm.id));
+    await handle.db.insert(call).values([
+      {
+        workspaceId: ws,
+        createdById: userId,
+        companyId: firm.id,
+        disposition: "callback",
+        calledAt: new Date(NOW.getTime() - 3 * 86_400_000),
+        nextStepAt: new Date(NOW.getTime() - 2 * 86_400_000),
+      },
+      {
+        workspaceId: ws,
+        createdById: userId,
+        companyId: firm.id,
+        disposition: "no_answer",
+        calledAt: new Date(NOW.getTime() - 86_400_000),
+      },
+    ]);
+    const n = await getNotifications(handle.db, ws, NOW);
+    expect(n.items.filter((i) => i.kind === "callback" && i.name === firm.name)).toEqual([]);
+  });
 });

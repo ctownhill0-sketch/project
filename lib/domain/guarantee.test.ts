@@ -86,6 +86,13 @@ describe("vacancyGuarantee", () => {
     expect(g.reasons).toEqual(["No reply times entered."]);
   });
 
+  it("projects over the days that have data when today's entry is already in", () => {
+    const eightDays = [...onTrackWeek, day(0, 40)];
+    expect(vacancyGuarantee(eightDays, 7, DEFAULT_GUARANTEE, 8).projectedTours).toBe(5.3);
+    expect(vacancyGuarantee(onTrackWeek, 7, DEFAULT_GUARANTEE, 7).projectedTours).toBe(6);
+    expect(vacancyGuarantee([day(2, 40), day(0, 40)], 1, DEFAULT_GUARANTEE, 2).projectedTours).toBe(14);
+  });
+
   it("uses the configured rules", () => {
     const g = vacancyGuarantee(onTrackWeek, 7, { ...DEFAULT_GUARANTEE, tourTarget: 8 });
     expect(g.status).toBe("at_risk");

@@ -80,7 +80,16 @@ export function ScriptEditor({ script }: { script: { id: string; name: string; b
   return (
     <div className="flex w-full flex-col gap-2">
       <Label htmlFor={`${id}-body`}>{script.name} wording</Label>
-      <Textarea id={`${id}-body`} rows={4} value={body} onChange={(e) => setBody(e.target.value)} />
+      <Textarea
+        id={`${id}-body`}
+        rows={4}
+        value={body}
+        onChange={(e) => {
+          setBody(e.target.value);
+          // A result (and any override) only ever applies to the text it was checked on.
+          setCheck(null);
+        }}
+      />
       <div className="flex gap-2">
         <Button size="sm" disabled={pending} onClick={() => save()}>
           Check and save

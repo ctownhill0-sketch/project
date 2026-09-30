@@ -1,10 +1,10 @@
 // Pilots (brief M10): start a 14-day pilot, enter each vacancy's numbers by hand each day, and
 // judge the guarantee. Everything the founder changes goes through withAudit.
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, like } from "drizzle-orm";
 import { z } from "zod";
 import { withAudit, type AuditContext } from "@/lib/audit/audit";
 import type { Db } from "@/lib/db/client";
-import { client, company, pilot, pilotMetric, vacancy } from "@/lib/db/schema";
+import { client, company, pilot, pilotMetric, setting, vacancy } from "@/lib/db/schema";
 import {
   addDays,
   daysElapsed,
@@ -20,6 +20,26 @@ async function rulesFor(db: Db, workspaceId: string): Promise<GuaranteeRules> {
     ...DEFAULT_GUARANTEE,
     ...(await getSetting<Partial<GuaranteeRules>>(db, workspaceId, "guarantee", {})),
   };
+}
+
+/** Each pilot keeps the guarantee rules it started with, so later settings changes can't move its goalposts. */
+const rulesKey = (pilotId: string) => `pilotRules.${pilotId}`;
+
+/**
+ * Vacancies belong to a client, and a firm can run more than one pilot. A pilot's vacancies are the
+ * client's vacancies created from its start until the client's next pilot started.
+ */
+function vacanciesOf<V extends { clientId: string; createdAt: Date }>(
+  p: { id: string; clientId: string; createdAt: Date },
+  clientPilots: { id: string; clientId: string; createdAt: Date }[],
+  vacancies: V[],
+): V[] {
+  const next = clientPilots
+    .filter((o) => o.clientId === p.clientId && o.id !== p.id && o.createdAt > p.createdAt)
+    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[0];
+  return vacancies.filter(
+    (v) => v.clientId === p.clientId && v.createdAt >= p.createdAt && (!next || v.createdAt < next.createdAt),
+  );
 }
 
 export interface StartPilotInput {
@@ -58,6 +78,7 @@ export async function startPilot(db: Db, ctx: AuditContext, input: StartPilotInp
       .insert(pilot)
       .values({ ...own, clientId: clientRow.id, day0: input.day0, tourTarget: rules.tourTarget })
       .returning();
+    await tx.insert(setting).values({ ...own, key: rulesKey(p!.id), value: rules });
     await tx.insert(vacancy).values(
       labels.map((v) => ({
         ...own,
@@ -93,21 +114,13 @@ export async function saveDayMetrics(
   input: { pilotId: string; day: string; rows: MetricRow[] },
   today: string,
 ) {
-  const rules = await rulesFor(db, ctx.workspaceId);
   const rows = z.array(MetricRow).min(1).parse(input.rows);
-  const [p] = await db
-    .select()
-    .from(pilot)
-    .where(and(eq(pilot.id, input.pilotId), eq(pilot.workspaceId, ctx.workspaceId)));
+  const [p] = await listPilots(db, ctx.workspaceId, today, { pilotId: input.pilotId });
   if (!p) throw new Error("Pilot not found.");
-  const last = addDays(p.day0, rules.pilotDays - 1);
-  if (input.day < p.day0 || input.day > last) throw new Error(`Pick a day between ${p.day0} and ${last}.`);
+  if (input.day < p.day0 || input.day > p.lastDay)
+    throw new Error(`Pick a day between ${p.day0} and ${p.lastDay}.`);
   if (input.day > today) throw new Error("That day is in the future.");
-  const allowed = new Set(
-    (await db.select({ id: vacancy.id }).from(vacancy).where(eq(vacancy.clientId, p.clientId))).map(
-      (v) => v.id,
-    ),
-  );
+  const allowed = new Set(p.vacancies.map((v) => v.id));
   if (rows.some((r) => !allowed.has(r.vacancyId))) throw new Error("That vacancy isn't part of this pilot.");
   await withAudit(db, ctx, { action: "update", entity: "pilot_metric" }, async (tx) => {
     for (const r of rows) {
@@ -133,7 +146,7 @@ export async function saveDayMetrics(
 
 /** From day 14 the pilot is closed as met (every vacancy met) or missed. */
 export async function closePilot(db: Db, ctx: AuditContext, pilotId: string, today: string) {
-  const [listed] = (await listPilots(db, ctx.workspaceId, today)).filter((p) => p.id === pilotId);
+  const [listed] = await listPilots(db, ctx.workspaceId, today, { pilotId });
   if (!listed) throw new Error("Pilot not found.");
   if (listed.status !== "running") throw new Error("This pilot is already closed.");
   if (listed.elapsed < listed.rules.pilotDays)
@@ -146,18 +159,28 @@ export async function closePilot(db: Db, ctx: AuditContext, pilotId: string, tod
   return outcome;
 }
 
-export async function listPilots(db: Db, workspaceId: string, today: string) {
+export async function listPilots(
+  db: Db,
+  workspaceId: string,
+  today: string,
+  options: { runningOnly?: boolean; pilotId?: string } = {},
+) {
   const settings = await rulesFor(db, workspaceId);
-  const pilots = await db
+  const all = await db
     .select({ pilot, firmName: company.name, companyId: company.id })
     .from(pilot)
     .innerJoin(client, eq(client.id, pilot.clientId))
     .innerJoin(company, eq(company.id, client.companyId))
     .where(eq(pilot.workspaceId, workspaceId))
     .orderBy(desc(pilot.day0), asc(company.name));
+  const pilots = all.filter(
+    (p) =>
+      (!options.runningOnly || p.pilot.status === "running") &&
+      (!options.pilotId || p.pilot.id === options.pilotId),
+  );
   if (!pilots.length) return [];
   const clientIds = [...new Set(pilots.map((p) => p.pilot.clientId))];
-  const [vacancies, metrics] = await Promise.all([
+  const [vacancies, metrics, frozen] = await Promise.all([
     db.select().from(vacancy).where(inArray(vacancy.clientId, clientIds)).orderBy(asc(vacancy.label)),
     db
       .select()
@@ -169,9 +192,16 @@ export async function listPilots(db: Db, workspaceId: string, today: string) {
         ),
       )
       .orderBy(asc(pilotMetric.day)),
+    db
+      .select({ key: setting.key, value: setting.value })
+      .from(setting)
+      .where(and(eq(setting.workspaceId, workspaceId), like(setting.key, "pilotRules.%"))),
   ]);
+  const frozenRules = new Map(frozen.map((f) => [f.key, f.value as Partial<GuaranteeRules>]));
+  const clientPilots = all.map((p) => p.pilot);
   return pilots.map(({ pilot: p, firmName, companyId }) => {
-    const rules = { ...settings, tourTarget: p.tourTarget };
+    // Pilots from before rules were frozen fall back to today's settings with their own tour target.
+    const rules = { ...settings, tourTarget: p.tourTarget, ...frozenRules.get(rulesKey(p.id)) };
     const lastDay = addDays(p.day0, rules.pilotDays - 1);
     const elapsed = Math.max(0, daysElapsed(p.day0, today));
     const mine = metrics.filter((m) => m.pilotId === p.id && m.day <= lastDay);
@@ -185,18 +215,18 @@ export async function listPilots(db: Db, workspaceId: string, today: string) {
       elapsed,
       day: Math.min(elapsed, rules.pilotDays),
       rules,
-      vacancies: vacancies
-        .filter((v) => v.clientId === p.clientId)
-        .map((v) => {
-          const days = mine.filter((m) => m.vacancyId === v.id);
-          return {
-            id: v.id,
-            label: v.label,
-            baselineDaysOnMarket: v.baselineDaysOnMarket,
-            metrics: days,
-            guarantee: vacancyGuarantee(days, elapsed, rules),
-          };
-        }),
+      vacancies: vacanciesOf(p, clientPilots, vacancies).map((v) => {
+        const days = mine.filter((m) => m.vacancyId === v.id);
+        const lastEntered = days.at(-1)?.day;
+        const covered = lastEntered ? daysElapsed(p.day0, lastEntered) + 1 : 0;
+        return {
+          id: v.id,
+          label: v.label,
+          baselineDaysOnMarket: v.baselineDaysOnMarket,
+          metrics: days,
+          guarantee: vacancyGuarantee(days, elapsed, rules, covered),
+        };
+      }),
     };
   });
 }

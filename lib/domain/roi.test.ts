@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_ROI_INPUTS, parseRoiQuery, roi, roiQuery } from "@/lib/domain/roi";
+import { DEFAULT_ROI_INPUTS, parseRoiQuery, roi, roiQuery, roiFieldError } from "@/lib/domain/roi";
 
 describe("roi", () => {
   it("costs a vacant day at rent × 12 ÷ 365 ($1,800 → $59.18)", () => {
@@ -39,5 +39,14 @@ describe("query string (local shareable link)", () => {
     expect(parseRoiQuery(new URLSearchParams("rent=999999999"))).toMatchObject({
       rent: DEFAULT_ROI_INPUTS.rent,
     });
+  });
+});
+
+describe("roiFieldError", () => {
+  it("names the allowed range for an out-of-range value, and is null when it's fine", () => {
+    expect(roiFieldError("rent", 1800)).toBeNull();
+    expect(roiFieldError("rent", 60000)).toBe("Use a value from 100 to 50,000.");
+    expect(roiFieldError("daysVacant", 400)).toBe("Use a value from 0 to 365.");
+    expect(roiFieldError("vacanciesAtOnce", 0)).toBe("Use a value from 1 to 500.");
   });
 });

@@ -90,7 +90,12 @@ export async function saveSummary(db: Db, ctx: AuditContext, id: string, summary
   await withAudit(db, ctx, { action: "update", entity: "vacancy_audit" }, async (tx) => {
     await tx
       .update(vacancyAudit)
-      .set({ summary: clean || null, summaryAuthor: "founder" })
+      // New wording needs new checks: an old pass or export no longer describes this text.
+      .set({
+        summary: clean || null,
+        summaryAuthor: "founder",
+        ...(clean === (audit.summary ?? "") ? {} : { fairHousingCheckId: null, pdfGeneratedAt: null }),
+      })
       .where(eq(vacancyAudit.id, id));
     return { result: null, entityId: id, before: { summary: audit.summary }, after: { summary: clean } };
   });

@@ -5,6 +5,7 @@ import { auditLog, client, company, pilot, pilotMetric, vacancy } from "@/lib/db
 import { createTestDb } from "@/lib/db/test-db";
 import { insertOwner } from "@/lib/db/test-fixtures";
 import { closePilot, listPilots, saveDayMetrics, startPilot } from "@/lib/pilots/service";
+import { saveSetting } from "@/lib/settings/save";
 
 const TODAY = "2026-09-29";
 let handle: DbHandle;
@@ -121,5 +122,77 @@ describe("closePilot", () => {
     expect(await closePilot(handle.db, ctx, id, TODAY)).toBe("missed");
     const [p] = await handle.db.select().from(pilot).where(eq(pilot.id, id));
     expect(p!.status).toBe("missed");
+  });
+});
+
+describe("pilot isolation and frozen rules", () => {
+  it("a firm's second pilot has only its own vacancies", async () => {
+    const { ctx, firm } = await setup();
+    const first = await startPilot(handle.db, ctx, {
+      companyId: firm.id,
+      day0: "2026-09-01",
+      vacancies: [{ label: "Unit 1A", baselineDaysOnMarket: null }],
+    });
+    await closePilot(handle.db, ctx, first, TODAY);
+    const second = await startPilot(handle.db, ctx, {
+      companyId: firm.id,
+      day0: "2026-09-28",
+      vacancies: [{ label: "Unit 2B", baselineDaysOnMarket: null }],
+    });
+    const pilots = await listPilots(handle.db, ctx.workspaceId, TODAY);
+    const one = pilots.find((p) => p.id === first)!;
+    const two = pilots.find((p) => p.id === second)!;
+    expect(one.vacancies.map((v) => v.label)).toEqual(["Unit 1A"]);
+    expect(two.vacancies.map((v) => v.label)).toEqual(["Unit 2B"]);
+    await expect(
+      saveDayMetrics(
+        handle.db,
+        ctx,
+        { pilotId: second, day: TODAY, rows: [row(one.vacancies[0]!.id)] },
+        TODAY,
+      ),
+    ).rejects.toThrow(/vacancy/);
+  });
+
+  it("keeps the rules a pilot started with when settings change", async () => {
+    const { ctx, firm } = await setup();
+    const id = await startPilot(handle.db, ctx, {
+      companyId: firm.id,
+      day0: "2026-09-20",
+      vacancies: [{ label: "Unit 1A", baselineDaysOnMarket: null }],
+    });
+    await saveSetting(handle.db, ctx, "guarantee", {
+      tourTarget: 9,
+      medianReplySeconds: 30,
+      atRiskFromDay: 3,
+      pilotDays: 7,
+    });
+    const p = (await listPilots(handle.db, ctx.workspaceId, TODAY)).find((x) => x.id === id)!;
+    expect(p.rules).toMatchObject({ tourTarget: 5, medianReplySeconds: 60, atRiskFromDay: 7, pilotDays: 14 });
+    expect(p.lastDay).toBe("2026-10-03");
+  });
+
+  it("projects over today's entry once it's in", async () => {
+    const { ctx, firm } = await setup();
+    const id = await startPilot(handle.db, ctx, {
+      companyId: firm.id,
+      day0: "2026-09-22",
+      vacancies: [{ label: "Unit 1A", baselineDaysOnMarket: null }],
+    });
+    const [v] = (await listPilots(handle.db, ctx.workspaceId, TODAY)).find((x) => x.id === id)!.vacancies;
+    await saveDayMetrics(
+      handle.db,
+      ctx,
+      { pilotId: id, day: "2026-09-22", rows: [row(v!.id, { tours: 4 })] },
+      TODAY,
+    );
+    await saveDayMetrics(
+      handle.db,
+      ctx,
+      { pilotId: id, day: TODAY, rows: [row(v!.id, { tours: 0 })] },
+      TODAY,
+    );
+    const p = (await listPilots(handle.db, ctx.workspaceId, TODAY)).find((x) => x.id === id)!;
+    expect(p.vacancies[0]!.guarantee.projectedTours).toBe(7); // 4 × 14 ÷ 8 days of data
   });
 });

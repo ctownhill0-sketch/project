@@ -10,7 +10,7 @@ import { Estimated } from "@/components/states/estimated";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { parseRoiQuery, roi, roiQuery, type RoiInputs } from "@/lib/domain/roi";
+import { parseRoiQuery, roi, roiFieldError, roiQuery, type RoiInputs } from "@/lib/domain/roi";
 import { cn } from "@/lib/utils";
 
 const FIELDS: { key: keyof RoiInputs; label: string; hint: string; prefix?: string }[] = [
@@ -40,6 +40,7 @@ export function RoiCalculator({
         string
       >,
   );
+  const [errors, setErrors] = useState<Partial<Record<keyof RoiInputs, string>>>({});
   const [pending, start] = useTransition();
   // Results come from the same parsed, range-limited values the shared link restores.
   const query = roiQuery(parseRoiQuery(new URLSearchParams(roiQuery(inputs))));
@@ -49,7 +50,10 @@ export function RoiCalculator({
   const set = (key: keyof RoiInputs, value: string) => {
     setRaw((prev) => ({ ...prev, [key]: value }));
     const n = Number(value);
-    if (value !== "" && Number.isFinite(n) && n >= 0) {
+    // Out-of-range values are flagged and never used, so the results always match the boxes.
+    const problem = value === "" ? "Enter a number." : roiFieldError(key, n);
+    setErrors((prev) => ({ ...prev, [key]: problem ?? undefined }));
+    if (!problem) {
       const next = { ...inputs, [key]: n };
       setInputs(next);
       router.replace(`${pathname}?${roiQuery(next)}${extra}${present ? "&present=1" : ""}`, {
@@ -137,12 +141,18 @@ export function RoiCalculator({
               inputMode="decimal"
               value={raw[f.key]}
               onChange={(e) => set(f.key, e.target.value.replace(/[^\d.]/g, ""))}
-              aria-describedby={`roi-${f.key}-hint`}
+              aria-describedby={`roi-${f.key}-hint${errors[f.key] ? ` roi-${f.key}-error` : ""}`}
+              aria-invalid={errors[f.key] ? true : undefined}
               className="num"
             />
             <p id={`roi-${f.key}-hint`} className="text-caption text-muted-foreground">
               {f.hint}
             </p>
+            {errors[f.key] ? (
+              <p id={`roi-${f.key}-error`} className="text-caption text-destructive-text">
+                {errors[f.key]} The results still use {inputs[f.key].toLocaleString("en-US")}.
+              </p>
+            ) : null}
           </div>
         ))}
       </form>

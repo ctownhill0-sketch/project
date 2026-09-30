@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, isNotNull, isNull, lte, ne } from "drizzle-orm";
+import { and, desc, eq, gte, isNull, ne } from "drizzle-orm";
 import type { Db } from "@/lib/db/client";
 import { call, company, mysteryShop } from "@/lib/db/schema";
 import { nyDateKey } from "@/lib/domain/ny-time";
@@ -17,104 +17,64 @@ const MAX_CALL_NOW = 5;
  */
 export async function getNotifications(db: Db, workspaceId: string, now = new Date()) {
   const dueBy = new Date(now.getTime() + DAY / 2);
-  const callbacks = await db
-    .select({
-      companyId: call.companyId,
-      name: company.name,
-      town: company.city,
-      score: company.score,
-      dueAt: call.nextStepAt,
-    })
-    .from(call)
-    .innerJoin(company, eq(company.id, call.companyId))
-    .where(
-      and(
-        eq(call.workspaceId, workspaceId),
-        isNotNull(call.nextStepAt),
-        lte(call.nextStepAt, dueBy),
-        eq(company.dncFlag, false),
-      ),
-    )
-    .orderBy(desc(call.calledAt));
-  const open = await db
-    .select({
-      companyId: mysteryShop.companyId,
-      name: company.name,
-      town: company.city,
-      score: company.score,
-      sentAt: mysteryShop.sentAt,
-    })
-    .from(mysteryShop)
-    .innerJoin(company, eq(company.id, mysteryShop.companyId))
-    .where(
-      and(
-        eq(mysteryShop.workspaceId, workspaceId),
-        isNull(mysteryShop.firstReplyAt),
-        gte(mysteryShop.sentAt, new Date(now.getTime() - 7 * DAY)),
-      ),
-    );
+  const firmCols = { companyId: company.id, name: company.name, town: company.city, score: company.score };
+  const live = and(eq(company.dncFlag, false), ne(company.status, "excluded"), isNull(company.mergedIntoId));
+  // Independent reads run together: this renders with every page.
+  const [calls, shops, pending, pilots] = await Promise.all([
+    db
+      .select({ ...firmCols, calledAt: call.calledAt, nextStepAt: call.nextStepAt })
+      .from(call)
+      .innerJoin(company, eq(company.id, call.companyId))
+      .where(and(eq(call.workspaceId, workspaceId), live))
+      .orderBy(desc(call.calledAt)),
+    db
+      .select({ ...firmCols, sentAt: mysteryShop.sentAt, firstReplyAt: mysteryShop.firstReplyAt })
+      .from(mysteryShop)
+      .innerJoin(company, eq(company.id, mysteryShop.companyId))
+      .where(
+        and(
+          eq(mysteryShop.workspaceId, workspaceId),
+          gte(mysteryShop.sentAt, new Date(now.getTime() - 30 * DAY)),
+          live,
+        ),
+      )
+      .orderBy(desc(mysteryShop.sentAt)),
+    triageQueue(db, workspaceId, null),
+    listPilots(db, workspaceId, nyDateKey(now), { runningOnly: true }),
+  ]);
+
+  // Only a firm's latest call decides its callback: a later call replaces the earlier plan.
+  const latestCall = new Map<string, (typeof calls)[number]>();
+  for (const c of calls) if (!latestCall.has(c.companyId)) latestCall.set(c.companyId, c);
   const ref = (r: Omit<FirmRef, "why">): FirmRef => ({ ...r, why: "" });
-  const today = buildToday(
-    {
-      now,
-      dueBy,
-      callbacks: callbacks.map((c) => ({ ...ref(c), dueAt: c.dueAt as Date })),
-      openShops: open.map((s) => ({ ...ref(s), sentAt: s.sentAt })),
-      candidates: [],
-    },
-    8,
-    { dedupe: false },
-  );
+  const callbacks = [...latestCall.values()]
+    .filter((c): c is typeof c & { nextStepAt: Date } => c.nextStepAt !== null && c.nextStepAt <= dueBy)
+    .map((c) => ({ ...ref(c), dueAt: c.nextStepAt }));
+  const openShops = shops
+    .filter((sh) => !sh.firstReplyAt && sh.sentAt >= new Date(now.getTime() - 7 * DAY))
+    .map((sh) => ({ ...ref(sh), sentAt: sh.sentAt }));
+  const today = buildToday({ now, dueBy, callbacks, openShops, candidates: [] }, 8, { dedupe: false });
+
   // Call now: the shop is the proof. Replied late or never, and not called since it was sent.
-  const shopsForProof = await db
-    .select({
-      companyId: mysteryShop.companyId,
-      name: company.name,
-      sentAt: mysteryShop.sentAt,
-      firstReplyAt: mysteryShop.firstReplyAt,
-    })
-    .from(mysteryShop)
-    .innerJoin(company, eq(company.id, mysteryShop.companyId))
-    .where(
-      and(
-        eq(mysteryShop.workspaceId, workspaceId),
-        lte(mysteryShop.sentAt, new Date(now.getTime() - DAY)),
-        gte(mysteryShop.sentAt, new Date(now.getTime() - 30 * DAY)),
-        eq(company.dncFlag, false),
-        ne(company.status, "excluded"),
-        isNull(company.mergedIntoId),
-      ),
-    )
-    .orderBy(desc(mysteryShop.sentAt));
-  const calls = await db
-    .select({ companyId: call.companyId, calledAt: call.calledAt })
-    .from(call)
-    .where(eq(call.workspaceId, workspaceId));
   const seen = new Set<string>();
-  const callNow = shopsForProof.filter((s) => {
-    const late = !s.firstReplyAt || s.firstReplyAt.getTime() - s.sentAt.getTime() > DAY;
-    const calledSince = calls.some((c) => c.companyId === s.companyId && c.calledAt >= s.sentAt);
-    if (!late || calledSince || seen.has(s.companyId)) return false;
-    seen.add(s.companyId);
+  const callNow = shops.filter((sh) => {
+    const old = sh.sentAt.getTime() <= now.getTime() - DAY;
+    const late = !sh.firstReplyAt || sh.firstReplyAt.getTime() - sh.sentAt.getTime() > DAY;
+    const lastCalled = latestCall.get(sh.companyId)?.calledAt;
+    if (!old || !late || (lastCalled && lastCalled >= sh.sentAt) || seen.has(sh.companyId)) return false;
+    seen.add(sh.companyId);
     return true;
   });
-
-  const [pending, pilots] = await Promise.all([
-    triageQueue(db, workspaceId, null),
-    listPilots(db, workspaceId, nyDateKey(now)),
-  ]);
-  const atRisk = pilots.filter(
-    (p) => p.status === "running" && p.vacancies.some((v) => v.guarantee.status === "at_risk"),
-  );
+  const atRisk = pilots.filter((p) => p.vacancies.some((v) => v.guarantee.status === "at_risk"));
 
   const extra = [
-    ...callNow.slice(0, MAX_CALL_NOW).map((s) => ({
+    ...callNow.slice(0, MAX_CALL_NOW).map((sh) => ({
       kind: "call_now",
-      name: s.name,
-      label: s.firstReplyAt
-        ? `Took ${formatMinutes((s.firstReplyAt.getTime() - s.sentAt.getTime()) / 60_000)} to reply. Call with the proof.`
+      name: sh.name,
+      label: sh.firstReplyAt
+        ? `Took ${formatMinutes((sh.firstReplyAt.getTime() - sh.sentAt.getTime()) / 60_000)} to reply. Call with the proof.`
         : "No reply in 24h to your inquiry. Call with the proof.",
-      href: `/calls?lead=${s.companyId}`,
+      href: `/calls?lead=${sh.companyId}`,
     })),
     ...(pending.length
       ? [

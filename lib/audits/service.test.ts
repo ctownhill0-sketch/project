@@ -148,4 +148,18 @@ describe("export", () => {
       firmName: "Harborline Residential",
     });
   });
+
+  it("changing the summary clears the old check and export; saving the same text keeps them", async () => {
+    const { ctx, firm } = await setup();
+    const id = await createAudit(handle.db, ctx, firm.id, NOW);
+    await saveSummary(handle.db, ctx, id, GOOD);
+    await prepareExport(handle.db, ctx, id);
+    await exportAudit(handle.db, ctx, id, NOW);
+    await saveSummary(handle.db, ctx, id, GOOD);
+    let [row] = await handle.db.select().from(vacancyAudit).where(eq(vacancyAudit.id, id));
+    expect(row!.pdfGeneratedAt).toEqual(NOW);
+    await saveSummary(handle.db, ctx, id, GOOD.replace("first.", "first!"));
+    [row] = await handle.db.select().from(vacancyAudit).where(eq(vacancyAudit.id, id));
+    expect(row).toMatchObject({ fairHousingCheckId: null, pdfGeneratedAt: null });
+  });
 });

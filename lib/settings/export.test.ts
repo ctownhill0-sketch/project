@@ -3,7 +3,8 @@ import type { DbHandle } from "@/lib/db/client";
 import { company } from "@/lib/db/schema";
 import { createTestDb } from "@/lib/db/test-db";
 import { insertOwner } from "@/lib/db/test-fixtures";
-import { exportWorkspace } from "@/lib/settings/export";
+import { canBackUpWholeDatabase, exportWorkspace } from "@/lib/settings/export";
+import { createTestDb as freshDb } from "@/lib/db/test-db";
 
 let handle: DbHandle;
 beforeAll(async () => {
@@ -35,5 +36,14 @@ describe("exportWorkspace", () => {
     const bytes = new Uint8Array(await blob.arrayBuffer());
     expect(bytes[0]).toBe(0x1f);
     expect(bytes[1]).toBe(0x8b);
+  });
+
+  it("allows a whole-database backup only while one workspace exists", async () => {
+    const solo = await freshDb();
+    await insertOwner(solo.db);
+    expect(await canBackUpWholeDatabase(solo.db)).toBe(true);
+    await insertOwner(solo.db);
+    expect(await canBackUpWholeDatabase(solo.db)).toBe(false);
+    await solo.close();
   });
 });

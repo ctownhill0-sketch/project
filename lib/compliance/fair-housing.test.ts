@@ -6,6 +6,7 @@ import { createTestDb } from "@/lib/db/test-db";
 import { insertOwner } from "@/lib/db/test-fixtures";
 import {
   activeRules,
+  checkForText,
   isCleared,
   overrideCheck,
   runCheck,
@@ -158,5 +159,20 @@ describe("saveScript", () => {
       NOW,
     );
     expect(ok).toMatchObject({ saved: true, outcome: "warn" });
+  });
+});
+
+describe("checkForText", () => {
+  it("finds the check that covered exactly this text, ignoring rejected drafts", async () => {
+    const { ctx, own } = await setup();
+    const [sc] = await handle.db
+      .insert(script)
+      .values({ ...own, kind: "voicemail", name: "Voicemail", body: "Hi {{contactName}}." })
+      .returning();
+    await saveScript(handle.db, ctx, { id: sc!.id, body: "Hi there, calling back." }, NOW);
+    await saveScript(handle.db, ctx, { id: sc!.id, body: "We take no vouchers." }, NOW);
+    const found = await checkForText(handle.db, ctx.workspaceId, "script", sc!.id, "Hi there, calling back.");
+    expect(found?.outcome).toBe("pass");
+    expect(await checkForText(handle.db, ctx.workspaceId, "script", sc!.id, "Never checked")).toBeNull();
   });
 });

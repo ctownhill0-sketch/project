@@ -66,3 +66,10 @@ export function parseRoiQuery(q: URLSearchParams): RoiInputs {
   }
   return out;
 }
+
+/** Why a typed value can't be used, in the founder's words, or null when it's in range. */
+export function roiFieldError(key: keyof RoiInputs, value: number): string | null {
+  const [lo, hi] = LIMITS[key];
+  if (Number.isFinite(value) && value >= lo && value <= hi) return null;
+  return `Use a value from ${lo.toLocaleString("en-US")} to ${hi.toLocaleString("en-US")}.`;
+}

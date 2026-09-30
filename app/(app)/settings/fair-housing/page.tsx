@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/states/status-badge";
 import { requireUser } from "@/lib/auth/require-user";
 import { categoryLabel, checkStatus } from "@/lib/compliance/labels";
-import { allRules, latestCheck, recentChecks } from "@/lib/compliance/fair-housing";
+import { allRules, checkForText, recentChecks } from "@/lib/compliance/fair-housing";
 import { getDb } from "@/lib/db";
 import { script } from "@/lib/db/schema";
 import { SCREENING_LABEL } from "@/lib/domain/fair-housing";
@@ -70,7 +70,9 @@ export default async function FairHousingPage() {
       .where(and(eq(script.workspaceId, workspaceId), eq(script.isActive, true)))
       .orderBy(asc(script.kind)),
   ]);
-  const scriptChecks = await Promise.all(scripts.map((s) => latestCheck(db, workspaceId, "script", s.id)));
+  const scriptChecks = await Promise.all(
+    scripts.map((s) => checkForText(db, workspaceId, "script", s.id, s.body)),
+  );
   const active = rules.filter((r) => r.isActive).length;
   const blocked = checks.filter((c) => c.outcome === "block").length;
 

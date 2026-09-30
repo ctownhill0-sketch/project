@@ -127,6 +127,30 @@ export async function latestCheck(db: Db, workspaceId: string, entityType: strin
   return row ?? null;
 }
 
+/** The latest check that covered exactly this text (by hash), so a rejected draft never labels saved text. */
+export async function checkForText(
+  db: Db,
+  workspaceId: string,
+  entityType: string,
+  entityId: string,
+  text: string,
+) {
+  const [row] = await db
+    .select()
+    .from(fairHousingCheck)
+    .where(
+      and(
+        eq(fairHousingCheck.workspaceId, workspaceId),
+        eq(fairHousingCheck.entityType, entityType),
+        eq(fairHousingCheck.entityId, entityId),
+        eq(fairHousingCheck.textHash, hash(text)),
+      ),
+    )
+    .orderBy(desc(fairHousingCheck.createdAt))
+    .limit(1);
+  return row ?? null;
+}
+
 export async function recentChecks(db: Db, workspaceId: string, limit = 50) {
   return db
     .select()

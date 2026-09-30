@@ -62,14 +62,21 @@ export interface VacancyGuarantee {
   reasons: string[];
 }
 
+/**
+ * `daysCovered` is how many pilot days have numbers (day 0 through the last entered day). When
+ * today's entry is already in, it's one more than `elapsed`, and the projection divides by it so
+ * the pace isn't overstated.
+ */
 export function vacancyGuarantee(
   days: DayMetric[],
   elapsed: number,
   rules: GuaranteeRules = DEFAULT_GUARANTEE,
+  daysCovered = elapsed,
 ): VacancyGuarantee {
   const tours = days.reduce((sum, d) => sum + d.tours, 0);
   const median = weightedMedianReply(days);
-  const projected = elapsed > 0 ? Math.round(((tours * rules.pilotDays) / elapsed) * 10) / 10 : null;
+  const divisor = Math.min(Math.max(elapsed, daysCovered), rules.pilotDays);
+  const projected = divisor > 0 ? Math.round(((tours * rules.pilotDays) / divisor) * 10) / 10 : null;
   const base = { tours, projectedTours: projected, medianReplySeconds: median };
   const slow = median !== null && median > rules.medianReplySeconds;
   const slowReason = `Median reply is ${median}s, over ${rules.medianReplySeconds}s.`;
